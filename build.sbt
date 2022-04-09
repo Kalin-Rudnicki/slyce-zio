@@ -37,6 +37,7 @@ inThisBuild(
     ),
     sonatypeCredentialHost := "s01.oss.sonatype.org",
     scalaVersion := Scala_3,
+    scalacOptions += "-source:future",
   ),
 )
 
@@ -45,16 +46,22 @@ inThisBuild(
 lazy val `slyce-core` =
   project
     .in(file("slyce-core"))
-    .enablePlugins(BuildInfoPlugin)
     .settings(
       name := "slyce-core",
-      buildInfoKeys := Seq[BuildInfoKey](version),
-      buildInfoPackage := "slyce",
       libraryDependencies ++= Seq(
         MyOrg %% "klib" % "2.0.1",
       ),
       sonatypeCredentialHost := "s01.oss.sonatype.org",
     )
+
+lazy val `slyce-generate` =
+  project
+    .in(file("slyce-generate"))
+    .settings(
+      name := "slyce-generate",
+      sonatypeCredentialHost := "s01.oss.sonatype.org",
+    )
+    .dependsOn(`slyce-core`)
 
 lazy val `slyce-root` =
   project
