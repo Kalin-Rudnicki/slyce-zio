@@ -7,25 +7,25 @@ import scala.annotation.tailrec
 
 sealed trait Regex {
 
-  def repeat(min: Int, max: Option[Int]): Regex =
+  final def repeat(min: Int, max: Option[Int]): Regex =
     Regex.Repeat(this, min, max)
 
-  def maybe: Regex =
+  final def maybe: Regex =
     repeat(0, 1.some)
 
-  def exactly(n: Int): Regex =
+  final def exactly(n: Int): Regex =
     repeat(n, n.some)
 
-  def atLeastN(n: Int): Regex =
+  final def atLeastN(n: Int): Regex =
     repeat(n, None)
 
-  def anyAmount: Regex =
+  final def anyAmount: Regex =
     atLeastN(0)
 
-  def atLeastOnce: Regex =
+  final def atLeastOnce: Regex =
     atLeastN(1)
 
-  def toIdtStr: IndentedString =
+  final def toIdtStr: IndentedString =
     this match {
       case cc: Regex.CharClass =>
         cc.toString
@@ -66,10 +66,8 @@ object Regex {
 
     override def toString: String =
       chars match {
-        case InfiniteSet.Inclusive(explicit) =>
-          explicit.prettyChars("Inclusive")
-        case InfiniteSet.Exclusive(explicit) =>
-          explicit.prettyChars("Exclusive")
+        case InfiniteSet.Inclusive(explicit) => explicit.prettyChars("Inclusive")
+        case InfiniteSet.Exclusive(explicit) => explicit.prettyChars("Exclusive")
       }
 
   }
