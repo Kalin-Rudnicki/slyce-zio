@@ -10,6 +10,7 @@ val githubProject = "slyce-fp"
 
 ThisBuild / dynverVTagPrefix := false
 ThisBuild / dynverSonatypeSnapshots := true
+ThisBuild / watchBeforeCommand := Watch.clearScreen
 
 ThisBuild / version ~= (_.replace('+', '-'))
 ThisBuild / dynver ~= (_.replace('+', '-'))
@@ -72,4 +73,5 @@ lazy val `slyce-root` =
     )
     .aggregate(
       `slyce-core`,
+      `slyce-generate`,
     )

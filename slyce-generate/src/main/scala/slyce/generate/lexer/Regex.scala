@@ -1,9 +1,10 @@
-package slyce.generate
+package slyce.generate.lexer
 
 import cats.data.NonEmptyList
 import cats.syntax.option.*
 import klib.utils.*
-import scala.annotation.tailrec
+
+import slyce.generate.*
 
 sealed trait Regex {
 
