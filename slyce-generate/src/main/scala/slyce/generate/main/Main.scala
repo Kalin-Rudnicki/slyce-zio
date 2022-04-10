@@ -1,8 +1,10 @@
-package slyce.generate
+package slyce.generate.main
 
 import klib.utils.*
 import klib.utils.commandLine.parse.*
 import zio.*
+
+import slyce.generate.*
 
 object Main extends ExecutableApp {
 
