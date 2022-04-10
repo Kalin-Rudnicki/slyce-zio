@@ -3,13 +3,20 @@ package slyce.core
 import cats.data.NonEmptyList
 import cats.syntax.list.*
 import cats.syntax.option.*
+import java.util.UUID
 import klib.utils.*
 import scala.annotation.tailrec
 import scala.math.Ordering.Implicits.infixOrderingOps
 import zio.*
 
-final case class Source(input: String, name: Option[String]) {
+final case class Source(input: String, name: Option[String]) { self =>
+  private val uuid: UUID = UUID.randomUUID
   val chars: List[Char] = input.toList
+
+  override def equals(obj: Any): Boolean =
+    if (obj.isInstanceOf[Source]) self.uuid == obj.asInstanceOf[Source].uuid
+    else false
+
 }
 object Source {
 
