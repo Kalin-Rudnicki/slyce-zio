@@ -6,7 +6,7 @@ val Scala_3 = "3.1.2-RC3"
 
 val MyOrg = "io.github.kalin-rudnicki"
 val githubUsername = "Kalin-Rudnicki"
-val githubProject = "slyce-fp"
+val githubProject = "slyce-zio"
 
 ThisBuild / dynverVTagPrefix := false
 ThisBuild / dynverSonatypeSnapshots := true

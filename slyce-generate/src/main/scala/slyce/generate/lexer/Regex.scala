@@ -11,10 +11,10 @@ sealed trait Regex {
   final def repeat(min: Int, max: Option[Int]): Regex =
     Regex.Repeat(this, min, max)
 
-  final def maybe: Regex =
+  final def optional: Regex =
     repeat(0, 1.some)
 
-  final def exactly(n: Int): Regex =
+  final def exactlyN(n: Int): Regex =
     repeat(n, n.some)
 
   final def atLeastN(n: Int): Regex =
@@ -32,21 +32,21 @@ sealed trait Regex {
         cc.toString
       case Regex.Sequence(seq) =>
         IndentedString.inline(
-          "Sequence",
+          "Sequence:",
           IndentedString.indented(
             seq.map(_.toIdtStr),
           ),
         )
       case Regex.Group(seqs) =>
         IndentedString.inline(
-          "Group",
+          "Group:",
           IndentedString.indented(
             seqs.toList.map(_.toIdtStr),
           ),
         )
       case Regex.Repeat(reg, min, max) =>
         IndentedString.inline(
-          s"Repeat($min, $max)",
+          s"Repeat($min, $max):",
           IndentedString.indented(
             reg.toIdtStr,
           ),

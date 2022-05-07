@@ -4,7 +4,7 @@ import cats.syntax.either.*
 import klib.utils.*
 import scala.annotation.tailrec
 
-implicit class CharSetOps(chars: Set[Char]) {
+extension (chars: Set[Char]) {
 
   def groupChars: List[Either[Char, (Char, Char)]] = {
     @tailrec

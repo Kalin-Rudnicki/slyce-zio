@@ -5,6 +5,9 @@ final case class Marked[+T](
     span: Span,
 ) {
 
+  inline def as[T2](f: => T2): Marked[T2] =
+    map(_ => f)
+
   def map[T2](f: T => T2): Marked[T2] =
     Marked(f(value), span)
 
