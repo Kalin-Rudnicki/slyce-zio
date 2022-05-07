@@ -16,10 +16,13 @@ final case class NFA private (
 )
 object NFA {
 
-  enum State {
-    case TransitionOnChars(charClass: CharClass, to: Pointer[State])
-    case TransitionOnEpsilon(to: Set[Pointer[State]])
-    case End(line: LexerInput.Mode.Line)
+  sealed trait State
+  object State {
+    sealed trait NonTrivial extends State
+
+    final case class TransitionOnChars(charClass: CharClass, to: Pointer[State]) extends State.NonTrivial
+    final case class TransitionOnEpsilon(to: Set[Pointer[State]]) extends State
+    final case class End(line: LexerInput.Mode.Line) extends State.NonTrivial
   }
 
   def lexerToNFA(lexer: LexerInput): Validated[NFA] =
