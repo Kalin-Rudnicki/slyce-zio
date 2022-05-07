@@ -39,6 +39,7 @@ inThisBuild(
     sonatypeCredentialHost := "s01.oss.sonatype.org",
     scalaVersion := Scala_3,
     scalacOptions += "-source:future",
+    testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
   ),
 )
 
@@ -50,7 +51,7 @@ lazy val `slyce-core` =
     .settings(
       name := "slyce-core",
       libraryDependencies ++= Seq(
-        MyOrg %% "klib" % "2.0.1",
+        MyOrg %% "klib" % "2.0.1" % "test->test;compile->compile",
       ),
       sonatypeCredentialHost := "s01.oss.sonatype.org",
     )
@@ -62,7 +63,7 @@ lazy val `slyce-generate` =
       name := "slyce-generate",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
     )
-    .dependsOn(`slyce-core`)
+    .dependsOn(`slyce-core` % "test->test;compile->compile")
 
 lazy val `slyce-root` =
   project

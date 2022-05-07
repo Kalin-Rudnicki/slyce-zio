@@ -6,7 +6,7 @@ import slyce.core.*
 
 final case class Yields[I](
     yields: List[Marked[Yields.Yield]],
-    toMode: Marked[Yields.ToMode[I]] = Marked(Yields.ToMode.Same, Span.Unknown),
+    toMode: Marked[Yields.ToMode[I]],
 ) {
 
   def yieldsTerminals: Set[String] =

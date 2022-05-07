@@ -63,7 +63,7 @@ object NFA {
         (validateMin(lineSpan, min), validateMax(lineSpan, min, max)).parTupled.flatMap { _ =>
           max match {
             case Some(max) =>
-              doRegexOrSkip(lineSpan, reg, min, next, next).flatMap { afterMin =>
+              doRegexOrSkip(lineSpan, reg, max - min, next, next).flatMap { afterMin =>
                 repeat(lineSpan, reg, min, afterMin)
               }
             case None =>
@@ -79,8 +79,9 @@ object NFA {
 
       private def validateMax(lineSpan: Span, min: Int, max: Option[Int]): Validated[Unit] =
         max match {
-          case Some(max) if max < min => Marked(s"max($max) < min($min)", lineSpan).leftNel
-          case _                      => ().asRight
+          case Some(max) if max < min              => Marked(s"max($max) < min($min)", lineSpan).leftNel
+          case Some(max) if min == max && min == 0 => Marked(s"max($max) == min($min) == 0", lineSpan).leftNel
+          case _                                   => ().asRight
         }
 
       private def repeat(lineSpan: Span, reg: Regex, times: Int, next: Pointer[State]): Validated[Pointer[State]] =

@@ -31,7 +31,6 @@ object Pointer {
     val self = new Pointer[T](None)
     val res = f(self)
 
-    if (self == res) throw RuntimeException("You can not just return the input...")
     self._value = res._value
     self
   }
@@ -39,8 +38,8 @@ object Pointer {
   def withSelfWrapped[T, F[_]: Functor](f: Pointer[T] => F[Pointer[T]]): F[Pointer[T]] = {
     val self = new Pointer[T](None)
     val res = f(self)
+
     res.map { t =>
-      if (self == t) throw RuntimeException("You can not just return the input...")
       self._value = t._value
       self
     }
