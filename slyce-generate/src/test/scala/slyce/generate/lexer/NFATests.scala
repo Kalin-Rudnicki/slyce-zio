@@ -25,7 +25,7 @@ object NFATests extends DefaultRunnableSpec {
   override def spec: ZSpec[TestEnvironment, Any] = {
     def testRegex(name: String)(reg: Regex, expNumErrors: Option[Int]): ZSpec[TestEnvironment, Any] =
       test(name) {
-        val nfa = NFA.lexerToNFA(lexerInputFromRegex(reg))
+        val nfa = NFA.fromLexer(lexerInputFromRegex(reg))
 
         expNumErrors match {
           case Some(expNumErrors) => assert(nfa.leftMap(_.toList))(isLeft(hasSize(equalTo(expNumErrors))))

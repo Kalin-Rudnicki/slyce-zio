@@ -25,21 +25,21 @@ object NFA {
     final case class End(line: LexerInput.Mode.Line) extends State.NonTrivial
   }
 
-  def lexerToNFA(lexer: LexerInput): Validated[NFA] =
-    lexer.modes
-      .parTraverse { mode =>
-        modeToState(mode).map { state =>
-          (mode.name.value, mode.name.as(state))
-        }
-      }
-      .map { list =>
-        NFA(lexer.startMode, list.toMap)
-      }
-
   // TODO (KR) : Mark errors more granularly
-  private object modeToState {
+  object fromLexer {
 
-    def apply(mode: LexerInput.Mode): Validated[Pointer[State]] =
+    def apply(lexer: LexerInput): Validated[NFA] =
+      lexer.modes
+        .parTraverse { mode =>
+          modeToState(mode).map { state =>
+            (mode.name.value, mode.name.as(state))
+          }
+        }
+        .map { list =>
+          NFA(lexer.startMode, list.toMap)
+        }
+
+    private def modeToState(mode: LexerInput.Mode): Validated[Pointer[State]] =
       mode.lines.parTraverse { line => regexToState(line.regex.span, line.regex.value, Pointer(State.End(line))) }.map(stateWithEpsilonsTo(_*))
 
     private def stateWithEpsilonsTo(states: Pointer[State]*): Pointer[State] =
@@ -60,7 +60,10 @@ object NFA {
     private object repeatToState {
 
       def apply(lineSpan: Span, reg: Regex, min: Int, max: Option[Int], next: Pointer[State]): Validated[Pointer[State]] =
-        (validateMin(lineSpan, min), validateMax(lineSpan, min, max)).parTupled.flatMap { _ =>
+        Validated.withValidations(
+          validateMin(lineSpan, min),
+          validateMax(lineSpan, min, max),
+        ) {
           max match {
             case Some(max) =>
               doRegexOrSkip(lineSpan, reg, max - min, next, next).flatMap { afterMin =>
