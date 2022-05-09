@@ -6,20 +6,15 @@ import zio.test.*
 import zio.test.Assertion.*
 
 import slyce.core.*
+import slyce.generate.builder.Builders.*
 
 object NFATests extends DefaultRunnableSpec {
 
   private def lexerInputFromRegex(reg: Regex): LexerInput =
-    LexerInput(
-      Marked("test", Span.Unknown),
-      LexerInput.Mode(
-        Marked("test", Span.Unknown),
-        LexerInput.Mode.Line(
-          1,
-          Marked(reg, Span.Unknown),
-          Yields(Nil, Marked(Yields.ToMode.Same, Span.Unknown)),
-        ) :: Nil,
-      ) :: Nil,
+    lexer("test")(
+      lexer.mode("test")(
+        lexer.mode.line(reg)(),
+      ),
     )
 
   override def spec: ZSpec[TestEnvironment, Any] = {

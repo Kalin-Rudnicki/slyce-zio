@@ -1,5 +1,6 @@
 package slyce.generate
 
+import java.util.UUID
 import scala.annotation.tailrec
 
 object Helpers {
@@ -18,6 +19,16 @@ object Helpers {
       findAll(newUnseen, newSeen)(findF)
     else
       newSeen
+  }
+
+  trait ExactEquality {
+    private final val eeUUID: UUID = UUID.randomUUID
+    final override def hashCode(): Int = eeUUID.hashCode
+    final override def equals(obj: Any): Boolean =
+      obj.asInstanceOf[Matchable] match {
+        case that: ExactEquality => this.eeUUID == that.eeUUID
+        case _                   => false
+      }
   }
 
 }

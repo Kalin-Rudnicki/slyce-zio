@@ -18,10 +18,7 @@ final case class NFA private (
 )
 object NFA {
 
-  sealed trait State {
-    private val uuid: UUID = UUID.randomUUID
-    override final def hashCode: Int = uuid.hashCode
-  }
+  sealed trait State extends Helpers.ExactEquality
   object State {
     sealed trait NonTrivial extends State
 
