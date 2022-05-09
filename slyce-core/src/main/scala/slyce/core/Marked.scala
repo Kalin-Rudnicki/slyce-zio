@@ -1,5 +1,7 @@
 package slyce.core
 
+import klib.utils.*
+
 final case class Marked[+T](
     value: T,
     span: Span,
@@ -16,8 +18,15 @@ final case class Marked[+T](
     Marked(marked2.value, Span.joinSpans(span, marked2.span))
   }
 
-  def toString(showAbsolute: Boolean): String =
-    s"$value @ ${span.toString(showAbsolute)}"
+  def toString(showAbsolute: Boolean): String = {
+    val str: String =
+      value.asInstanceOf[Matchable] match {
+        case str: String => str.unesc
+        case any         => any.toString
+      }
+
+    s"$str @ ${span.toString(showAbsolute)}"
+  }
 
   override def toString: String =
     toString(false)

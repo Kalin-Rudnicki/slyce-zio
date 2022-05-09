@@ -4,7 +4,9 @@ import cats.data.{EitherNel, NonEmptyList}
 import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
+import java.util.UUID
 import klib.utils.InfiniteSet
+import scala.util.hashing.MurmurHash3
 
 import slyce.core.*
 import slyce.generate.*
@@ -16,7 +18,10 @@ final case class NFA private (
 )
 object NFA {
 
-  sealed trait State
+  sealed trait State {
+    private val uuid: UUID = UUID.randomUUID
+    override final def hashCode: Int = uuid.hashCode
+  }
   object State {
     sealed trait NonTrivial extends State
 

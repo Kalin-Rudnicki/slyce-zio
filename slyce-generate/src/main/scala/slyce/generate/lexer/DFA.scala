@@ -101,8 +101,8 @@ object DFA {
 
       (nfa.startMode :: toModeNames)
         .parTraverse { modeName =>
-          if (nfa.modes.contains(modeName.value)) modeName.as(s"Invalid mode name : ${modeName.value}").leftNel
-          else ().asRight
+          if (nfa.modes.contains(modeName.value)) ().asRight
+          else modeName.as(s"Invalid mode name : ${modeName.value}").leftNel
         }
         .map { _ => () }
     }
