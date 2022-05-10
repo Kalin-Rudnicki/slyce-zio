@@ -52,6 +52,7 @@ lazy val `slyce-core` =
       name := "slyce-core",
       libraryDependencies ++= Seq(
         MyOrg %% "klib" % "2.0.1" % "test->test;compile->compile",
+        "com.lihaoyi" %% "scalatags" % "0.11.1",
       ),
       sonatypeCredentialHost := "s01.oss.sonatype.org",
     )

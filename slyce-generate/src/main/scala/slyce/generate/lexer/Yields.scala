@@ -38,7 +38,7 @@ object Yields {
         name: String,
         subString: (Option[Int], Option[Int]) = (None, None),
     ) extends Yield
-    final case class Const(
+    final case class ConstText(
         text: String,
         subString: (Option[Int], Option[Int]) = (None, None),
     ) extends Yield

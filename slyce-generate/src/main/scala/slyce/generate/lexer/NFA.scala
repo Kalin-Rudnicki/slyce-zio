@@ -78,7 +78,7 @@ object NFA {
         ) {
           max match {
             case Some(max) =>
-              doRegexOrSkip(lineSpan, reg, max - min, next, next).flatMap { afterMin =>
+              doRegexOrSkip(lineSpan, reg, max - min, next).flatMap { afterMin =>
                 repeat(lineSpan, reg, min, afterMin)
               }
             case None =>
@@ -110,15 +110,18 @@ object NFA {
           }
         }
 
-      private def doRegexOrSkip(lineSpan: Span, reg: Regex, times: Int, next: Pointer[State], skipTo: Pointer[State]): Validated[Pointer[State]] =
-        (
-          if (times > 0)
-            regexToState(lineSpan, reg, next).flatMap { next =>
-              doRegexOrSkip(lineSpan, reg, times - 1, next, skipTo)
-            }
-          else
-            next.asRight
-        ).map(stateWithEpsilonsTo(_, skipTo))
+      private def doRegexOrSkip(lineSpan: Span, reg: Regex, times: Int, next: Pointer[State]): Validated[Pointer[State]] =
+        if (times > 0)
+          regexToState(lineSpan, reg, next).flatMap { _next =>
+            doRegexOrSkip(
+              lineSpan,
+              reg,
+              times - 1,
+              Pointer(State.TransitionOnEpsilon(Set(next, _next))),
+            )
+          }
+        else
+          next.asRight
 
     }
 
