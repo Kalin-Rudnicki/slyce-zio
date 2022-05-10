@@ -12,16 +12,23 @@ import slyce.core.*
 import slyce.generate.*
 
 final case class DFA private (
-    modeStarts: Map[String, DFA.State], // Not actually used, just for reference
     states: List[DFA.State],
+    forDebugging: DFA.ForDebugging,
 )
 object DFA {
+
+  type NFAStates = Set[NFA.State.NonTrivial]
 
   final case class State(
       id: Int,
       transitions: Map[Set[Char], Option[Lazy[State]]],
       elseTransition: Option[Lazy[State]],
       yields: Option[(LexerInput.Mode.Line, Yields[Lazy[State]])],
+  )
+
+  final case class ForDebugging(
+      modeStarts: Map[String, State],
+      nfaStatesToState: Map[NFAStates, State],
   )
 
   object fromNFA {
@@ -60,11 +67,15 @@ object DFA {
           validateModeStartStateCanNotYield(stateModeStarts),
           validateShadows(allStates, shadows1 ++ shadows2),
         ) {
-          DFA(stateModeStarts, allStates).asRight
+          DFA(
+            allStates,
+            ForDebugging(
+              stateModeStarts,
+              nfaStatesToState,
+            ),
+          ).asRight
         }
       }
-
-    private type NFAStates = Set[NFA.State.NonTrivial]
 
     private final case class IState(
         transitions: Map[Set[Char], Option[NFAStates]],
