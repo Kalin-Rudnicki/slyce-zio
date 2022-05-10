@@ -18,8 +18,8 @@ final class Pointer[T] private (private var _value: Option[T]) {
       case _                => false
     }
 
-  override def hashCode(): Int =
-    value.hashCode
+  override def hashCode: Int = value.hashCode
+  override def toString: String = s"Pointer($value)"
 
 }
 object Pointer {

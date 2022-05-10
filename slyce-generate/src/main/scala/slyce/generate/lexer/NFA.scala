@@ -18,12 +18,12 @@ final case class NFA private (
 )
 object NFA {
 
-  sealed trait State extends Helpers.ExactEquality
+  sealed trait State
   object State {
     sealed trait NonTrivial extends State
 
     final case class TransitionOnChars(charClass: CharClass, to: Pointer[State]) extends State.NonTrivial
-    final case class TransitionOnEpsilon(to: Set[Pointer[State]]) extends State
+    final case class TransitionOnEpsilon(to: Set[Pointer[State]]) extends State with Helpers.ExactEquality
     final case class End(line: LexerInput.Mode.Line) extends State.NonTrivial
   }
 
@@ -31,15 +31,25 @@ object NFA {
   object fromLexer {
 
     def apply(lexer: LexerInput): Validated[NFA] =
-      lexer.modes
-        .parTraverse { mode =>
-          modeToState(mode).map { state =>
-            (mode.name.value, mode.name.as(state))
+      Validated.withValidations(
+        validateNonEmptyModes(lexer),
+      ) {
+        lexer.modes
+          .parTraverse { mode =>
+            modeToState(mode).map { state =>
+              (mode.name.value, mode.name.as(state))
+            }
           }
-        }
-        .map { list =>
-          NFA(lexer.startMode, list.toMap)
-        }
+          .map { list =>
+            NFA(lexer.startMode, list.toMap)
+          }
+      }
+
+    private def validateNonEmptyModes(lexer: LexerInput): Validated[Any] =
+      lexer.modes.parTraverse { mode =>
+        if (mode.lines.nonEmpty) ().rightNel
+        else mode.name.as(s"Mode has no lines : ${mode.name.value}").leftNel
+      }
 
     private def modeToState(mode: LexerInput.Mode): Validated[Pointer[State]] =
       mode.lines.parTraverse { line => regexToState(line.regex.span, line.regex.value, Pointer(State.End(line))) }.map(stateWithEpsilonsTo(_*))
@@ -94,12 +104,11 @@ object NFA {
         else next.asRight
 
       private def loopOnSelf(lineSpan: Span, reg: Regex, next: Pointer[State]): Validated[Pointer[State]] =
-        Pointer
-          .withSelfWrapped[State, Validated] { self =>
-            regexToState(lineSpan, reg, self).map { state =>
-              stateWithEpsilonsTo(state, next)
-            }
+        Pointer.withSelfWrapped[State, Validated] { self =>
+          regexToState(lineSpan, reg, self).map { state =>
+            stateWithEpsilonsTo(state, next)
           }
+        }
 
       private def doRegexOrSkip(lineSpan: Span, reg: Regex, times: Int, next: Pointer[State], skipTo: Pointer[State]): Validated[Pointer[State]] =
         (

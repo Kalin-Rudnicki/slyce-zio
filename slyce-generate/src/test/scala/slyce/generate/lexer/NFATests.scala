@@ -19,14 +19,7 @@ object NFATests extends DefaultRunnableSpec {
 
   override def spec: ZSpec[TestEnvironment, Any] = {
     def testRegex(name: String)(reg: Regex, expNumErrors: Option[Int]): ZSpec[TestEnvironment, Any] =
-      test(name) {
-        val nfa = NFA.fromLexer(lexerInputFromRegex(reg))
-
-        expNumErrors match {
-          case Some(expNumErrors) => assert(nfa.leftMap(_.toList))(isLeft(hasSize(equalTo(expNumErrors))))
-          case None               => assert(nfa)(isRight)
-        }
-      }
+      testNFA(name)(lexerInputFromRegex(reg), expNumErrors)
 
     suite("NFATests")(
       suite("basic successes")(
@@ -61,6 +54,13 @@ object NFATests extends DefaultRunnableSpec {
         testRegex("repeat : max < min")(Regex.CharClass.inclusive('A').repeat(1, 0.some), 1.some),
         testRegex("repeat : min < 0, max < min")(Regex.CharClass.inclusive('A').repeat(-1, -2.some), 2.some),
         testRegex("repeat : min == max == 0")(Regex.CharClass.inclusive('A').repeat(0, 0.some), 1.some),
+        testNFA("mode with 0 lines")(
+          lexer("test")(
+            lexer.mode("test")(
+            ),
+          ),
+          1.some,
+        ),
       ),
     )
   }

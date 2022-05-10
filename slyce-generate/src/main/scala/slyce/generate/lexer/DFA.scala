@@ -85,26 +85,30 @@ object DFA {
         }
         .collect { case nonTrivial: NFA.State.NonTrivial => nonTrivial }
 
-    private def validateModeNames(nfa: NFA): Validated[Unit] = {
-      val toModeNames =
-        expandEpsilons(nfa.modes.values.map(_.value.value).toSet).toList
-          .flatMap {
-            case NFA.State.End(line) =>
-              line.yields.toMode.value match {
-                case Yields.ToMode.To(mode)   => Marked(mode, line.yields.toMode.span).some
-                case Yields.ToMode.Push(mode) => Marked(mode, line.yields.toMode.span).some
-                case _                        => None
-              }
-            case _ =>
-              None
-          }
-
-      (nfa.startMode :: toModeNames)
-        .parTraverse { modeName =>
-          if (nfa.modes.contains(modeName.value)) ().asRight
-          else modeName.as(s"Invalid mode name : ${modeName.value}").leftNel
+    private def validateModeNames(nfa: NFA): Validated[Any] = {
+      val allNFAStates: Set[NFA.State] =
+        Helpers.findAll(nfa.modes.values.map(_.value.value).toSet) {
+          case NFA.State.TransitionOnChars(_, to) => Set(to.value)
+          case NFA.State.End(_)                   => Set.empty
+          case NFA.State.TransitionOnEpsilon(to)  => to.map(_.value)
         }
-        .map { _ => () }
+
+      val toModeNames =
+        allNFAStates.toList.flatMap {
+          case NFA.State.End(line) =>
+            line.yields.toMode.value match {
+              case Yields.ToMode.To(mode)   => Marked(mode, line.yields.toMode.span).some
+              case Yields.ToMode.Push(mode) => Marked(mode, line.yields.toMode.span).some
+              case _                        => None
+            }
+          case _ =>
+            None
+        }
+
+      (nfa.startMode :: toModeNames).parTraverse { modeName =>
+        if (nfa.modes.contains(modeName.value)) ().asRight
+        else modeName.as(s"Invalid mode name : ${modeName.value}").leftNel
+      }
     }
 
     private def nfaStatesToIState(expandedStates: NFAStates): (IState, Set[Shadows]) = {
@@ -206,15 +210,13 @@ object DFA {
         name -> nfaStatesToState(expandEpsilons(Set(state.value.value)))
       }
 
-    private def validateModeStartStateCanNotYield(stateModeStarts: Map[String, State]): Validated[Unit] =
-      stateModeStarts.toList
-        .parTraverse { (name, state) =>
-          if (state.yields.nonEmpty) Marked(s"Mode '$name' can yield on no input (at least 1 char is required before yielding)", Span.Unknown).leftNel
-          else ().rightNel
-        }
-        .map { _ => () }
+    private def validateModeStartStateCanNotYield(stateModeStarts: Map[String, State]): Validated[Any] =
+      stateModeStarts.toList.parTraverse { (name, state) =>
+        if (state.yields.nonEmpty) Marked(s"Mode '$name' can yield on no input (at least 1 char is required before yielding)", Span.Unknown).leftNel
+        else ().rightNel
+      }
 
-    private def validateShadows(allStates: List[State], shadows: Set[Shadows]): Validated[Unit] = {
+    private def validateShadows(allStates: List[State], shadows: Set[Shadows]): Validated[Any] = {
       val selectedLines: Set[LexerInput.Mode.Line] =
         allStates.flatMap(_.yields.map(_._1)).toSet
 

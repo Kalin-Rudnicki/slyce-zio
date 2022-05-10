@@ -56,17 +56,12 @@ object Yields {
 
   }
   object ToMode {
-
     case object Same extends ToMode[Nothing]
-
     final case class To[I](mode: I) extends ToMode[I]
-
     final case class Push[I](mode: I) extends ToMode[I]
-
     // TODO (KR) : Eventual improvement will be allowing for arbitrary number of pops
     //           : eg. Pop(2), Pop(3), Pop(5)
     case object Pop extends ToMode[Nothing]
-
   }
 
 }
