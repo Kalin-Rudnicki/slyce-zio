@@ -21,7 +21,7 @@ object TestMain extends ExecutableApp {
           lexerInput =
             lexer("test")(
               lexer.mode("test")(
-                lexer.mode.line(Regex.CharClass.inclusive('A').repeat(2, 5.some))(
+                lexer.mode.line(Regex.Sequence("ABC").repeat(2, None))(
                   Yields.Yield.Terminal("text"),
                 ),
                 lexer.mode.line(Regex.Sequence("AA"))(),
