@@ -31,7 +31,7 @@ object TestMain extends ExecutableApp {
           result = Result.build(lexerInput)
           resultFrag = Result.resultToHTML(result)
           resultString = resultFrag.render
-          outputFile <- File.fromPath("test-output.html")
+          outputFile <- File.fromPath("target/test-output.html")
           _ <- outputFile.writeString(resultString)
         } yield ()
       }
