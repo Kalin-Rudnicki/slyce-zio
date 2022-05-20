@@ -7,6 +7,7 @@ import cats.syntax.functor.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
 import java.util.UUID
+import scala.annotation.tailrec
 
 import slyce.core.*
 import slyce.generate.*
@@ -546,21 +547,155 @@ object ExpandedGrammar {
 
     private def expandNonOptElement(element: GrammarInput.Element.NonOptional): Validated[Expansion[Identifier]] =
       element match {
-        case lnt: GrammarInput.NonTerminal.ListNonTerminal =>
-          expandListNonTerminal(None, lnt)
-        case identifier: GrammarInput.Identifier =>
-          Expansion(convertGrammarIdentifier(identifier), Nil, Nil, Nil, Nil).asRight
+        case lnt: GrammarInput.NonTerminal.ListNonTerminal => expandListNonTerminal(None, lnt)
+        case identifier: GrammarInput.Identifier           => Expansion(convertGrammarIdentifier(identifier), Nil, Nil, Nil, Nil).asRight
       }
 
   }
 
-  private object deDuplicate {
+  // TODO (KR) : This was jus copied from the previous version.
+  //           : It might make sense to give it the clean-up treatment as well.
+  def deDuplicate(expandedGrammar: ExpandedGrammar): ExpandedGrammar = {
+    val anonListUUIDMap: Map[UUID, NT[Identifier.NonTerminal.AnonListNt]] =
+      expandedGrammar.nts.flatMap { nt =>
+        nt.name match {
+          case anonList: Identifier.NonTerminal.AnonListNt => (anonList.key, nt.asInstanceOf[NT[Identifier.NonTerminal.AnonListNt]]).some
+          case _                                           => None
+        }
+      }.toMap
 
-    def apply(expandedGrammar: ExpandedGrammar): ExpandedGrammar = {
-      // TODO (KR) :
-      ???
+    def getNonBlockedNts(completedUUIDs: Set[UUID]): List[NT[Identifier.NonTerminal.AnonListNt]] = {
+      def validAnonList(nt: NT[Identifier.NonTerminal.AnonListNt]): Boolean = {
+        def isAlreadyDone: Boolean =
+          completedUUIDs.contains(nt.name.key)
+
+        def isBlocked: Boolean =
+          nt.reductions.toList.exists { r =>
+            r.elements.exists {
+              case al: Identifier.NonTerminal.AnonListNt => al.key != nt.name.key && !completedUUIDs.contains(al.key)
+              case _                                     => false
+            }
+          }
+
+        !(isAlreadyDone || isBlocked)
+      }
+
+      anonListUUIDMap.values.toList.filter(validAnonList)
     }
 
+    def mDereferenceNtId(key: UUID, id: Identifier.NonTerminal, found: Map[UUID, UUID]): Option[Identifier.NonTerminal] =
+      id match {
+        case al: Identifier.NonTerminal.AnonListNt =>
+          Option.when(al.key != key)(dereferenceNtId(id, found))
+        case _ =>
+          id.some
+      }
+    def dereferenceNtId(id: Identifier.NonTerminal, found: Map[UUID, UUID]): Identifier.NonTerminal =
+      id match {
+        case al: Identifier.NonTerminal.AnonListNt =>
+          Identifier.NonTerminal
+            .AnonListNt(found.getOrElse(al.key, al.key), al.`type`)
+            .asInstanceOf[id.type]
+        case _ =>
+          id
+      }
+
+    def mDereferenceId(key: UUID, id: Identifier, found: Map[UUID, UUID]): Option[Identifier] =
+      id match {
+        case terminal: Identifier.NonTerminal =>
+          mDereferenceNtId(key, terminal, found)
+        case _ =>
+          id.some
+      }
+    def dereferenceId(id: Identifier, found: Map[UUID, UUID]): Identifier =
+      id match {
+        case terminal: Identifier.NonTerminal =>
+          dereferenceNtId(terminal, found)
+        case _ =>
+          id
+      }
+
+    def dereferenceNt(
+        nt: NT[Identifier.NonTerminal],
+        found: Map[UUID, UUID],
+    ): NT[Identifier.NonTerminal] =
+      NT(
+        dereferenceNtId(nt.name, found),
+        nt.reductions.map(r => NT.Reduction(r.elements.map(dereferenceId(_, found)), r.liftIdx)),
+      )
+
+    @tailrec
+    def findDuplicates(
+        found: Map[UUID, UUID],
+    ): Map[UUID, UUID] = {
+      val completedUUIDs = found.keys.toSet
+      val nonBlockedNts = getNonBlockedNts(completedUUIDs)
+
+      if (nonBlockedNts.isEmpty) found
+      else {
+        val nonBlockedDereferenced = nonBlockedNts.map { nt =>
+          (
+            nt.name.key,
+            nt.reductions.map(r => (r.elements.map(mDereferenceId(nt.name.key, _, found)), r.liftIdx)),
+          )
+        }
+        val duplicateLists = nonBlockedDereferenced.groupMap(_._2)(_._1).values.toList
+        val newMap = duplicateLists.flatMap(dl => dl.map((_, dl.head))).toMap
+
+        findDuplicates(found ++ newMap)
+      }
+    }
+
+    def filterRedundantAnonListNts(nts: List[NT[Identifier.NonTerminal]], valid: Set[UUID]): List[NT[Identifier.NonTerminal]] =
+      nts.filter { nt =>
+        nt.name match {
+          case al: Identifier.NonTerminal.AnonListNt => valid.contains(al.key)
+          case _                                     => true
+        }
+      }
+
+    val duplicateMap = findDuplicates(Map.empty)
+    val filteredNts = filterRedundantAnonListNts(expandedGrammar.nts, duplicateMap.values.toSet).map(dereferenceNt(_, duplicateMap))
+    val filteredAliases = expandedGrammar.aliases.map(t => Alias(dereferenceNtId(t.named, duplicateMap), dereferenceNtId(t.actual, duplicateMap)))
+
+    def unaliasNt(nt: ExpandedGrammar.Identifier.NonTerminal): ExpandedGrammar.Identifier.NonTerminal =
+      filteredAliases.find(_.named == nt).fold(nt)(_.actual)
+
+    val deReferenceAliases =
+      filteredNts.map { nt =>
+        ExpandedGrammar.NT(
+          nt.name,
+          nt.reductions.map { reduction =>
+            ExpandedGrammar.NT.Reduction(
+              reduction.elements.map {
+                case nt: Identifier.NonTerminal => unaliasNt(nt)
+                case i                          => i
+              },
+              reduction.liftIdx,
+            )
+          },
+        )
+      }
+
+    val unaliasedWiths =
+      expandedGrammar.withs.map { w =>
+        With(
+          identifier = w.identifier match {
+            case nt: Identifier.NonTerminal => unaliasNt(nt)
+            case id                         => id
+          },
+          nt = w.nt,
+          name = w.name,
+        )
+      }.distinct
+
+    ExpandedGrammar(
+      startNt = expandedGrammar.startNt,
+      nts = deReferenceAliases.distinct,
+      aliases = filteredAliases,
+      extras = expandedGrammar.extras.distinct, // TODO (KR) : unalias as well?
+      withs = unaliasedWiths,
+    )
   }
 
 }

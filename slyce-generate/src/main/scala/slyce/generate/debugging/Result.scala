@@ -6,28 +6,45 @@ import scalatags.Text.all.{id as htmlId, *}
 
 import slyce.core.*
 import slyce.generate.*
+import slyce.generate.grammar.*
 import slyce.generate.lexer.*
 
 final case class Result(
     lexer: LexerInput,
     nfa: Validated[NFA],
     dfa: Validated[DFA],
+    grammar: GrammarInput,
+    expandedGrammar1: Validated[ExpandedGrammar],
+    expandedGrammar2: Validated[ExpandedGrammar],
 )
 object Result {
 
   def build(
       lexer: LexerInput,
+      grammar: GrammarInput,
   ): Result = {
+    def unableToBuild(thing: String): Validated[Nothing] =
+      Marked(s"Unable to attempt building '$thing'", Span.Unknown).leftNel
+
     val (nfa, dfa) =
       NFA.fromLexer(lexer) match {
         case right @ Right(nfa) => (right, DFA.fromNFA(nfa))
-        case left @ Left(_)     => (left, Marked("Unable to attempt building DFA", Span.Unknown).leftNel)
+        case left @ Left(_)     => (left, unableToBuild("dfa"))
+      }
+
+    val (expandedGrammar1, expandedGrammar2) =
+      ExpandedGrammar.fromGrammar(grammar) match {
+        case right @ Right(eg) => (right, ExpandedGrammar.deDuplicate(eg).asRight)
+        case left @ Left(_)    => (left, unableToBuild("expandedGrammar2"))
       }
 
     Result(
       lexer = lexer,
       nfa = nfa,
       dfa = dfa,
+      grammar = grammar,
+      expandedGrammar1 = expandedGrammar1,
+      expandedGrammar2 = expandedGrammar2,
     )
   }
 
