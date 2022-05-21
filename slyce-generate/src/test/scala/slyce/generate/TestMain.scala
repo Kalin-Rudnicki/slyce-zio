@@ -1,5 +1,6 @@
 package slyce.generate
 
+import cats.syntax.either.*
 import cats.syntax.option.*
 import klib.utils.*
 import klib.utils.commandLine.parse.*
@@ -7,6 +8,7 @@ import zio.*
 
 import slyce.generate.builder.Builders.*
 import slyce.generate.debugging.Result
+import slyce.generate.grammar.*
 import slyce.generate.lexer.*
 
 object TestMain extends ExecutableApp {
@@ -19,16 +21,61 @@ object TestMain extends ExecutableApp {
         for {
           _ <- Logger.println.info("=====| TestMain |=====")
           lexerInput =
-            lexer("test")(
-              lexer.mode("test")(
-                lexer.mode.line(Regex.Sequence("ABC").repeat(2, None))(
-                  Yields.Yield.Terminal("text"),
-                ),
-                lexer.mode.line(Regex.Sequence("AA"))(),
-                lexer.mode.line(Regex.Sequence("AAAA"))(),
+            lexer("General")(
+              lexer.mode("General")(
+                lexer.mode.line(Regex.CharClass.inclusive('+', '-'))(Yields.Yield.Terminal("addOp")),
+                lexer.mode.line(Regex.CharClass.inclusive('*', '/'))(Yields.Yield.Terminal("multOp")),
+                lexer.mode.line(Regex.CharClass.inclusive('^'))(Yields.Yield.Terminal("powOp")),
+                lexer.mode.line(
+                  Regex.Sequence(
+                    Regex.CharClass.inclusive('-').optional,
+                    Regex.CharClass.`\\d`.atLeastOnce,
+                  ),
+                )(Yields.Yield.Terminal("int")),
+                lexer.mode.line(
+                  Regex.Sequence(
+                    Regex.CharClass.inclusive('-').optional,
+                    Regex.CharClass.`\\d`.atLeastOnce,
+                    Regex.CharClass.inclusive('.'),
+                    Regex.CharClass.`\\d`.atLeastOnce,
+                  ),
+                )(Yields.Yield.Terminal("float")),
+                lexer.mode.line(
+                  Regex.Sequence(
+                    Regex.CharClass.`[a-z]`,
+                    Regex.CharClass.`[A-Za-z_\\d]`.anyAmount,
+                  ),
+                )(Yields.Yield.Terminal("variable")),
+                lexer.mode.line(Regex.CharClass.inclusive('=', '(', ')', ';', '~'))(Yields.Yield.Text()),
+                lexer.mode.line(Regex.CharClass.inclusive(' ', '\t', '\n'))(),
               ),
             )
-          result = Result.build(lexerInput)
+          grammarInput =
+            grammar("Lines")(
+              grammar.nt.+(
+                grammar.liftElements()("Line")(";"),
+              )("Lines"),
+              grammar.nt.`:`(
+                grammar.elements("Assign"),
+                grammar.elements("Expr", "~".optional),
+              )("Line"),
+              grammar.nt.`:`(
+                grammar.elements("variable", "=", "Expr"),
+              )("Assign"),
+              grammar.nt.~(
+                "powOp".asRight,
+                "multOp".asLeft,
+                "addOp".asLeft,
+              )(
+                grammar.nt.^(
+                  grammar.liftElements()("variable")(),
+                  grammar.liftElements()("int")(),
+                  grammar.liftElements()("float")(),
+                  grammar.liftElements("(")("Expr")(")"),
+                ),
+              )("Expr"),
+            )
+          result = Result.build(lexerInput, grammarInput)
           resultFrag = Result.resultToHTML(result)
           resultString = resultFrag.render
           outputFile <- File.fromPath("target/test-output.html")

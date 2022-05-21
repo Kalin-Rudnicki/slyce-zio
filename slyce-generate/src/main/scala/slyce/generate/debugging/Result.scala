@@ -59,6 +59,13 @@ object Result {
             val nfaStateMap: Map[NFA.State, Int] = allNFAStates(result.nfa)
 
             List[Frag](
+              section("LexerInput") {
+                // TODO (KR) :
+                List[Frag](
+                  h2(color := "red")("TODO"),
+                )
+              },
+              div(height := "1px"),
               eitherSection("NFA", result.nfa) { nfa =>
                 val idToModeName: Map[Int, String] = nfa.modes.toList.map { (name, state) => (nfaStateMap(state.value.value), name) }.toMap
 
@@ -82,10 +89,24 @@ object Result {
           },
           div(height := "1px"),
           section("Grammer") {
-
-            // TODO (KR) :
             List[Frag](
-              h2(color := "red")("TODO"),
+              section("GrammarInput") {
+                // TODO (KR) :
+                List[Frag](
+                  h2(color := "red")("TODO"),
+                )
+              },
+              div(height := "1px"),
+              expandedGrammarSection("ExpandedGrammar - Original", result.expandedGrammar1),
+              div(height := "1px"),
+              expandedGrammarSection("ExpandedGrammar - DeDuplicated", result.expandedGrammar2),
+              div(height := "1px"),
+              section("ParsingTable") {
+                // TODO (KR) :
+                List[Frag](
+                  h2(color := "red")("TODO"),
+                )
+              },
             )
           },
         ),
@@ -282,6 +303,14 @@ object Result {
           )
         },
       )
+
+    private def expandedGrammarSection(name: String, eg: Validated[ExpandedGrammar]): Frag =
+      eitherSection(name, eg) { eg =>
+        // TODO (KR) :
+        List[Frag](
+          h2(color := "red")("TODO"),
+        )
+      }
 
   }
 
