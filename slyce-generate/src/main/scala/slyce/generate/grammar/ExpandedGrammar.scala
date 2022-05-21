@@ -7,6 +7,7 @@ import cats.syntax.functor.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
 import java.util.UUID
+import klib.utils.*
 import scala.annotation.tailrec
 
 import slyce.core.*
@@ -16,7 +17,7 @@ final case class ExpandedGrammar private (
     startNt: Marked[String], // TODO (KR) : Remove?
     nts: List[ExpandedGrammar.NT[ExpandedGrammar.Identifier.NonTerminal]],
     aliases: List[ExpandedGrammar.Alias],
-    extras: List[ExpandedGrammar.ExtraFor],
+    extras: Map[ExpandedGrammar.Identifier.NonTerminal, List[ExpandedGrammar.Extra]],
     withs: List[ExpandedGrammar.With],
 )
 object ExpandedGrammar {
@@ -53,7 +54,9 @@ object ExpandedGrammar {
 
     sealed trait Term extends Identifier
     final case class Terminal(name: String) extends Term
-    final case class Raw(name: String) extends Term
+    final case class Raw(name: String) extends Term {
+      override def toString: String = s"Raw(${name.unesc})"
+    }
 
   }
 
@@ -63,15 +66,13 @@ object ExpandedGrammar {
   )
 
   final case class With(
-      identifier: Identifier,
-      nt: Identifier.NonTerminal,
-      name: String,
+      extendingIdentifier: Identifier,
+      typeInNT: Identifier.NonTerminal,
+      `type`: With.Type,
   )
-
-  final case class ExtraFor(
-      nt: Identifier.NonTerminal,
-      extra: Extra,
-  )
+  object With {
+    enum Type { case Lift, Operator, Operand }
+  }
 
   enum Extra {
     case SimpleToList(liftIdx: Int, tailIdx: Int)
@@ -94,7 +95,7 @@ object ExpandedGrammar {
             startNt = grammar.startNT,
             nts = combined.generatedNts,
             aliases = combined.aliases,
-            extras = combined.extras,
+            extras = combined.extras.groupMap(_.nt)(_.extra),
             withs = combined.withs.distinct,
           )
         }
@@ -164,6 +165,11 @@ object ExpandedGrammar {
 
     }
 
+    final case class ExtraFor(
+        nt: Identifier.NonTerminal,
+        extra: Extra,
+    )
+
     final case class ToList[L[_]](toList: [A] => L[A] => List[A])
     object ToList {
       implicit val listToList: ToList[List] = ToList[List] { [A] => (l: List[A]) => l }
@@ -171,10 +177,6 @@ object ExpandedGrammar {
     }
 
     // =====| Helpers |=====
-
-    private val LiftType = "LiftType"
-    private val Operator = "Operator"
-    private val Operand = "Operand"
 
     private def convertGrammarIdentifier(identifier: GrammarInput.Identifier): Identifier =
       identifier match {
@@ -229,10 +231,10 @@ object ExpandedGrammar {
           exprExtras match {
             case Some((n, _)) => {
               case Identifier.NonTerminal.NamedNt(n2) if n == n2 => None
-              case id                                            => With(id, Identifier.NonTerminal.AssocNt(n, 1), Operand).some
+              case id                                            => With(id, Identifier.NonTerminal.AssocNt(n, 1), With.Type.Operand).some
             }
             case None =>
-              With(_, name, LiftType).some
+              With(_, name, With.Type.Lift).some
           }
         val lift: ExtraFor =
           exprExtras match {
@@ -315,7 +317,7 @@ object ExpandedGrammar {
         val (ma, myId) = createMyId(name)
 
         for {
-          eStart <- expandIgnoredList(start, Some(With(_, myId, LiftType).some))
+          eStart <- expandIgnoredList(start, Some(With(_, myId, With.Type.Lift).some))
           sR1 = NT.Reduction(eStart.data.elements.appended(myId), eStart.data.liftIdx)
           sNt = NT(myId, sR1, NT.Reduction())
         } yield Expansion(
@@ -339,8 +341,8 @@ object ExpandedGrammar {
         val (ma, myHeadId, myTailId) = createMyIds(name)
 
         for {
-          eStart <- expandIgnoredList(start, Some(With(_, myHeadId, LiftType).some))
-          eRepeat <- expandIgnoredList(repeat, Some(With(_, myHeadId, LiftType).some))
+          eStart <- expandIgnoredList(start, Some(With(_, myHeadId, With.Type.Lift).some))
+          eRepeat <- expandIgnoredList(repeat, Some(With(_, myHeadId, With.Type.Lift).some))
           sR1 = NT.Reduction(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
           rR1 = NT.Reduction(eRepeat.data.elements.appended(myTailId), eRepeat.data.liftIdx)
           sNt = NT(myHeadId, sR1, NT.Reduction())
@@ -371,7 +373,7 @@ object ExpandedGrammar {
         val (ma, myHeadId, myTailId) = createMyIds(name)
 
         for {
-          eStart <- expandIgnoredList(start, Some(With(_, myHeadId, LiftType).some))
+          eStart <- expandIgnoredList(start, Some(With(_, myHeadId, With.Type.Lift).some))
           sR1 = NT.Reduction(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
           sNt = NT(myHeadId, sR1)
           rNt = NT(myTailId, sR1, NT.Reduction())
@@ -402,8 +404,8 @@ object ExpandedGrammar {
         val (ma, myHeadId, myTailId) = createMyIds(name)
 
         for {
-          eStart <- expandIgnoredList(start, Some(With(_, myHeadId, LiftType).some))
-          eRepeat <- expandIgnoredList(repeat, Some(With(_, myHeadId, LiftType).some))
+          eStart <- expandIgnoredList(start, Some(With(_, myHeadId, With.Type.Lift).some))
+          eRepeat <- expandIgnoredList(repeat, Some(With(_, myHeadId, With.Type.Lift).some))
           sR1 = NT.Reduction(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
           rR1 = NT.Reduction(eRepeat.data.elements.appended(myTailId), eRepeat.data.liftIdx)
           sNt = NT(myHeadId, sR1)
@@ -479,7 +481,7 @@ object ExpandedGrammar {
                   ),
                 ) :: Nil,
                 Nil,
-                With(opExpansion.data, Identifier.NonTerminal.AssocNt(name.name, 1), Operator) :: Nil,
+                With(opExpansion.data, Identifier.NonTerminal.AssocNt(name.name, 1), With.Type.Operator) :: Nil,
                 Nil,
               )
             } yield Expansion.join(
@@ -536,7 +538,7 @@ object ExpandedGrammar {
               NT.Reduction(),
             ) :: Nil,
             Nil,
-            With(expandedElement.data, optId, LiftType) :: Nil,
+            With(expandedElement.data, optId, With.Type.Lift) :: Nil,
             ExtraFor(optId, Extra.Optional) :: Nil,
           )
           Expansion.join(addWithIfExists(optElem), expandedElement)
@@ -680,12 +682,12 @@ object ExpandedGrammar {
     val unaliasedWiths =
       expandedGrammar.withs.map { w =>
         With(
-          identifier = w.identifier match {
+          extendingIdentifier = w.extendingIdentifier match {
             case nt: Identifier.NonTerminal => unaliasNt(nt)
             case id                         => id
           },
-          nt = w.nt,
-          name = w.name,
+          typeInNT = w.typeInNT,
+          `type` = w.`type`,
         )
       }.distinct
 
@@ -693,7 +695,7 @@ object ExpandedGrammar {
       startNt = expandedGrammar.startNt,
       nts = deReferenceAliases.distinct,
       aliases = filteredAliases,
-      extras = expandedGrammar.extras.distinct, // TODO (KR) : unalias as well?
+      extras = expandedGrammar.extras.map { (k, v) => (k, v.distinct) }, // TODO (KR) : unalias as well?
       withs = unaliasedWiths,
     )
   }
