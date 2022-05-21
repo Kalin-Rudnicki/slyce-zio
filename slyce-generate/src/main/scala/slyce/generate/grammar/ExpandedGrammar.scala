@@ -24,16 +24,16 @@ object ExpandedGrammar {
 
   final case class NT[+N <: Identifier.NonTerminal](
       name: N,
-      reductions: NonEmptyList[NT.Reduction],
+      productions: NonEmptyList[NT.Production],
   )
   object NT {
 
-    def apply[N <: Identifier.NonTerminal](name: N, reduction0: Reduction, reductionN: Reduction*): NT[N] =
+    def apply[N <: Identifier.NonTerminal](name: N, reduction0: Production, reductionN: Production*): NT[N] =
       NT(name, NonEmptyList(reduction0, reductionN.toList))
 
-    final case class Reduction(elements: List[Identifier], liftIdx: Option[Int])
-    object Reduction {
-      def apply(elementN: Identifier*): Reduction = Reduction(elementN.toList, None)
+    final case class Production(elements: List[Identifier], liftIdx: Option[Int])
+    object Production {
+      def apply(elementN: Identifier*): Production = Production(elementN.toList, None)
     }
 
   }
@@ -216,7 +216,7 @@ object ExpandedGrammar {
         // val mAddWiths: Option[Identifier => With] = ???
         // val lift: Option[ExtraFor] = ???
 
-        nt.reductions.parTraverse(expandList).map { eReductions =>
+        nt.productions.parTraverse(expandList).map { eReductions =>
           val tmpENt = Expansion.combine(eReductions)(NT(name, _))
           tmpENt.copy(data = name, generatedNts = tmpENt.data :: tmpENt.generatedNts)
         }
@@ -241,7 +241,7 @@ object ExpandedGrammar {
             case Some((n, assocs)) =>
               val base = Identifier.NonTerminal.AssocNt(n, 1)
               val idxs =
-                nt.reductions.map { r =>
+                nt.productions.map { r =>
                   (
                     r.liftIdx,
                     r.lift.value match {
@@ -252,10 +252,10 @@ object ExpandedGrammar {
                 }
               ExtraFor(base, Extra.LiftExpr(n, assocs.reverse, idxs))
             case None =>
-              ExtraFor(name, Extra.Lift(nt.reductions.map(_.liftIdx)))
+              ExtraFor(name, Extra.Lift(nt.productions.map(_.liftIdx)))
           }
 
-        nt.reductions.parTraverse(expandIgnoredList(_, mAddWiths.some)).map { eReductions =>
+        nt.productions.parTraverse(expandIgnoredList(_, mAddWiths.some)).map { eReductions =>
           val tmpENt = Expansion.combine(eReductions)(ers => NT(name, ers))
           tmpENt.add(generatedNts = tmpENt.data :: Nil, extras = lift :: Nil).map(_ => name)
         }
@@ -318,8 +318,8 @@ object ExpandedGrammar {
 
         for {
           eStart <- expandIgnoredList(start, Some(With(_, myId, With.Type.Lift).some))
-          sR1 = NT.Reduction(eStart.data.elements.appended(myId), eStart.data.liftIdx)
-          sNt = NT(myId, sR1, NT.Reduction())
+          sR1 = NT.Production(eStart.data.elements.appended(myId), eStart.data.liftIdx)
+          sNt = NT(myId, sR1, NT.Production())
         } yield Expansion(
           myId,
           sNt :: eStart.generatedNts,
@@ -343,10 +343,10 @@ object ExpandedGrammar {
         for {
           eStart <- expandIgnoredList(start, Some(With(_, myHeadId, With.Type.Lift).some))
           eRepeat <- expandIgnoredList(repeat, Some(With(_, myHeadId, With.Type.Lift).some))
-          sR1 = NT.Reduction(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
-          rR1 = NT.Reduction(eRepeat.data.elements.appended(myTailId), eRepeat.data.liftIdx)
-          sNt = NT(myHeadId, sR1, NT.Reduction())
-          rNt = NT(myTailId, rR1, NT.Reduction())
+          sR1 = NT.Production(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
+          rR1 = NT.Production(eRepeat.data.elements.appended(myTailId), eRepeat.data.liftIdx)
+          sNt = NT(myHeadId, sR1, NT.Production())
+          rNt = NT(myTailId, rR1, NT.Production())
         } yield Expansion(
           myHeadId,
           sNt :: rNt :: eStart.generatedNts ::: eRepeat.generatedNts,
@@ -374,9 +374,9 @@ object ExpandedGrammar {
 
         for {
           eStart <- expandIgnoredList(start, Some(With(_, myHeadId, With.Type.Lift).some))
-          sR1 = NT.Reduction(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
+          sR1 = NT.Production(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
           sNt = NT(myHeadId, sR1)
-          rNt = NT(myTailId, sR1, NT.Reduction())
+          rNt = NT(myTailId, sR1, NT.Production())
         } yield Expansion(
           myHeadId,
           sNt :: rNt :: eStart.generatedNts,
@@ -406,10 +406,10 @@ object ExpandedGrammar {
         for {
           eStart <- expandIgnoredList(start, Some(With(_, myHeadId, With.Type.Lift).some))
           eRepeat <- expandIgnoredList(repeat, Some(With(_, myHeadId, With.Type.Lift).some))
-          sR1 = NT.Reduction(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
-          rR1 = NT.Reduction(eRepeat.data.elements.appended(myTailId), eRepeat.data.liftIdx)
+          sR1 = NT.Production(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
+          rR1 = NT.Production(eRepeat.data.elements.appended(myTailId), eRepeat.data.liftIdx)
           sNt = NT(myHeadId, sR1)
-          rNt = NT(myTailId, rR1, NT.Reduction())
+          rNt = NT(myTailId, rR1, NT.Production())
         } yield Expansion(
           myHeadId,
           sNt :: rNt :: eStart.generatedNts ::: eRepeat.generatedNts,
@@ -464,19 +464,19 @@ object ExpandedGrammar {
                   myId,
                   head._1.value match {
                     case GrammarInput.NonTerminal.AssocNonTerminal.Type.Left =>
-                      NT.Reduction(
+                      NT.Production(
                         myId,
                         opExpansion.data,
                         childExpansion.data,
                       )
                     case GrammarInput.NonTerminal.AssocNonTerminal.Type.Right =>
-                      NT.Reduction(
+                      NT.Production(
                         childExpansion.data,
                         opExpansion.data,
                         myId,
                       )
                   },
-                  NT.Reduction(
+                  NT.Production(
                     childExpansion.data,
                   ),
                 ) :: Nil,
@@ -499,21 +499,21 @@ object ExpandedGrammar {
 
     }
 
-    private def expandList(l: List[Marked[GrammarInput.Element]]): Validated[Expansion[NT.Reduction]] =
+    private def expandList(l: List[Marked[GrammarInput.Element]]): Validated[Expansion[NT.Production]] =
       l.parTraverse(expandElement(_)).map {
-        Expansion.combine(_)(rs => NT.Reduction(rs*))
+        Expansion.combine(_)(rs => NT.Production(rs*))
       }
 
     private def expandIgnoredList(
         il: LiftList[Marked[GrammarInput.Element]],
         mWith: Option[Identifier => Option[With]] = None,
-    ): Validated[Expansion[NT.Reduction]] =
+    ): Validated[Expansion[NT.Production]] =
       for {
         beforeExpansions <- il.before.parTraverse(expandElement(_))
         unIgnoredExpansion <- expandElement(il.lift, mWith)
         afterExpansions <- il.after.parTraverse(expandElement(_))
         expansions = beforeExpansions ::: unIgnoredExpansion :: afterExpansions
-      } yield Expansion.combine(expansions)(rs => NT.Reduction(rs, il.before.size.some))
+      } yield Expansion.combine(expansions)(rs => NT.Production(rs, il.before.size.some))
 
     private def expandElement(
         element: Marked[GrammarInput.Element],
@@ -534,8 +534,8 @@ object ExpandedGrammar {
             optId,
             NT(
               optId,
-              NT.Reduction(expandedElement.data),
-              NT.Reduction(),
+              NT.Production(expandedElement.data),
+              NT.Production(),
             ) :: Nil,
             Nil,
             With(expandedElement.data, optId, With.Type.Lift) :: Nil,
@@ -572,7 +572,7 @@ object ExpandedGrammar {
           completedUUIDs.contains(nt.name.key)
 
         def isBlocked: Boolean =
-          nt.reductions.toList.exists { r =>
+          nt.productions.toList.exists { r =>
             r.elements.exists {
               case al: Identifier.NonTerminal.AnonListNt => al.key != nt.name.key && !completedUUIDs.contains(al.key)
               case _                                     => false
@@ -623,7 +623,7 @@ object ExpandedGrammar {
     ): NT[Identifier.NonTerminal] =
       NT(
         dereferenceNtId(nt.name, found),
-        nt.reductions.map(r => NT.Reduction(r.elements.map(dereferenceId(_, found)), r.liftIdx)),
+        nt.productions.map(r => NT.Production(r.elements.map(dereferenceId(_, found)), r.liftIdx)),
       )
 
     @tailrec
@@ -638,7 +638,7 @@ object ExpandedGrammar {
         val nonBlockedDereferenced = nonBlockedNts.map { nt =>
           (
             nt.name.key,
-            nt.reductions.map(r => (r.elements.map(mDereferenceId(nt.name.key, _, found)), r.liftIdx)),
+            nt.productions.map(r => (r.elements.map(mDereferenceId(nt.name.key, _, found)), r.liftIdx)),
           )
         }
         val duplicateLists = nonBlockedDereferenced.groupMap(_._2)(_._1).values.toList
@@ -667,8 +667,8 @@ object ExpandedGrammar {
       filteredNts.map { nt =>
         ExpandedGrammar.NT(
           nt.name,
-          nt.reductions.map { reduction =>
-            ExpandedGrammar.NT.Reduction(
+          nt.productions.map { reduction =>
+            ExpandedGrammar.NT.Production(
               reduction.elements.map {
                 case nt: Identifier.NonTerminal => unaliasNt(nt)
                 case i                          => i

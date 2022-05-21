@@ -16,6 +16,7 @@ final case class Result(
     nfa: Validated[NFA],
     dfa: Validated[DFA],
     grammar: GrammarInput,
+    expandedGrammar: ExpandedGrammar2,
     originalExpandedGrammar: Validated[ExpandedGrammar],
     deDuplicatedExpandedGrammar: Validated[ExpandedGrammar],
     parsingTable: Validated[ParsingTable],
@@ -41,6 +42,8 @@ object Result {
         .fromLexer(lexer)
         .attemptToBuild("dfa", identity)(DFA.fromNFA(_))
 
+    val expandedGrammar = ExpandedGrammar2.fromGrammar(grammar)
+
     val (originalExpandedGrammar, deDuplicatedExpandedGrammar, parsingTable) =
       ExpandedGrammar
         .fromGrammar(grammar)
@@ -52,6 +55,7 @@ object Result {
       nfa = nfa,
       dfa = dfa,
       grammar = grammar,
+      expandedGrammar = expandedGrammar,
       originalExpandedGrammar = originalExpandedGrammar,
       deDuplicatedExpandedGrammar = deDuplicatedExpandedGrammar,
       parsingTable = parsingTable,
@@ -426,7 +430,7 @@ object Result {
           "Value" -> 150,
         )(
           shared.makeRow("Total NTs", nts.size),
-          shared.makeRow("Total Reductions", nts.flatMap(_.reductions.toList).size),
+          shared.makeRow("Total Reductions", nts.flatMap(_.productions.toList).size),
         )
 
       private def egNTTable(eg: ExpandedGrammar): Frag =
@@ -447,25 +451,25 @@ object Result {
 
             shared.frag(
               tr(
-                shared.makeCell(rowspan := nt.reductions.size)(
+                shared.makeCell(rowspan := nt.productions.size)(
                   shared.productTitleList(nt.name),
                   br,
-                  div(fontSize := "0.75rem", textAlign := "center")(s"[${nt.reductions.size.pluralizeOn("reduction")}]"),
+                  div(fontSize := "0.75rem", textAlign := "center")(s"[${nt.productions.size.pluralizeOn("reduction")}]"),
                 ),
-                reductionCells(0, nt.reductions.head),
-                shared.makeCell(rowspan := nt.reductions.size, shared.shadedIf(aliases.isEmpty))(
+                reductionCells(0, nt.productions.head),
+                shared.makeCell(rowspan := nt.productions.size, shared.shadedIf(aliases.isEmpty))(
                   ul(
                     aliases.map { a => li(shared.productTitleList(a.named)) },
                   ),
                 ),
-                shared.makeCell(rowspan := nt.reductions.size, shared.shadedIf(extras.isEmpty))(
+                shared.makeCell(rowspan := nt.productions.size, shared.shadedIf(extras.isEmpty))(
                   ul(
                     extras.map { extra =>
                       li(shared.productTitleList(extra))
                     },
                   ),
                 ),
-                shared.makeCell(rowspan := nt.reductions.size, shared.shadedIf(types.isEmpty))(
+                shared.makeCell(rowspan := nt.productions.size, shared.shadedIf(types.isEmpty))(
                   ul(
                     types.toList.map { (wType, ids) =>
                       li(
@@ -478,7 +482,7 @@ object Result {
                   ),
                 ),
               ),
-              nt.reductions.tail.zipWithIndex.map { (r, idx) =>
+              nt.productions.tail.zipWithIndex.map { (r, idx) =>
                 tr(reductionCells(idx + 1, r))
               },
             )
@@ -487,7 +491,7 @@ object Result {
 
       private def reductionCells(
           idx: Int,
-          reduction: ExpandedGrammar.NT.Reduction,
+          reduction: ExpandedGrammar.NT.Production,
       ): Frag =
         shared.frag(
           shared.makeCenteredCell(idx),
@@ -507,7 +511,7 @@ object Result {
         val all: List[ExpandedGrammar.Identifier] =
           eg.nts
             .flatMap[ExpandedGrammar.Identifier] { nt =>
-              nt.name :: nt.reductions.toList.flatMap(_.elements)
+              nt.name :: nt.productions.toList.flatMap(_.elements)
             }
             .distinct
 

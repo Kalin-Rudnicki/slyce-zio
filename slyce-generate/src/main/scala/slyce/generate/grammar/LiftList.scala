@@ -13,4 +13,6 @@ final case class LiftList[+A](
   def map[B](f: A => B): LiftList[B] =
     LiftList(before.map(f), f(lift), after.map(f))
 
+  override def toString: String = s"LiftList(${before.mkString(",")})($lift)(${after.mkString(",")})"
+
 }

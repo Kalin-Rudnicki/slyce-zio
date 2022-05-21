@@ -58,8 +58,8 @@ object GrammarInput {
   object NonTerminal {
 
     enum StandardNonTerminal extends NonTerminal {
-      case `:`(reductions: NonEmptyList[List[Marked[Element]]])
-      case ^(reductions: NonEmptyList[LiftList[Marked[Element]]])
+      case `:`(productions: NonEmptyList[List[Marked[Element]]])
+      case ^(productions: NonEmptyList[LiftList[Marked[Element]]])
     }
 
     final case class ListNonTerminal(

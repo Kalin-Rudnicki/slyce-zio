@@ -46,7 +46,8 @@ object TestMain extends ExecutableApp {
                     Regex.CharClass.`[A-Za-z_\\d]`.anyAmount,
                   ),
                 )(Yields.Yield.Terminal("variable")),
-                lexer.mode.line(Regex.CharClass.inclusive('=', '(', ')', ';', '~'))(Yields.Yield.Text()),
+                lexer.mode.line(Regex.CharClass.inclusive('=', '(', ')', ';', '~', ','))(Yields.Yield.Text()),
+                lexer.mode.line(Regex.Sequence("->"))(Yields.Yield.Text()),
                 lexer.mode.line(Regex.CharClass.inclusive(' ', '\t', '\n'))(),
               ),
             )
@@ -61,7 +62,31 @@ object TestMain extends ExecutableApp {
               )("Line"),
               grammar.nt.`:`(
                 grammar.elements("variable", "=", "Expr"),
+                grammar.elements("variable", "=", "FunctionDef"),
               )("Assign"),
+              grammar.nt.`:`(
+                grammar.elements(
+                  "(",
+                  grammar.nt.*(
+                    grammar.liftElements()("variable")(),
+                    grammar.liftElements(",")("variable")(),
+                  ),
+                  ")",
+                  "->",
+                  "Expr",
+                ),
+              )("FunctionDef"),
+              grammar.nt.`:`(
+                grammar.elements(
+                  "variable",
+                  "(",
+                  grammar.nt.*(
+                    grammar.liftElements()("Expr")(),
+                    grammar.liftElements(",")("Expr")(),
+                  ),
+                  ")",
+                ),
+              )("FunctionCall"),
               grammar.nt.~(
                 "powOp".asRight,
                 "multOp".asLeft,
@@ -74,6 +99,43 @@ object TestMain extends ExecutableApp {
                   grammar.liftElements("(")("Expr")(")"),
                 ),
               )("Expr"),
+              // TODO (KR) : Remove
+              grammar.nt.~(
+                "powOp".asRight,
+                "multOp".asLeft,
+                "addOp".asLeft,
+              )(
+                grammar.nt.`:`(
+                  grammar.elements("variable"),
+                  grammar.elements("int"),
+                  grammar.elements("float"),
+                  grammar.elements("(", "Expr", ")"),
+                ),
+              )("Expr2"),
+              grammar.nt.`:`(
+                grammar.elements(
+                  "(",
+                  grammar.nt.+(
+                    grammar.liftElements()(
+                      grammar.nt.+(
+                        grammar.liftElements()("tmp")(),
+                      ),
+                    )(),
+                  ),
+                  ")",
+                ),
+                grammar.elements(
+                  "[",
+                  grammar.nt.+(
+                    grammar.liftElements()(
+                      grammar.nt.+(
+                        grammar.liftElements()("tmp")(),
+                      ),
+                    )(),
+                  ),
+                  "]",
+                ),
+              )("Tmp"),
             )
           result = Result.build(lexerInput, grammarInput)
           resultFrag = Result.resultToHTML(result)
