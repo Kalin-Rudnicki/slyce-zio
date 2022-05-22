@@ -431,7 +431,7 @@ object Result {
             shared.verticalSpace,
             expandedGrammarSection(result.expandedGrammar),
             shared.verticalSpace,
-            shared.eitherSection("ParsingTable", result.parsingTable) { parsingTable =>
+            shared.eitherSection("ParsingTable", result.parsingTable, false) { parsingTable =>
               // TODO (KR) :
               shared.frag(
                 shared.todo,

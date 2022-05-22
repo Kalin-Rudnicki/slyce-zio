@@ -66,7 +66,7 @@ object ExpandedGrammar {
 
     enum NonTerminal extends Identifier {
       case NamedNt(name: String)
-      case NamedListNt(name: String, `type`: NonTerminal.ListType)
+      case NamedListNtTail(name: String)
       case AnonListNt(key: UUID, `type`: NonTerminal.ListType)
       case AssocNt(name: String, idx: Int)
       case AnonOptNt(identifier: Identifier)
@@ -97,6 +97,8 @@ object ExpandedGrammar {
       )
     }
 
+    // =====| Types |=====
+
     private final case class Expansion[+A](
         value: A,
         ntGroups: List[NTGroup],
@@ -121,6 +123,8 @@ object ExpandedGrammar {
           repeatProds: Option[LiftList[Identifier]],
       )
     }
+
+    // =====| Helpers |=====
 
     private def convertIdentifier(id: GrammarInput.Identifier): Identifier =
       id match {
@@ -342,9 +346,18 @@ object ExpandedGrammar {
 
   private def listNTId(name: Either[String, UUID], listType: Identifier.NonTerminal.ListType): Identifier.NonTerminal =
     name match {
-      case Left(name) => Identifier.NonTerminal.NamedListNt(name, listType)
+      case Left(name) =>
+        listType match {
+          case Identifier.NonTerminal.ListType.Simple => Identifier.NonTerminal.NamedNt(name)
+          case Identifier.NonTerminal.ListType.Head   => Identifier.NonTerminal.NamedNt(name)
+          case Identifier.NonTerminal.ListType.Tail   => Identifier.NonTerminal.NamedListNtTail(name)
+        }
       case Right(key) => Identifier.NonTerminal.AnonListNt(key, listType)
     }
+
+  private def assocNTId(name: String, idx: Int): Identifier.NonTerminal =
+    if (idx == 1) Identifier.NonTerminal.NamedNt(name)
+    else Identifier.NonTerminal.AssocNt(name, idx)
 
   private object convertNTGroup {
 
@@ -417,8 +430,8 @@ object ExpandedGrammar {
     private def convertAssocNT(assocNT: NTGroup.AssocNT): NonEmptyList[RawNT] = {
       val assocNTs: NonEmptyList[RawNT] =
         assocNT.assocs.zipWithIndex.map { case ((op, assocType), idx) =>
-          val myId = Identifier.NonTerminal.AssocNt(assocNT.name, idx + 1)
-          val nextId = Identifier.NonTerminal.AssocNt(assocNT.name, idx + 2)
+          val myId = assocNTId(assocNT.name, idx + 1)
+          val nextId = assocNTId(assocNT.name, idx + 2)
           RawNT(
             myId,
             assocType match {
