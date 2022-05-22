@@ -271,23 +271,6 @@ object ExpandedGrammar {
         anonListNTs: List[AnonListNT],
         map: Map[UUID, UUID],
     ): (List[NTGroup.ListNT], Map[UUID, UUID]) = {
-      // TODO (KR) : Remove
-      def showNTs(label: String, nts: List[AnonListNT]): Unit = {
-        println(s"--- $label (${nts.size}) ---")
-        nts.sortBy(_.partial.toString).foreach(nt => println(s"  - ${nt.key} -> ${nt.partial}"))
-      }
-      def showMap(label: String, m: Map[UUID, UUID]): Unit = {
-        println(s"--- $label (${m.size}) ---")
-        m.foreach { (k, v) => println(s"  - $k -> $v") }
-      }
-
-      // TODO (KR) : Remove
-      println()
-      println()
-      println()
-      showNTs("anonListNTs", anonListNTs)
-      showMap("map", map)
-
       val grouped: List[(AnonListNT.Partial, NonEmptyList[UUID])] =
         anonListNTs.groupMap(_.partial)(_.key).toList.map { (partial, uuids) => (partial, NonEmptyList(uuids.head, uuids.tail)) }
 
@@ -315,12 +298,6 @@ object ExpandedGrammar {
               ),
             )
           }
-
-        // TODO (KR) : Remove
-        println()
-        showNTs("remaining", remaining)
-        showNTs("replaced", replaced)
-        showMap("newMappings", newMappings)
 
         deDuplicateAnonListNTs(
           replaced,
