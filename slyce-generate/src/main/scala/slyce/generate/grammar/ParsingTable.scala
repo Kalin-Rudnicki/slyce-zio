@@ -2,6 +2,7 @@ package slyce.generate.grammar
 
 import cats.data.NonEmptyList
 import cats.syntax.either.*
+import cats.syntax.list.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
 import klib.utils.{given, *}
@@ -33,7 +34,8 @@ object ParsingTable {
       ) {
         // TODO (KR) :
         // expandClosures(expandedGrammar.deDuplicatedNTGroups)
-        todoRename(expandedGrammar.startNt.value, expandedGrammar.deDuplicatedNTGroups)
+        // todoRename(expandedGrammar.startNt.value, expandedGrammar.deDuplicatedNTGroups)
+        todoRename2(expandedGrammar.startNt.value, expandedGrammar.deDuplicatedNTGroups)
 
         // TODO (KR) :
         Validated.???
@@ -268,6 +270,123 @@ object ParsingTable {
       expandedClosures
     }
      */
+
+    private def todoRename2(startName: String, ntgs: List[ExpandedGrammar.NTGroup]): Unit = {
+      val ntMap: Map[ExpandedGrammar.Identifier.NonTerminal, NonEmptyList[ExpandedGrammar.Production]] =
+        ntgs.flatMap(_.rawNTs.toList.map(nt => (nt.name, nt.productions))).toMap
+
+      final case class Follow(
+          validTerminals: Set[ExpandedGrammar.Identifier.Term],
+          eofIsValid: Boolean,
+      )
+
+      def mergeFollows(follows: List[List[Follow]]): List[Follow] = {
+        follows.flatMap(_.toNel).toNel match {
+          case Some(nels) =>
+            val heads = nels.map(_.head)
+            val tails = nels.toList.map(_.tail)
+            Follow(heads.toList.toSet.flatMap(_.validTerminals), heads.exists(_.eofIsValid)) :: mergeFollows(tails)
+          case None =>
+            Nil
+        }
+      }
+
+      def calcLookAheadHelper(
+          ids: List[ExpandedGrammar.Identifier],
+          // TODO (KR) : I think this needs to be some combination of 'ReducesTo + seen.length'.
+          //           : ids might also need to change to some sort of List[List[(comboMentionedAbove, _)]].
+          //           : or, maybe List[(comboListedAbove, List[_])]
+          alreadyExpanded: Set[ExpandedGrammar.Identifier.NonTerminal],
+          ifPassThrough: List[Follow],
+          remaining: Int,
+      ): List[Follow] =
+        if (remaining <= 0) Nil
+        else
+          ids match {
+            case Nil => ifPassThrough
+            case head :: tail =>
+              head match {
+                case nt: ExpandedGrammar.Identifier.NonTerminal =>
+                  if (alreadyExpanded.contains(nt)) {
+                    println(s"Already used: $nt")
+                    Nil
+                  } else {
+                    val newExpanded = alreadyExpanded + nt
+                    val inlined = ntMap(nt).toList.map(_.elements ::: tail)
+                    mergeFollows(inlined.map(calcLookAheadHelper(_, newExpanded, ifPassThrough, remaining)))
+                  }
+                case t: ExpandedGrammar.Identifier.Term =>
+                  Follow(Set(t), false) :: calcLookAheadHelper(tail, Set.empty, ifPassThrough, remaining - 1)
+              }
+          }
+
+      def calcLookAhead(
+          ids: List[(ReducesTo, Int, ExpandedGrammar.Identifier)],
+          alreadyExpanded: Set[(ReducesTo, Int)],
+          ifPassThrough: List[Follow],
+          maxLookAhead: Int,
+      ): List[Follow] =
+        if (maxLookAhead <= 0) Nil
+        else
+          ids match {
+            case Nil => ifPassThrough.take(maxLookAhead)
+            case (rt, sc, id) :: tail =>
+              id match {
+                case nt: ExpandedGrammar.Identifier.NonTerminal =>
+                  if (alreadyExpanded.contains((rt, sc))) Nil
+                  else {
+                    val newExpanded: Set[(ReducesTo, Int)] = alreadyExpanded + (rt -> sc)
+                    val inlined: List[List[(ReducesTo, Int, ExpandedGrammar.Identifier)]] =
+                      ntMap(nt).toList.zipWithIndex.map { (prod, idx) =>
+                        val rt = ReducesTo.Production(nt, idx)
+                        prod.elements.zipWithIndex.map { (i, idx) => (rt, idx, i) }
+                      }
+                    mergeFollows(inlined.map(ids => calcLookAhead(ids ::: tail, newExpanded, ifPassThrough, maxLookAhead)))
+                  }
+                case t: ExpandedGrammar.Identifier.Term =>
+                  Follow(Set(t), false) :: calcLookAhead(tail, Set.empty, ifPassThrough, maxLookAhead - 1)
+              }
+          }
+
+      val res =
+        calcLookAhead(
+          (ReducesTo.###, 0, ExpandedGrammar.Identifier.NonTerminal.NamedNt(startName)) :: Nil,
+          Set.empty,
+          List(Follow(Set.empty, true)),
+          1,
+        )
+
+      println()
+      println(
+        mergeFollows(
+          List(
+          ),
+        ),
+      )
+      println(
+        mergeFollows(
+          List(
+            Follow(Set.empty, true) :: Nil,
+            Follow(Set(ExpandedGrammar.Identifier.Term.Terminal("term1")), false) :: Nil,
+          ),
+        ),
+      )
+      println(
+        mergeFollows(
+          List(
+            Follow(Set.empty, true) :: Nil,
+            Follow(Set(ExpandedGrammar.Identifier.Term.Terminal("term1")), false) :: Follow(Set(ExpandedGrammar.Identifier.Term.Terminal("term2")), false) :: Nil,
+          ),
+        ),
+      )
+
+      println()
+      println(res.size)
+      res.foreach(f => println(s"  - $f"))
+
+      // TODO (KR) :
+      ()
+    }
 
   }
 }
