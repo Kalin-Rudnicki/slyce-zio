@@ -17,9 +17,7 @@ final case class Result(
     nfa: Validated[NFA],
     dfa: Validated[DFA],
     grammar: GrammarInput,
-    expandedGrammar: ExpandedGrammar2,
-    originalExpandedGrammar: Validated[ExpandedGrammar],
-    deDuplicatedExpandedGrammar: Validated[ExpandedGrammar],
+    expandedGrammar: ExpandedGrammar,
     parsingTable: Validated[ParsingTable],
 )
 object Result {
@@ -43,13 +41,9 @@ object Result {
         .fromLexer(lexer)
         .attemptToBuild("dfa", identity)(DFA.fromNFA(_))
 
-    val expandedGrammar = ExpandedGrammar2.fromGrammar(grammar)
+    val expandedGrammar = ExpandedGrammar.fromGrammar(grammar)
 
-    val (originalExpandedGrammar, deDuplicatedExpandedGrammar, parsingTable) =
-      ExpandedGrammar
-        .fromGrammar(grammar)
-        .attemptToBuild("deDuplicatedExpandedGrammar", identity)(ExpandedGrammar.deDuplicate(_).asRight)
-        .attemptToBuild("parsingTable", _._2)(ParsingTable.fromExpandedGrammar(_))
+    val parsingTable = ParsingTable.fromExpandedGrammar(expandedGrammar)
 
     Result(
       lexer = lexer,
@@ -57,8 +51,6 @@ object Result {
       dfa = dfa,
       grammar = grammar,
       expandedGrammar = expandedGrammar,
-      originalExpandedGrammar = originalExpandedGrammar,
-      deDuplicatedExpandedGrammar = deDuplicatedExpandedGrammar,
       parsingTable = parsingTable,
     )
   }
@@ -188,12 +180,12 @@ object Result {
             any.toString
           else
             any.asInstanceOf[Matchable] match {
-              case anonListNT: ExpandedGrammar2.Identifier.NonTerminal.AnonListNt => showProduct(anonListNT, maxDepth - 1)
-              case id: ExpandedGrammar2.Identifier                                => id.toString
-              case nel: NonEmptyList[_]                                           => showList(nel.toList, maxDepth - 1)
-              case list: List[_]                                                  => showList(list, maxDepth - 1)
-              case product: Product                                               => showProduct(product, maxDepth - 1)
-              case _                                                              => any.toString
+              case anonListNT: ExpandedGrammar.Identifier.NonTerminal.AnonListNt => showProduct(anonListNT, maxDepth - 1)
+              case id: ExpandedGrammar.Identifier                                => id.toString
+              case nel: NonEmptyList[_]                                          => showList(nel.toList, maxDepth - 1)
+              case list: List[_]                                                 => showList(list, maxDepth - 1)
+              case product: Product                                              => showProduct(product, maxDepth - 1)
+              case _                                                             => any.toString
             }
 
         private def showList(list: List[Any], maxDepth: Int): Frag =
@@ -428,7 +420,7 @@ object Result {
     private object grammarSection {
 
       def apply(result: Result): Frag =
-        shared.section("Grammer", false) {
+        shared.section("Grammar", false) {
           shared.frag(
             shared.section("GrammarInput") {
               // TODO (KR) :
@@ -437,11 +429,7 @@ object Result {
               )
             },
             shared.verticalSpace,
-            expandedGrammarSection("ExpandedGrammar - Original", result.originalExpandedGrammar),
-            shared.verticalSpace,
-            expandedGrammarSection("ExpandedGrammar - DeDuplicated", result.deDuplicatedExpandedGrammar, false),
-            shared.verticalSpace,
-            expandedGrammar2Section(result.expandedGrammar),
+            expandedGrammarSection(result.expandedGrammar),
             shared.verticalSpace,
             shared.eitherSection("ParsingTable", result.parsingTable) { parsingTable =>
               // TODO (KR) :
@@ -452,133 +440,14 @@ object Result {
           )
         }
 
-      private def expandedGrammarSection(name: String, eg: Validated[ExpandedGrammar], startsHidden: Boolean = true): Frag =
-        shared.eitherSection(name, eg, startsHidden) { eg =>
-          shared.frag(
-            shared.section("NTs", startsHidden)(
-              egNTStatTable(eg.nts),
-              br,
-              egNTTable(eg),
-            ),
-            shared.verticalSpace,
-            allIdentifiersSection(eg),
-          )
-        }
-
-      private def egNTStatTable(nts: List[ExpandedGrammar.NT[ExpandedGrammar.Identifier.NonTerminal]]): Frag =
-        shared.makeTable(
-          "Stat" -> 150,
-          "Value" -> 150,
-        )(
-          shared.makeRow("Total NTs", nts.size),
-          shared.makeRow("Total Reductions", nts.flatMap(_.productions.toList).size),
-        )
-
-      private def egNTTable(eg: ExpandedGrammar): Frag =
-        shared.makeTable(
-          "NonTerminal" -> 150,
-          "Idx" -> 50,
-          "LiftIdx" -> 75,
-          "Reductions" -> 300,
-          "Aliases" -> 150,
-          "Extras" -> 450,
-          "Types" -> 250,
-        )(
-          eg.nts.map { nt =>
-            val extras = eg.extras.getOrElse(nt.name, Nil)
-            val aliases = eg.aliases.filter(_.actual == nt.name)
-            val allNames = (nt.name :: aliases.map(_.named)).toSet
-            val types = eg.withs.filter { w => allNames.contains(w.typeInNT) }.groupMap(_.`type`)(_.extendingIdentifier)
-
-            shared.frag(
-              tr(
-                shared.makeCell(rowspan := nt.productions.size)(
-                  shared.productTitleList(nt.name),
-                  br,
-                  div(fontSize := "0.75rem", textAlign := "center")(s"[${nt.productions.size.pluralizeOn("reduction")}]"),
-                ),
-                reductionCells(0, nt.productions.head),
-                shared.makeCell(rowspan := nt.productions.size, shared.shadedIf(aliases.isEmpty))(
-                  ul(
-                    aliases.map { a => li(shared.productTitleList(a.named)) },
-                  ),
-                ),
-                shared.makeCell(rowspan := nt.productions.size, shared.shadedIf(extras.isEmpty))(
-                  ul(
-                    extras.map { extra =>
-                      li(shared.productTitleList(extra))
-                    },
-                  ),
-                ),
-                shared.makeCell(rowspan := nt.productions.size, shared.shadedIf(types.isEmpty))(
-                  ul(
-                    types.toList.map { (wType, ids) =>
-                      li(
-                        wType.toString,
-                        ul(
-                          ids.map { id => li(id.toString) },
-                        ),
-                      )
-                    },
-                  ),
-                ),
-              ),
-              nt.productions.tail.zipWithIndex.map { (r, idx) =>
-                tr(reductionCells(idx + 1, r))
-              },
-            )
-          },
-        )
-
-      private def reductionCells(
-          idx: Int,
-          reduction: ExpandedGrammar.NT.Production,
-      ): Frag =
-        shared.frag(
-          shared.makeCenteredCell(idx),
-          shared.makeCenteredCell(shared.shadedIf(reduction.liftIdx.isEmpty))(reduction.liftIdx),
-          shared.makeCell(shared.shadedIf(reduction.elements.isEmpty))(
-            Option.when(reduction.elements.nonEmpty) {
-              ul(
-                reduction.elements.map { e =>
-                  li(e.toString)
-                },
-              )
-            },
-          ),
-        )
-
-      private def allIdentifiersSection(eg: ExpandedGrammar): Frag = {
-        val all: List[ExpandedGrammar.Identifier] =
-          eg.nts
-            .flatMap[ExpandedGrammar.Identifier] { nt =>
-              nt.name :: nt.productions.toList.flatMap(_.elements)
-            }
-            .distinct
-
-        shared.section(s"All Identifiers (${all.size})")(
-          shared.makeTable(
-            "Identifier" -> 150,
-            "Extends" -> 200,
-          )(
-            all.sortBy(_.toString).map { id =>
-              shared.makeRow(
-                id.toString,
-                shared.todo,
-              )
-            },
-          ),
-        )
-      }
-
-      private def expandedGrammar2Section(eg: ExpandedGrammar2): Frag =
+      private def expandedGrammarSection(eg: ExpandedGrammar): Frag =
         shared.section("ExpandedGrammar", false)(
-          expandedGrammar2Nts("NTs - Initial", eg.initialNTGroups),
+          expandedGrammarNTs("NTs - Initial", eg.initialNTGroups),
           shared.verticalSpace,
-          expandedGrammar2Nts("NTs - DeDuplicated", eg.deDuplicatedNTGroups),
+          expandedGrammarNTs("NTs - DeDuplicated", eg.deDuplicatedNTGroups),
         )
 
-      private def expandedGrammar2Nts(label: String, ntgs: List[ExpandedGrammar2.NTGroup]): Frag =
+      private def expandedGrammarNTs(label: String, ntgs: List[ExpandedGrammar.NTGroup]): Frag =
         shared.section(label, false)(
           shared.makeTable(
             "Stat" -> 150,
@@ -606,7 +475,7 @@ object Result {
             "Production" -> 400,
           )(
             ntgs.sortBy(_.toString).map { ntg =>
-              def makeRow(idx1: Int, idx2: Int, rawNT: ExpandedGrammar2.RawNT, prod: ExpandedGrammar2.Production): Frag =
+              def makeRow(idx1: Int, idx2: Int, rawNT: ExpandedGrammar.RawNT, prod: ExpandedGrammar.Production): Frag =
                 tr(
                   Option.when(idx1 == 0 && idx2 == 0)(
                     shared.makeCell(rowspan := ntg.rawNTs.flatMap(_.productions).size)(

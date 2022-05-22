@@ -1,11 +1,8 @@
 package slyce.generate.grammar
 
-import cats.Functor
 import cats.data.NonEmptyList
 import cats.syntax.either.*
-import cats.syntax.functor.*
 import cats.syntax.option.*
-import cats.syntax.parallel.*
 import java.util.UUID
 import klib.utils.*
 import scala.annotation.tailrec
@@ -14,27 +11,53 @@ import slyce.core.*
 import slyce.generate.*
 
 final case class ExpandedGrammar private (
-    startNt: Marked[String], // TODO (KR) : Remove?
-    nts: List[ExpandedGrammar.NT[ExpandedGrammar.Identifier.NonTerminal]],
-    aliases: List[ExpandedGrammar.Alias],
-    extras: Map[ExpandedGrammar.Identifier.NonTerminal, List[ExpandedGrammar.Extra]],
-    withs: List[ExpandedGrammar.With],
+    startNt: Marked[String],
+    initialNTGroups: List[ExpandedGrammar.NTGroup],
+    deDuplicatedNTGroups: List[ExpandedGrammar.NTGroup],
 )
 object ExpandedGrammar {
 
-  final case class NT[+N <: Identifier.NonTerminal](
-      name: N,
-      productions: NonEmptyList[NT.Production],
+  final case class Production(elements: List[Identifier])
+  object Production {
+    def apply(elements: Identifier*): Production = Production(elements.toList)
+  }
+
+  final case class RawNT(
+      name: Identifier.NonTerminal,
+      productions: NonEmptyList[Production],
   )
-  object NT {
+  object RawNT {
+    def apply(name: Identifier.NonTerminal, prod0: Production, prodN: Production*): RawNT = RawNT(name, NonEmptyList(prod0, prodN.toList))
+  }
 
-    def apply[N <: Identifier.NonTerminal](name: N, reduction0: Production, reductionN: Production*): NT[N] =
-      NT(name, NonEmptyList(reduction0, reductionN.toList))
+  enum NTGroup {
+    case BasicNT(
+        name: String,
+        prods: NonEmptyList[List[Identifier]],
+    )
+    case LiftNT(
+        name: String,
+        prods: NonEmptyList[LiftList[Identifier]],
+    )
+    case ListNT(
+        name: Either[String, UUID],
+        listType: GrammarInput.NonTerminal.ListNonTerminal.Type,
+        startProds: LiftList[Identifier],
+        repeatProds: Option[LiftList[Identifier]],
+    )
+    case AssocNT(
+        name: String,
+        assocs: NonEmptyList[(Identifier, GrammarInput.NonTerminal.AssocNonTerminal.Type)],
+        base: Either[
+          NonEmptyList[List[Identifier]],
+          NonEmptyList[LiftList[Identifier]],
+        ],
+    )
+    case Optional(
+        id: Identifier,
+    )
 
-    final case class Production(elements: List[Identifier], liftIdx: Option[Int])
-    object Production {
-      def apply(elementN: Identifier*): Production = Production(elementN.toList, None)
-    }
+    final lazy val rawNTs: NonEmptyList[RawNT] = convertNTGroup(this)
 
   }
 
@@ -43,7 +66,7 @@ object ExpandedGrammar {
 
     enum NonTerminal extends Identifier {
       case NamedNt(name: String)
-      case ListNt(name: String, `type`: NonTerminal.ListType)
+      case NamedListNt(name: String, `type`: NonTerminal.ListType)
       case AnonListNt(key: UUID, `type`: NonTerminal.ListType)
       case AssocNt(name: String, idx: Int)
       case AnonOptNt(identifier: Identifier)
@@ -53,651 +76,411 @@ object ExpandedGrammar {
     }
 
     sealed trait Term extends Identifier
-    final case class Terminal(name: String) extends Term
-    final case class Raw(name: String) extends Term {
-      override def toString: String = s"Raw(${name.unesc})"
+    object Term {
+      final case class Terminal(name: String) extends Term
+      final case class Raw(name: String) extends Term {
+        override def toString: String = s"Raw(${name.unesc})"
+      }
     }
 
-  }
-
-  final case class Alias(
-      named: Identifier.NonTerminal,
-      actual: Identifier.NonTerminal,
-  )
-
-  final case class With(
-      extendingIdentifier: Identifier,
-      typeInNT: Identifier.NonTerminal,
-      `type`: With.Type,
-  )
-  object With {
-    enum Type { case Lift, Operator, Operand }
-  }
-
-  enum Extra {
-    case SimpleToList(liftIdx: Int, tailIdx: Int)
-    case HeadTailToList(isNel: Boolean, headLiftIdx: Int, headTailIdx: Int, tailNt: Identifier.NonTerminal, tailLiftIdx: Int, tailTailIdx: Int)
-    case Optional
-    case Lift(idxs: NonEmptyList[Int])
-    case LiftExpr(baseName: String, assocs: NonEmptyList[GrammarInput.NonTerminal.AssocNonTerminal.Type], idxs: NonEmptyList[(Int, Boolean)])
   }
 
   object fromGrammar {
 
-    def apply(grammar: GrammarInput): Validated[ExpandedGrammar] =
-      grammar.nonTerminals
-        .parTraverse { nt =>
-          expandNonTerminal(nt.name.value, nt.nonTerminal)
-        }
-        .map { expansions =>
-          val combined = Expansion.combine.unit(expansions)
-          ExpandedGrammar(
-            startNt = grammar.startNT,
-            nts = combined.generatedNts,
-            aliases = combined.aliases,
-            extras = combined.extras.groupMap(_.nt)(_.extra),
-            withs = combined.withs.distinct,
-          )
-        }
+    def apply(grammar: GrammarInput): ExpandedGrammar = {
+      val initialNTGroups: List[NTGroup] = grammar.nonTerminals.flatMap(expandNamedNT)
 
-    // =====| Types |=====
+      ExpandedGrammar(
+        startNt = grammar.startNT,
+        initialNTGroups = initialNTGroups,
+        deDuplicatedNTGroups = removeDuplicates(initialNTGroups),
+      )
+    }
 
     private final case class Expansion[+A](
-        data: A,
-        generatedNts: List[NT[Identifier.NonTerminal]],
-        aliases: List[Alias],
-        withs: List[With],
-        extras: List[ExtraFor],
+        value: A,
+        ntGroups: List[NTGroup],
     ) {
-
-      def map[B](f: A => B): Expansion[B] = Expansion(f(data), generatedNts, aliases, withs, extras)
-
-      def add(
-          generatedNts: List[NT[Identifier.NonTerminal]] = Nil,
-          aliases: List[Alias] = Nil,
-          withs: List[With] = Nil,
-          extras: List[ExtraFor] = Nil,
-      ): Expansion[A] =
-        Expansion(
-          data = this.data,
-          generatedNts = generatedNts ::: this.generatedNts,
-          aliases = aliases ::: this.aliases,
-          withs = withs ::: this.withs,
-          extras = extras ::: this.extras,
-        )
-
+      def map[B](f: A => B): Expansion[B] = Expansion(f(value), ntGroups)
     }
     private object Expansion {
 
-      def join(
-          main: Expansion[Identifier],
-          extras: Expansion[Identifier]*,
-      ): Expansion[Identifier] = {
-        val all = main :: extras.toList
-
+      def mergeNTGroup(ntGroup: NTGroup)(includes: List[Expansion[_]]*): Expansion[Identifier] =
         Expansion(
-          data = main.data,
-          generatedNts = all.flatMap(_.generatedNts),
-          aliases = all.flatMap(_.aliases),
-          withs = all.flatMap(_.withs),
-          extras = all.flatMap(_.extras),
+          ntGroupHead(ntGroup),
+          ntGroup :: includes.toList.flatten.flatMap(_.ntGroups),
         )
-      }
-
-      object combine {
-
-        def apply[L[_]: ToList: Functor, T, T2](expansions: L[Expansion[T]])(f: L[T] => T2): Expansion[T2] = {
-          val expansionList = implicitly[ToList[L]].toList(expansions)
-
-          Expansion(
-            f(expansions.map(_.data)),
-            expansionList.flatMap(_.generatedNts),
-            expansionList.flatMap(_.aliases),
-            expansionList.flatMap(_.withs),
-            expansionList.flatMap(_.extras),
-          )
-        }
-
-        // TODO (KR) : Remove?
-        def unit[L[_]: ToList: Functor, T](expansions: L[Expansion[T]]): Expansion[Unit] = combine(expansions)(_ => ())
-
-      }
 
     }
 
-    final case class ExtraFor(
-        nt: Identifier.NonTerminal,
-        extra: Extra,
-    )
-
-    final case class ToList[L[_]](toList: [A] => L[A] => List[A])
-    object ToList {
-      implicit val listToList: ToList[List] = ToList[List] { [A] => (l: List[A]) => l }
-      implicit val nonEmptyListToList: ToList[NonEmptyList] = ToList[NonEmptyList] { [A] => (l: NonEmptyList[A]) => l.toList }
-    }
-
-    // =====| Helpers |=====
-
-    private def convertGrammarIdentifier(identifier: GrammarInput.Identifier): Identifier =
-      identifier match {
-        case GrammarInput.Identifier.NonTerminal(name) => Identifier.NonTerminal.NamedNt(name)
-        case GrammarInput.Identifier.Terminal(name)    => Identifier.Terminal(name)
-        case GrammarInput.Identifier.Raw(text)         => Identifier.Raw(text)
-      }
-
-    private def expandNonTerminal(
-        name: grammar.GrammarInput.Identifier.NonTerminal,
-        nonTerminal: GrammarInput.NonTerminal,
-    ): Validated[Expansion[Identifier]] =
-      nonTerminal match {
-        case snt: GrammarInput.NonTerminal.StandardNonTerminal => expandStandardNonTerminal(Identifier.NonTerminal.NamedNt(name.name), snt, None)
-        case lnt: GrammarInput.NonTerminal.ListNonTerminal     => expandListNonTerminal(name.some, lnt)
-        case ant: GrammarInput.NonTerminal.AssocNonTerminal    => expandAssocNonTerminal(name, ant)
-      }
-
-    private object expandStandardNonTerminal {
-
-      def apply(
-          name: Identifier.NonTerminal,
-          snt: GrammarInput.NonTerminal.StandardNonTerminal,
-          exprExtras: Option[(String, NonEmptyList[GrammarInput.NonTerminal.AssocNonTerminal.Type])],
-      ): Validated[Expansion[Identifier]] =
-        snt match {
-          case nt: GrammarInput.NonTerminal.StandardNonTerminal.`:` => colon(name, nt)
-          case nt: GrammarInput.NonTerminal.StandardNonTerminal.^   => carrot(name, nt, exprExtras)
-        }
-
-      private def colon(
-          name: Identifier.NonTerminal,
-          nt: GrammarInput.NonTerminal.StandardNonTerminal.`:`,
-      ): Validated[Expansion[Identifier]] = {
-        // TODO (KR) : In the previous version, these were both unused vals, returned 'None', and had 'TODO' comments on them.
-        //           : The correct course of action is probably to eventually delete these.
-        // val mAddWiths: Option[Identifier => With] = ???
-        // val lift: Option[ExtraFor] = ???
-
-        nt.productions.parTraverse(expandList).map { eReductions =>
-          val tmpENt = Expansion.combine(eReductions)(NT(name, _))
-          tmpENt.copy(data = name, generatedNts = tmpENt.data :: tmpENt.generatedNts)
-        }
-      }
-
-      private def carrot(
-          name: Identifier.NonTerminal,
-          nt: GrammarInput.NonTerminal.StandardNonTerminal.^,
-          exprExtras: Option[(String, NonEmptyList[GrammarInput.NonTerminal.AssocNonTerminal.Type])],
-      ): Validated[Expansion[Identifier]] = {
-        val mAddWiths: Identifier => Option[With] =
-          exprExtras match {
-            case Some((n, _)) => {
-              case Identifier.NonTerminal.NamedNt(n2) if n == n2 => None
-              case id                                            => With(id, Identifier.NonTerminal.AssocNt(n, 1), With.Type.Operand).some
-            }
-            case None =>
-              With(_, name, With.Type.Lift).some
-          }
-        val lift: ExtraFor =
-          exprExtras match {
-            case Some((n, assocs)) =>
-              val base = Identifier.NonTerminal.AssocNt(n, 1)
-              val idxs =
-                nt.productions.map { r =>
-                  (
-                    r.liftIdx,
-                    r.lift.value match {
-                      case GrammarInput.Identifier.NonTerminal(n2) => n == n2
-                      case _                                       => false
-                    },
-                  )
-                }
-              ExtraFor(base, Extra.LiftExpr(n, assocs.reverse, idxs))
-            case None =>
-              ExtraFor(name, Extra.Lift(nt.productions.map(_.liftIdx)))
-          }
-
-        nt.productions.parTraverse(expandIgnoredList(_, mAddWiths.some)).map { eReductions =>
-          val tmpENt = Expansion.combine(eReductions)(ers => NT(name, ers))
-          tmpENt.add(generatedNts = tmpENt.data :: Nil, extras = lift :: Nil).map(_ => name)
-        }
-      }
-
-    }
-
-    private object expandListNonTerminal {
-
-      def apply(
-          name: Option[GrammarInput.Identifier.NonTerminal],
-          lnt: GrammarInput.NonTerminal.ListNonTerminal,
-      ): Validated[Expansion[Identifier]] =
-        (lnt.`type`, lnt.repeat) match {
-          case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, None)         => simpleStar(name, lnt.start)
-          case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, Some(repeat)) => complexStar(name, lnt.start, repeat)
-          case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, None)         => simplePlus(name, lnt.start)
-          case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, Some(repeat)) => complexPlus(name, lnt.start, repeat)
-        }
-
-      private def createMyId(name: Option[GrammarInput.Identifier.NonTerminal]): (Option[Alias], Identifier.NonTerminal) =
-        name match {
-          case Some(name) =>
-            val id = Identifier.NonTerminal.ListNt(name.name, Identifier.NonTerminal.ListType.Simple)
-            (
-              Alias(Identifier.NonTerminal.NamedNt(name.name), id).some,
-              id,
-            )
-          case None =>
-            (
-              None,
-              Identifier.NonTerminal.AnonListNt(UUID.randomUUID, Identifier.NonTerminal.ListType.Simple),
-            )
-        }
-
-      private def createMyIds(name: Option[GrammarInput.Identifier.NonTerminal]): (Option[Alias], Identifier.NonTerminal, Identifier.NonTerminal) =
-        name match {
-          case Some(name) =>
-            val headId = Identifier.NonTerminal.ListNt(name.name, Identifier.NonTerminal.ListType.Head)
-            (
-              Alias(Identifier.NonTerminal.NamedNt(name.name), headId).some,
-              headId,
-              Identifier.NonTerminal.ListNt(name.name, Identifier.NonTerminal.ListType.Tail),
-            )
-          case None =>
-            // TODO (KR) : It would be nice to associate the 2 with each other...
-            //           : This should be possible by changing all of the de-dupe stuff from using UUID to (UUID, ListType)
-            (
-              None,
-              Identifier.NonTerminal.AnonListNt(UUID.randomUUID, Identifier.NonTerminal.ListType.Head),
-              Identifier.NonTerminal.AnonListNt(UUID.randomUUID, Identifier.NonTerminal.ListType.Tail),
-            )
-        }
-
-      private def simpleStar(
-          name: Option[GrammarInput.Identifier.NonTerminal],
-          start: LiftList[Marked[GrammarInput.Element]],
-      ): Validated[Expansion[Identifier]] = {
-        val (ma, myId) = createMyId(name)
-
-        for {
-          eStart <- expandIgnoredList(start, Some(With(_, myId, With.Type.Lift).some))
-          sR1 = NT.Production(eStart.data.elements.appended(myId), eStart.data.liftIdx)
-          sNt = NT(myId, sR1, NT.Production())
-        } yield Expansion(
-          myId,
-          sNt :: eStart.generatedNts,
-          ma.toList ::: eStart.aliases,
-          eStart.withs,
-          ExtraFor(
-            nt = myId,
-            extra = Extra.SimpleToList(start.liftIdx, start.size),
-          ) ::
-            eStart.extras,
-        )
-      }
-
-      private def complexStar(
-          name: Option[GrammarInput.Identifier.NonTerminal],
-          start: LiftList[Marked[GrammarInput.Element]],
-          repeat: LiftList[Marked[GrammarInput.Element]],
-      ): Validated[Expansion[Identifier]] = {
-        val (ma, myHeadId, myTailId) = createMyIds(name)
-
-        for {
-          eStart <- expandIgnoredList(start, Some(With(_, myHeadId, With.Type.Lift).some))
-          eRepeat <- expandIgnoredList(repeat, Some(With(_, myHeadId, With.Type.Lift).some))
-          sR1 = NT.Production(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
-          rR1 = NT.Production(eRepeat.data.elements.appended(myTailId), eRepeat.data.liftIdx)
-          sNt = NT(myHeadId, sR1, NT.Production())
-          rNt = NT(myTailId, rR1, NT.Production())
-        } yield Expansion(
-          myHeadId,
-          sNt :: rNt :: eStart.generatedNts ::: eRepeat.generatedNts,
-          ma.toList ::: eStart.aliases ::: eRepeat.aliases,
-          eStart.withs ::: eRepeat.withs,
-          ExtraFor(
-            myHeadId,
-            Extra.HeadTailToList(
-              isNel = false,
-              headLiftIdx = start.liftIdx,
-              headTailIdx = start.size,
-              tailNt = myTailId,
-              tailLiftIdx = repeat.liftIdx,
-              tailTailIdx = repeat.size,
-            ),
-          ) :: eStart.extras ::: eRepeat.extras,
-        )
-      }
-
-      private def simplePlus(
-          name: Option[GrammarInput.Identifier.NonTerminal],
-          start: LiftList[Marked[GrammarInput.Element]],
-      ): Validated[Expansion[Identifier]] = {
-        val (ma, myHeadId, myTailId) = createMyIds(name)
-
-        for {
-          eStart <- expandIgnoredList(start, Some(With(_, myHeadId, With.Type.Lift).some))
-          sR1 = NT.Production(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
-          sNt = NT(myHeadId, sR1)
-          rNt = NT(myTailId, sR1, NT.Production())
-        } yield Expansion(
-          myHeadId,
-          sNt :: rNt :: eStart.generatedNts,
-          ma.toList ::: eStart.aliases,
-          eStart.withs,
-          ExtraFor(
-            myHeadId,
-            Extra.HeadTailToList(
-              isNel = true,
-              headLiftIdx = start.liftIdx,
-              headTailIdx = start.size,
-              tailNt = myTailId,
-              tailLiftIdx = start.liftIdx,
-              tailTailIdx = start.size,
-            ),
-          ) :: eStart.extras,
-        )
-      }
-
-      private def complexPlus(
-          name: Option[GrammarInput.Identifier.NonTerminal],
-          start: LiftList[Marked[GrammarInput.Element]],
-          repeat: LiftList[Marked[GrammarInput.Element]],
-      ): Validated[Expansion[Identifier]] = {
-        val (ma, myHeadId, myTailId) = createMyIds(name)
-
-        for {
-          eStart <- expandIgnoredList(start, Some(With(_, myHeadId, With.Type.Lift).some))
-          eRepeat <- expandIgnoredList(repeat, Some(With(_, myHeadId, With.Type.Lift).some))
-          sR1 = NT.Production(eStart.data.elements.appended(myTailId), eStart.data.liftIdx)
-          rR1 = NT.Production(eRepeat.data.elements.appended(myTailId), eRepeat.data.liftIdx)
-          sNt = NT(myHeadId, sR1)
-          rNt = NT(myTailId, rR1, NT.Production())
-        } yield Expansion(
-          myHeadId,
-          sNt :: rNt :: eStart.generatedNts ::: eRepeat.generatedNts,
-          ma.toList ::: eStart.aliases ::: eRepeat.aliases,
-          eStart.withs ::: eRepeat.withs,
-          ExtraFor(
-            myHeadId,
-            Extra.HeadTailToList(
-              isNel = true,
-              headLiftIdx = start.liftIdx,
-              headTailIdx = start.size,
-              tailNt = myTailId,
-              tailLiftIdx = repeat.liftIdx,
-              tailTailIdx = repeat.size,
-            ),
-          ) :: eStart.extras ::: eRepeat.extras,
-        )
-      }
-
-    }
-
-    private object expandAssocNonTerminal {
-
-      def apply(
-          name: GrammarInput.Identifier.NonTerminal,
-          ant: GrammarInput.NonTerminal.AssocNonTerminal,
-      ): Validated[Expansion[Identifier]] =
-        rec(name, ant, 1, ant.assocElements.toList.reverse).map { expansion =>
-          expansion.add(
-            aliases = Alias(
-              Identifier.NonTerminal.NamedNt(name.name),
-              Identifier.NonTerminal.AssocNt(name.name, 1),
-            ) :: Nil,
-          )
-        }
-
-      private def rec(
-          name: GrammarInput.Identifier.NonTerminal,
-          ant: GrammarInput.NonTerminal.AssocNonTerminal,
-          idx: Int,
-          queue: List[(Marked[GrammarInput.NonTerminal.AssocNonTerminal.Type], Marked[GrammarInput.Element])],
-      ): Validated[Expansion[Identifier]] =
-        queue match {
-          case head :: tail =>
-            for {
-              childExpansion <- rec(name, ant, idx + 1, tail)
-              opExpansion <- expandElement(head._2)
-              myId = Identifier.NonTerminal.AssocNt(name.name, idx)
-              myExpansion = Expansion(
-                myId,
-                NT(
-                  myId,
-                  head._1.value match {
-                    case GrammarInput.NonTerminal.AssocNonTerminal.Type.Left =>
-                      NT.Production(
-                        myId,
-                        opExpansion.data,
-                        childExpansion.data,
-                      )
-                    case GrammarInput.NonTerminal.AssocNonTerminal.Type.Right =>
-                      NT.Production(
-                        childExpansion.data,
-                        opExpansion.data,
-                        myId,
-                      )
-                  },
-                  NT.Production(
-                    childExpansion.data,
-                  ),
-                ) :: Nil,
-                Nil,
-                With(opExpansion.data, Identifier.NonTerminal.AssocNt(name.name, 1), With.Type.Operator) :: Nil,
-                Nil,
-              )
-            } yield Expansion.join(
-              myExpansion,
-              childExpansion,
-              opExpansion,
-            )
-          case Nil =>
-            expandStandardNonTerminal(
-              Identifier.NonTerminal.AssocNt(name.name, idx),
-              ant.base,
-              (name.name, ant.assocElements.map(_._1.value)).some,
-            )
-        }
-
-    }
-
-    private def expandList(l: List[Marked[GrammarInput.Element]]): Validated[Expansion[NT.Production]] =
-      l.parTraverse(expandElement(_)).map {
-        Expansion.combine(_)(rs => NT.Production(rs*))
-      }
-
-    private def expandIgnoredList(
-        il: LiftList[Marked[GrammarInput.Element]],
-        mWith: Option[Identifier => Option[With]] = None,
-    ): Validated[Expansion[NT.Production]] =
-      for {
-        beforeExpansions <- il.before.parTraverse(expandElement(_))
-        unIgnoredExpansion <- expandElement(il.lift, mWith)
-        afterExpansions <- il.after.parTraverse(expandElement(_))
-        expansions = beforeExpansions ::: unIgnoredExpansion :: afterExpansions
-      } yield Expansion.combine(expansions)(rs => NT.Production(rs, il.before.size.some))
-
-    private def expandElement(
-        element: Marked[GrammarInput.Element],
-        mWith: Option[Identifier => Option[With]] = None,
-    ): Validated[Expansion[Identifier]] = {
-      def addWithIfExists(expansion: Expansion[Identifier]): Expansion[Identifier] =
-        mWith match {
-          case Some(withF) => expansion.copy(withs = withF(expansion.data).toList ::: expansion.withs)
-          case None        => expansion
-        }
-
-      val (isOpt, elem) = element.value.toNonOpt
-
-      expandNonOptElement(elem).map {
-        case expandedElement if isOpt =>
-          val optId = Identifier.NonTerminal.AnonOptNt(expandedElement.data)
-          val optElem = Expansion(
-            optId,
-            NT(
-              optId,
-              NT.Production(expandedElement.data),
-              NT.Production(),
-            ) :: Nil,
-            Nil,
-            With(expandedElement.data, optId, With.Type.Lift) :: Nil,
-            ExtraFor(optId, Extra.Optional) :: Nil,
-          )
-          Expansion.join(addWithIfExists(optElem), expandedElement)
-        case expandedElement =>
-          addWithIfExists(expandedElement)
-      }
-    }
-
-    private def expandNonOptElement(element: GrammarInput.Element.NonOptional): Validated[Expansion[Identifier]] =
-      element match {
-        case lnt: GrammarInput.NonTerminal.ListNonTerminal => expandListNonTerminal(None, lnt)
-        case identifier: GrammarInput.Identifier           => Expansion(convertGrammarIdentifier(identifier), Nil, Nil, Nil, Nil).asRight
-      }
-
-  }
-
-  // TODO (KR) : This was jus copied from the previous version.
-  //           : It might make sense to give it the clean-up treatment as well.
-  def deDuplicate(expandedGrammar: ExpandedGrammar): ExpandedGrammar = {
-    val anonListUUIDMap: Map[UUID, NT[Identifier.NonTerminal.AnonListNt]] =
-      expandedGrammar.nts.flatMap { nt =>
-        nt.name match {
-          case anonList: Identifier.NonTerminal.AnonListNt => (anonList.key, nt.asInstanceOf[NT[Identifier.NonTerminal.AnonListNt]]).some
-          case _                                           => None
-        }
-      }.toMap
-
-    def getNonBlockedNts(completedUUIDs: Set[UUID]): List[NT[Identifier.NonTerminal.AnonListNt]] = {
-      def validAnonList(nt: NT[Identifier.NonTerminal.AnonListNt]): Boolean = {
-        def isAlreadyDone: Boolean =
-          completedUUIDs.contains(nt.name.key)
-
-        def isBlocked: Boolean =
-          nt.productions.toList.exists { r =>
-            r.elements.exists {
-              case al: Identifier.NonTerminal.AnonListNt => al.key != nt.name.key && !completedUUIDs.contains(al.key)
-              case _                                     => false
-            }
-          }
-
-        !(isAlreadyDone || isBlocked)
-      }
-
-      anonListUUIDMap.values.toList.filter(validAnonList)
-    }
-
-    def mDereferenceNtId(key: UUID, id: Identifier.NonTerminal, found: Map[UUID, UUID]): Option[Identifier.NonTerminal] =
-      id match {
-        case al: Identifier.NonTerminal.AnonListNt =>
-          Option.when(al.key != key)(dereferenceNtId(id, found))
-        case _ =>
-          id.some
-      }
-    def dereferenceNtId(id: Identifier.NonTerminal, found: Map[UUID, UUID]): Identifier.NonTerminal =
-      id match {
-        case al: Identifier.NonTerminal.AnonListNt =>
-          Identifier.NonTerminal
-            .AnonListNt(found.getOrElse(al.key, al.key), al.`type`)
-            .asInstanceOf[id.type]
-        case _ =>
-          id
-      }
-
-    def mDereferenceId(key: UUID, id: Identifier, found: Map[UUID, UUID]): Option[Identifier] =
-      id match {
-        case terminal: Identifier.NonTerminal =>
-          mDereferenceNtId(key, terminal, found)
-        case _ =>
-          id.some
-      }
-    def dereferenceId(id: Identifier, found: Map[UUID, UUID]): Identifier =
-      id match {
-        case terminal: Identifier.NonTerminal =>
-          dereferenceNtId(terminal, found)
-        case _ =>
-          id
-      }
-
-    def dereferenceNt(
-        nt: NT[Identifier.NonTerminal],
-        found: Map[UUID, UUID],
-    ): NT[Identifier.NonTerminal] =
-      NT(
-        dereferenceNtId(nt.name, found),
-        nt.productions.map(r => NT.Production(r.elements.map(dereferenceId(_, found)), r.liftIdx)),
+    final case class AnonListNT(key: UUID, partial: AnonListNT.Partial)
+    object AnonListNT {
+      final case class Partial(
+          listType: GrammarInput.NonTerminal.ListNonTerminal.Type,
+          startProds: LiftList[Identifier],
+          repeatProds: Option[LiftList[Identifier]],
       )
+    }
 
-    @tailrec
-    def findDuplicates(
-        found: Map[UUID, UUID],
-    ): Map[UUID, UUID] = {
-      val completedUUIDs = found.keys.toSet
-      val nonBlockedNts = getNonBlockedNts(completedUUIDs)
+    private def convertIdentifier(id: GrammarInput.Identifier): Identifier =
+      id match {
+        case GrammarInput.Identifier.Terminal(name)    => Identifier.Term.Terminal(name)
+        case GrammarInput.Identifier.NonTerminal(name) => Identifier.NonTerminal.NamedNt(name)
+        case GrammarInput.Identifier.Raw(text)         => Identifier.Term.Raw(text)
+      }
 
-      if (nonBlockedNts.isEmpty) found
-      else {
-        val nonBlockedDereferenced = nonBlockedNts.map { nt =>
-          (
-            nt.name.key,
-            nt.productions.map(r => (r.elements.map(mDereferenceId(nt.name.key, _, found)), r.liftIdx)),
-          )
-        }
-        val duplicateLists = nonBlockedDereferenced.groupMap(_._2)(_._1).values.toList
-        val newMap = duplicateLists.flatMap(dl => dl.map((_, dl.head))).toMap
-
-        findDuplicates(found ++ newMap)
+    private def expandNamedNT(namedNT: GrammarInput.NamedNonTerminal): List[NTGroup] = {
+      val name: String = namedNT.name.value.name
+      namedNT.nonTerminal match {
+        case nt: GrammarInput.NonTerminal.StandardNonTerminal => expandStandardNT(name, nt).ntGroups
+        case nt: GrammarInput.NonTerminal.ListNonTerminal     => expandListNT(name.some, nt).ntGroups
+        case nt: GrammarInput.NonTerminal.AssocNonTerminal    => expandAssocNT(name, nt).ntGroups
       }
     }
 
-    def filterRedundantAnonListNts(nts: List[NT[Identifier.NonTerminal]], valid: Set[UUID]): List[NT[Identifier.NonTerminal]] =
-      nts.filter { nt =>
-        nt.name match {
-          case al: Identifier.NonTerminal.AnonListNt => valid.contains(al.key)
-          case _                                     => true
+    private def expandStandardNT(name: String, standardNT: GrammarInput.NonTerminal.StandardNonTerminal): Expansion[Identifier] =
+      standardNT match {
+        case GrammarInput.NonTerminal.StandardNonTerminal.`:`(productions) =>
+          val expanded: NonEmptyList[Expansion[List[Identifier]]] = productions.map(r => expandList(r.map(_.value)))
+          Expansion.mergeNTGroup(
+            NTGroup.BasicNT(
+              name = name,
+              prods = expanded.map(_.value),
+            ),
+          )(
+            expanded.toList,
+          )
+        case GrammarInput.NonTerminal.StandardNonTerminal.^(productions) =>
+          val expanded: NonEmptyList[Expansion[LiftList[Identifier]]] = productions.map(r => expandLiftList(r.map(_.value)))
+          Expansion.mergeNTGroup(
+            NTGroup.LiftNT(
+              name = name,
+              prods = expanded.map(_.value),
+            ),
+          )(
+            expanded.toList,
+          )
+      }
+
+    private def expandListNT(name: Option[String], listNT: GrammarInput.NonTerminal.ListNonTerminal): Expansion[Identifier] = {
+      val expandedStart: Expansion[LiftList[Identifier]] = expandLiftList(listNT.start.map(_.value))
+      val expandedRepeat: Option[Expansion[LiftList[Identifier]]] = listNT.repeat.map(repeat => expandLiftList(repeat.map(_.value)))
+
+      Expansion.mergeNTGroup(
+        NTGroup.ListNT(
+          name = name.toLeft(UUID.randomUUID),
+          listType = listNT.`type`,
+          startProds = expandedStart.value,
+          repeatProds = expandedRepeat.map(_.value),
+        ),
+      )(
+        expandedStart :: Nil,
+        expandedRepeat.toList,
+      )
+    }
+
+    private def expandAssocNT(name: String, assocNT: GrammarInput.NonTerminal.AssocNonTerminal): Expansion[Identifier] = {
+      val expandedAssocs: NonEmptyList[Expansion[(Identifier, GrammarInput.NonTerminal.AssocNonTerminal.Type)]] =
+        assocNT.assocElements.map { (t, e) =>
+          expandElement(e.value).map((_, t.value))
         }
-      }
-
-    val duplicateMap = findDuplicates(Map.empty)
-    val filteredNts = filterRedundantAnonListNts(expandedGrammar.nts, duplicateMap.values.toSet).map(dereferenceNt(_, duplicateMap))
-    val filteredAliases = expandedGrammar.aliases.map(t => Alias(dereferenceNtId(t.named, duplicateMap), dereferenceNtId(t.actual, duplicateMap)))
-
-    def unaliasNt(nt: ExpandedGrammar.Identifier.NonTerminal): ExpandedGrammar.Identifier.NonTerminal =
-      filteredAliases.find(_.named == nt).fold(nt)(_.actual)
-
-    val deReferenceAliases =
-      filteredNts.map { nt =>
-        ExpandedGrammar.NT(
-          nt.name,
-          nt.productions.map { reduction =>
-            ExpandedGrammar.NT.Production(
-              reduction.elements.map {
-                case nt: Identifier.NonTerminal => unaliasNt(nt)
-                case i                          => i
-              },
-              reduction.liftIdx,
+      val expandedBase: Expansion[Either[NonEmptyList[List[Identifier]], NonEmptyList[LiftList[Identifier]]]] =
+        assocNT.base match {
+          case GrammarInput.NonTerminal.StandardNonTerminal.`:`(productions) =>
+            val expanded: NonEmptyList[Expansion[List[Identifier]]] = productions.map(r => expandList(r.map(_.value)))
+            Expansion(
+              expanded.map(_.value).asLeft,
+              expanded.toList.flatMap(_.ntGroups),
             )
-          },
-        )
+          case GrammarInput.NonTerminal.StandardNonTerminal.^(productions) =>
+            val expanded: NonEmptyList[Expansion[LiftList[Identifier]]] = productions.map(r => expandLiftList(r.map(_.value)))
+            Expansion(
+              expanded.map(_.value).asRight,
+              expanded.toList.flatMap(_.ntGroups),
+            )
+        }
+
+      Expansion.mergeNTGroup(
+        NTGroup.AssocNT(
+          name = name,
+          assocs = expandedAssocs.map(_.value),
+          base = expandedBase.value,
+        ),
+      )(
+        expandedAssocs.toList,
+        expandedBase :: Nil,
+      )
+    }
+
+    private def expandList(list: List[GrammarInput.Element]): Expansion[List[Identifier]] = {
+      val expanded: List[Expansion[Identifier]] = list.map(expandElement)
+      Expansion(
+        expanded.map(_.value),
+        expanded.flatMap(_.ntGroups),
+      )
+    }
+
+    private def expandLiftList(list: LiftList[GrammarInput.Element]): Expansion[LiftList[Identifier]] = {
+      val expanded: LiftList[Expansion[Identifier]] = list.map(expandElement)
+      Expansion(
+        expanded.map(_.value),
+        expanded.toList.flatMap(_.ntGroups),
+      )
+    }
+
+    private def expandElement(element: GrammarInput.Element): Expansion[Identifier] =
+      element match {
+        case element: GrammarInput.Element.NonOptional =>
+          expandNonOptElement(element)
+        case GrammarInput.Element.Optional(child) =>
+          val expanded: Expansion[Identifier] = expandNonOptElement(child)
+          Expansion.mergeNTGroup(
+            NTGroup.Optional(expanded.value),
+          )(
+            expanded :: Nil,
+          )
       }
 
-    val unaliasedWiths =
-      expandedGrammar.withs.map { w =>
-        With(
-          extendingIdentifier = w.extendingIdentifier match {
-            case nt: Identifier.NonTerminal => unaliasNt(nt)
-            case id                         => id
-          },
-          typeInNT = w.typeInNT,
-          `type` = w.`type`,
-        )
-      }.distinct
+    private def expandNonOptElement(element: GrammarInput.Element.NonOptional): Expansion[Identifier] =
+      element match {
+        case identifier: GrammarInput.Identifier              => Expansion(convertIdentifier(identifier), Nil)
+        case listNT: GrammarInput.NonTerminal.ListNonTerminal => expandListNT(None, listNT)
+      }
 
-    ExpandedGrammar(
-      startNt = expandedGrammar.startNt,
-      nts = deReferenceAliases.distinct,
-      aliases = filteredAliases,
-      extras = expandedGrammar.extras.map { (k, v) => (k, v.distinct) }, // TODO (KR) : unalias as well?
-      withs = unaliasedWiths,
-    )
+    private def replaceIdentifier(identifier: Identifier, map: Map[UUID, UUID]): Identifier =
+      identifier match {
+        case Identifier.NonTerminal.AnonListNt(key, listType) => Identifier.NonTerminal.AnonListNt(map.getOrElse(key, key), listType)
+        case id                                               => id
+      }
+
+    private def removeDuplicates(ntGroups: List[NTGroup]): List[NTGroup] = {
+      val (anonListNTs, otherNTs) = ntGroups.partitionMap {
+        case NTGroup.ListNT(Right(key), listType, startProds, repeatProds) => AnonListNT(key, AnonListNT.Partial(listType, startProds, repeatProds)).asLeft
+        case other                                                         => other.asRight
+      }
+
+      val (newAnonListNts, map) = deDuplicateAnonListNTs(anonListNTs, Map.empty)
+
+      newAnonListNts ::: otherNTs.map(replaceNTGroup(_, map)).distinct
+    }
+
+    // NOTE : I think that doing 'map ++ newMappings' is fine,
+    //      : but if there are issues, it might be necessary merge them in a more complex way.
+    @tailrec
+    private def deDuplicateAnonListNTs(
+        anonListNTs: List[AnonListNT],
+        map: Map[UUID, UUID],
+    ): (List[NTGroup.ListNT], Map[UUID, UUID]) = {
+      // TODO (KR) : Remove
+      def showNTs(label: String, nts: List[AnonListNT]): Unit = {
+        println(s"--- $label (${nts.size}) ---")
+        nts.sortBy(_.partial.toString).foreach(nt => println(s"  - ${nt.key} -> ${nt.partial}"))
+      }
+      def showMap(label: String, m: Map[UUID, UUID]): Unit = {
+        println(s"--- $label (${m.size}) ---")
+        m.foreach { (k, v) => println(s"  - $k -> $v") }
+      }
+
+      // TODO (KR) : Remove
+      println()
+      println()
+      println()
+      showNTs("anonListNTs", anonListNTs)
+      showMap("map", map)
+
+      val grouped: List[(AnonListNT.Partial, NonEmptyList[UUID])] =
+        anonListNTs.groupMap(_.partial)(_.key).toList.map { (partial, uuids) => (partial, NonEmptyList(uuids.head, uuids.tail)) }
+
+      val newMappings: Map[UUID, UUID] =
+        grouped.flatMap { (_, uuids) =>
+          uuids.tail.map((_, uuids.head))
+        }.toMap
+
+      if (newMappings.isEmpty)
+        (
+          anonListNTs.map { nt => NTGroup.ListNT(nt.key.asRight, nt.partial.listType, nt.partial.startProds, nt.partial.repeatProds) },
+          map,
+        )
+      else {
+        val remaining: List[AnonListNT] =
+          grouped.map { (partial, uuids) => AnonListNT(uuids.head, partial) }
+        val replaced: List[AnonListNT] =
+          remaining.map { case AnonListNT(key, AnonListNT.Partial(listType, startProds, repeatProds)) =>
+            AnonListNT(
+              key,
+              AnonListNT.Partial(
+                listType,
+                startProds.map(replaceIdentifier(_, newMappings)),
+                repeatProds.map(_.map(replaceIdentifier(_, newMappings))),
+              ),
+            )
+          }
+
+        // TODO (KR) : Remove
+        println()
+        showNTs("remaining", remaining)
+        showNTs("replaced", replaced)
+        showMap("newMappings", newMappings)
+
+        deDuplicateAnonListNTs(
+          replaced,
+          map ++ newMappings,
+        )
+      }
+    }
+
+    private def replaceNTGroup(ntGroup: NTGroup, map: Map[UUID, UUID]): NTGroup =
+      ntGroup match {
+        case NTGroup.BasicNT(name, prods) =>
+          NTGroup.BasicNT(
+            name,
+            prods.map(_.map(replaceIdentifier(_, map))),
+          )
+        case NTGroup.LiftNT(name, prods) =>
+          NTGroup.LiftNT(
+            name,
+            prods.map(_.map(replaceIdentifier(_, map))),
+          )
+        case NTGroup.ListNT(name, listType, startProds, repeatProds) =>
+          NTGroup.ListNT(
+            name,
+            listType,
+            startProds.map(replaceIdentifier(_, map)),
+            repeatProds.map(_.map(replaceIdentifier(_, map))),
+          )
+        case NTGroup.AssocNT(name, assocs, base) =>
+          NTGroup.AssocNT(
+            name,
+            assocs.map { (id, t) => (replaceIdentifier(id, map), t) },
+            base match {
+              case Right(value) => value.map(_.map(replaceIdentifier(_, map))).asRight
+              case Left(value)  => value.map(_.map(replaceIdentifier(_, map))).asLeft
+            },
+          )
+        case NTGroup.Optional(id) =>
+          NTGroup.Optional(replaceIdentifier(id, map))
+      }
+
   }
+
+  private def listNTId(name: Either[String, UUID], listType: Identifier.NonTerminal.ListType): Identifier.NonTerminal =
+    name match {
+      case Left(name) => Identifier.NonTerminal.NamedListNt(name, listType)
+      case Right(key) => Identifier.NonTerminal.AnonListNt(key, listType)
+    }
+
+  private object convertNTGroup {
+
+    def apply(ntGroup: NTGroup): NonEmptyList[RawNT] =
+      ntGroup match {
+        case NTGroup.BasicNT(name, prods) => NonEmptyList.one(RawNT(Identifier.NonTerminal.NamedNt(name), prods.map(Production(_))))
+        case NTGroup.LiftNT(name, prods)  => NonEmptyList.one(RawNT(Identifier.NonTerminal.NamedNt(name), prods.map(p => Production(p.toList))))
+        case listNT: NTGroup.ListNT       => convertListNT(listNT)
+        case assocNT: NTGroup.AssocNT     => convertAssocNT(assocNT)
+        case NTGroup.Optional(id)         => NonEmptyList.one(RawNT(Identifier.NonTerminal.AnonOptNt(id), Production(id), Production()))
+      }
+
+    private def convertListNT(listNT: NTGroup.ListNT): NonEmptyList[RawNT] =
+      (listNT.listType, listNT.repeatProds) match {
+        case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, None) =>
+          val n = listNTId(listNT.name, Identifier.NonTerminal.ListType.Simple)
+          NonEmptyList.of(
+            RawNT(
+              n,
+              Production(listNT.startProds.toList :+ n),
+              Production(),
+            ),
+          )
+        case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, None) =>
+          val n1 = listNTId(listNT.name, Identifier.NonTerminal.ListType.Head)
+          val n2 = listNTId(listNT.name, Identifier.NonTerminal.ListType.Tail)
+          val p1 = Production(listNT.startProds.toList :+ n2)
+          NonEmptyList.of(
+            RawNT(
+              n1,
+              p1,
+            ),
+            RawNT(
+              n2,
+              p1,
+              Production(),
+            ),
+          )
+        case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, Some(repeatProds)) =>
+          val n1 = listNTId(listNT.name, Identifier.NonTerminal.ListType.Head)
+          val n2 = listNTId(listNT.name, Identifier.NonTerminal.ListType.Tail)
+          NonEmptyList.of(
+            RawNT(
+              n1,
+              Production(listNT.startProds.toList :+ n2),
+              Production(),
+            ),
+            RawNT(
+              n2,
+              Production(repeatProds.toList :+ n2),
+              Production(),
+            ),
+          )
+        case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, Some(repeatProds)) =>
+          val n1 = listNTId(listNT.name, Identifier.NonTerminal.ListType.Head)
+          val n2 = listNTId(listNT.name, Identifier.NonTerminal.ListType.Tail)
+          NonEmptyList.of(
+            RawNT(
+              n1,
+              Production(listNT.startProds.toList :+ n2),
+            ),
+            RawNT(
+              n2,
+              Production(repeatProds.toList :+ n2),
+              Production(),
+            ),
+          )
+      }
+
+    private def convertAssocNT(assocNT: NTGroup.AssocNT): NonEmptyList[RawNT] = {
+      val assocNTs: NonEmptyList[RawNT] =
+        assocNT.assocs.zipWithIndex.map { case ((op, assocType), idx) =>
+          val myId = Identifier.NonTerminal.AssocNt(assocNT.name, idx + 1)
+          val nextId = Identifier.NonTerminal.AssocNt(assocNT.name, idx + 2)
+          RawNT(
+            myId,
+            assocType match {
+              case GrammarInput.NonTerminal.AssocNonTerminal.Type.Left  => Production(myId, op, nextId)
+              case GrammarInput.NonTerminal.AssocNonTerminal.Type.Right => Production(nextId, op, myId)
+            },
+            Production(nextId),
+          )
+        }
+      val baseNT: RawNT =
+        RawNT(
+          Identifier.NonTerminal.AssocNt(assocNT.name, assocNTs.size + 1),
+          assocNT.base match {
+            case Left(basic) => basic.map(Production(_))
+            case Right(lift) => lift.map(p => Production(p.toList))
+          },
+        )
+
+      assocNTs :+ baseNT
+    }
+
+  }
+
+  private def ntGroupHead(ntGroup: NTGroup): Identifier.NonTerminal =
+    ntGroup match {
+      case NTGroup.BasicNT(name, _) => Identifier.NonTerminal.NamedNt(name)
+      case NTGroup.LiftNT(name, _)  => Identifier.NonTerminal.NamedNt(name)
+      case NTGroup.ListNT(name, listType, _, repeatProds) =>
+        listNTId(
+          name,
+          (listType, repeatProds) match {
+            case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, None)    => Identifier.NonTerminal.ListType.Simple
+            case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, None)    => Identifier.NonTerminal.ListType.Head
+            case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, Some(_)) => Identifier.NonTerminal.ListType.Head
+            case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, Some(_)) => Identifier.NonTerminal.ListType.Head
+          },
+        )
+      case NTGroup.AssocNT(name, _, _) => Identifier.NonTerminal.AssocNt(name, 1)
+      case NTGroup.Optional(id)        => Identifier.NonTerminal.AnonOptNt(id)
+    }
 
 }

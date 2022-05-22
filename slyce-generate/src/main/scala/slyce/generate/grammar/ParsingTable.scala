@@ -3,8 +3,6 @@ package slyce.generate.grammar
 import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
-import klib.utils.IndentedString
-import scala.annotation.tailrec
 
 import slyce.core.*
 import slyce.generate.*
