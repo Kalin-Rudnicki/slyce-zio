@@ -134,6 +134,7 @@ object TestMain extends ExecutableApp {
                     )(),
                   ),
                   "]",
+                  "~".optional,
                 ),
               )("Tmp"),
             )

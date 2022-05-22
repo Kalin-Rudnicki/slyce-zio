@@ -261,7 +261,7 @@ object ExpandedGrammar2 {
 
       val (newAnonListNts, map) = deDuplicateAnonListNTs(anonListNTs, Map.empty)
 
-      newAnonListNts ::: otherNTs.map(replaceNTGroup(_, map))
+      newAnonListNts ::: otherNTs.map(replaceNTGroup(_, map)).distinct
     }
 
     // NOTE : I think that doing 'map ++ newMappings' is fine,

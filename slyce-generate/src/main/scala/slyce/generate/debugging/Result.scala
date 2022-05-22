@@ -1,5 +1,6 @@
 package slyce.generate.debugging
 
+import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.list.*
 import java.util.UUID
@@ -72,6 +73,9 @@ object Result {
               display -> "none",
             ),
             shared.cssSection("td ul")(
+              paddingLeft -> "20px",
+            ),
+            shared.cssSection("td ol")(
               paddingLeft -> "20px",
             ),
           ),
@@ -175,6 +179,41 @@ object Result {
         shared.titledList(if (simpleName.nonEmpty) simpleName else product.toString)(
           product.productElementNames.zip(product.productIterator).toList *,
         )
+      }
+
+      object autoShow {
+
+        def apply(any: Any, maxDepth: Int = -1): Frag =
+          if (maxDepth == 0)
+            any.toString
+          else
+            any.asInstanceOf[Matchable] match {
+              case anonListNT: ExpandedGrammar2.Identifier.NonTerminal.AnonListNt => showProduct(anonListNT, maxDepth - 1)
+              case id: ExpandedGrammar2.Identifier                                => id.toString
+              case nel: NonEmptyList[_]                                           => showList(nel.toList, maxDepth - 1)
+              case list: List[_]                                                  => showList(list, maxDepth - 1)
+              case product: Product                                               => showProduct(product, maxDepth - 1)
+              case _                                                              => any.toString
+            }
+
+        private def showList(list: List[Any], maxDepth: Int): Frag =
+          ol(
+            list.map(i => li(autoShow(i, maxDepth))),
+          )
+
+        private def showProduct(product: Product, maxDepth: Int): Frag =
+          frag(
+            if (product.productArity == 0) product.toString else product.getClass.getSimpleName,
+            ul(margin := "0")(
+              product.productElementNames.zip(product.productIterator).toList.map { (k, v) =>
+                li(
+                  s"$k: ",
+                  autoShow(v, maxDepth),
+                )
+              },
+            ),
+          )
+
       }
 
       def shadedIf(cond: Boolean): Modifier =
@@ -402,6 +441,8 @@ object Result {
             shared.verticalSpace,
             expandedGrammarSection("ExpandedGrammar - DeDuplicated", result.deDuplicatedExpandedGrammar, false),
             shared.verticalSpace,
+            expandedGrammar2Section(result.expandedGrammar),
+            shared.verticalSpace,
             shared.eitherSection("ParsingTable", result.parsingTable) { parsingTable =>
               // TODO (KR) :
               shared.frag(
@@ -529,6 +570,71 @@ object Result {
           ),
         )
       }
+
+      private def expandedGrammar2Section(eg: ExpandedGrammar2): Frag =
+        shared.section("ExpandedGrammar", false)(
+          expandedGrammar2Nts("NTs - Initial", eg.initialNTGroups),
+          shared.verticalSpace,
+          expandedGrammar2Nts("NTs - DeDuplicated", eg.deDuplicatedNTGroups),
+        )
+
+      private def expandedGrammar2Nts(label: String, ntgs: List[ExpandedGrammar2.NTGroup]): Frag =
+        shared.section(label, false)(
+          shared.makeTable(
+            "Stat" -> 150,
+            "Value" -> 150,
+          )(
+            shared.makeRow("# NTGroups", ntgs.size),
+            shared.makeRow("# RawNTs", ntgs.flatMap(_.rawNTs.toList).size),
+            shared.makeRow("# Productions", ntgs.flatMap(_.rawNTs.toList.flatMap(_.productions.toList)).size),
+            shared.makeRow(
+              "# Identifiers",
+              ntgs
+                .flatMap {
+                  _.rawNTs.toList.flatMap { rawNT =>
+                    rawNT.name :: rawNT.productions.toList.flatMap(_.elements)
+                  }
+                }
+                .distinct
+                .size,
+            ),
+          ),
+          br,
+          shared.makeTable(
+            "NT Group" -> 500,
+            "Name" -> 350,
+            "Production" -> 400,
+          )(
+            ntgs.sortBy(_.toString).map { ntg =>
+              def makeRow(idx1: Int, idx2: Int, rawNT: ExpandedGrammar2.RawNT, prod: ExpandedGrammar2.Production): Frag =
+                tr(
+                  Option.when(idx1 == 0 && idx2 == 0)(
+                    shared.makeCell(rowspan := ntg.rawNTs.flatMap(_.productions).size)(
+                      shared.autoShow(ntg, -1),
+                    ),
+                  ),
+                  Option.when(idx2 == 0)(
+                    shared.makeCell(rowspan := rawNT.productions.size)(
+                      shared.autoShow(rawNT.name),
+                      div(fontSize := "0.75rem", textAlign := "center")(s"[${rawNT.productions.size.pluralizeOn("production")}]"),
+                    ),
+                  ),
+                  shared.makeCell(shared.shadedIf(prod.elements.isEmpty))(
+                    if (prod.elements.nonEmpty)
+                      shared.autoShow(prod.elements)
+                    else
+                      "[Empty Production]",
+                  ),
+                )
+
+              ntg.rawNTs.toList.zipWithIndex.map { (nt, idx1) =>
+                nt.productions.toList.zipWithIndex.map { (prod, idx2) =>
+                  makeRow(idx1, idx2, nt, prod)
+                }
+              }
+            },
+          ),
+        )
 
     }
 
