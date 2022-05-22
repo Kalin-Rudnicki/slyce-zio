@@ -246,7 +246,7 @@ object Result {
             )
           },
           shared.verticalSpace,
-          shared.eitherSection("DFA", result.dfa) { dfa =>
+          shared.eitherSection("DFA", result.dfa, false) { dfa =>
             val reverseStateLookup: Map[Int, DFA.NFAStates] = dfa.forDebugging.nfaStatesToState.map { (k, v) => (v.id, k) }
 
             shared.frag(
@@ -444,11 +444,11 @@ object Result {
         shared.section("ExpandedGrammar", false)(
           expandedGrammarNTs("NTs - Initial", eg.initialNTGroups),
           shared.verticalSpace,
-          expandedGrammarNTs("NTs - DeDuplicated", eg.deDuplicatedNTGroups),
+          expandedGrammarNTs("NTs - DeDuplicated", eg.deDuplicatedNTGroups, false),
         )
 
-      private def expandedGrammarNTs(label: String, ntgs: List[ExpandedGrammar.NTGroup]): Frag =
-        shared.section(label, false)(
+      private def expandedGrammarNTs(label: String, ntgs: List[ExpandedGrammar.NTGroup], startsHidden: Boolean = true): Frag =
+        shared.section(label, startsHidden)(
           shared.makeTable(
             "Stat" -> 150,
             "Value" -> 150,
