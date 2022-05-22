@@ -112,6 +112,7 @@ object TestMain extends ExecutableApp {
               grammar.liftElements()("Expr")(),
               grammar.liftElements(",")("Expr")(),
             ),
+            ",".optional,
             ")",
           ),
         )("FunctionCall"),

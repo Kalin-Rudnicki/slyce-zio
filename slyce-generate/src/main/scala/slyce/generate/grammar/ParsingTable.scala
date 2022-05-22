@@ -35,9 +35,9 @@ object ParsingTable {
         val ntMap: Map[ExpandedGrammar.Identifier.NonTerminal, NonEmptyList[ExpandedGrammar.Production]] =
           expandedGrammar.deDuplicatedNTGroups.flatMap(_.rawNTs.toList.map(nt => (nt.name, nt.productions))).toMap
 
-        val initialEntries: Set[ExpandedEntry] =
+        val initialEntries: Set[Closure.Entry] =
           Set(
-            ExpandedEntry(
+            Closure.Entry(
               reducesTo = ReducesTo.###,
               seen = Nil,
               waiting = ExpandedGrammar.Identifier.NonTerminal.NamedNt(expandedGrammar.startNt.value) :: Nil,
@@ -45,7 +45,33 @@ object ParsingTable {
             ),
           )
 
-        val expanded: Set[ExpandedEntry] = expandEntries(ntMap, initialEntries)
+        val closure: Closure = expandEntries(ntMap, initialEntries)
+
+        val allClosures: List[(Closure, Int)] =
+          Helpers.findAll(Set(closure)) { c => calcAdvanceMap(ntMap, c).values.toSet }.toList.zipWithIndex
+
+        val closureIdMap: Map[Closure, Int] = allClosures.toMap
+
+        allClosures.foreach { (closure, id) =>
+          val advMap = calcAdvanceMap(ntMap, closure)
+          debugging.showEntries(id.toString, closure.entries)
+          advMap.foreach { (id, to) => println(s"  >> $id -> ${closureIdMap(to)}") }
+        }
+
+        println()
+        println()
+        println(s"Start state: ${closureIdMap(closure)}")
+
+        println()
+        println()
+        allClosures.foreach { (c: Closure, i) => // TODO (KR) :
+          c.entries.groupBy(e => e.reducesTo).foreach { (k, v) =>
+            if (v.size > 1) {
+              println(s"  >> Closure#$i : $k <- ${v.size}")
+              v.foreach { e => println(s"    >> ${e.lookAhead.mkString("  ")}") }
+            }
+          }
+        }
 
         // TODO (KR) :
         Validated.???
@@ -53,19 +79,27 @@ object ParsingTable {
 
     // =====| Types |=====
 
-    private final case class ExpandedEntry(
-        reducesTo: ReducesTo,
-        seen: List[ExpandedGrammar.Identifier],
-        waiting: List[ExpandedGrammar.Identifier],
-        lookAhead: List[Follow],
-    )
+    private final case class Closure(entries: Set[Closure.Entry])
+    private object Closure {
+
+      final case class Entry(
+          reducesTo: ReducesTo,
+          seen: List[ExpandedGrammar.Identifier],
+          waiting: List[ExpandedGrammar.Identifier],
+          lookAhead: List[Follow],
+      )
+
+    }
 
     private final case class Follow(
         validTerminals: Set[ExpandedGrammar.Identifier.Term],
         eofIsValid: Boolean,
     ) {
       override def toString: String =
-        (validTerminals.map(_.toString).toList.sorted ::: Option.when(eofIsValid)("$".cyan.toString).toList).mkString("Follow< ", ", ", " >")
+        (validTerminals.map(_.toString).toList.sorted ::: Option.when(eofIsValid)("$".cyan.toString).toList)
+          .mkString("Follow< ", ", ", " >")
+          .magentaBg
+          .toString
     }
 
     private enum ReducesTo {
@@ -85,7 +119,7 @@ object ParsingTable {
     // TODO (KR) : Remove
     private object debugging {
 
-      def showEntries(label: String, entries: Set[ExpandedEntry]): Unit = {
+      def showEntries(label: String, entries: Set[Closure.Entry]): Unit = {
         println()
         println()
         println()
@@ -95,7 +129,7 @@ object ParsingTable {
             .sortBy(_.toString)
             .map { e =>
               IndentedString.inline(
-                s">> ${e.reducesTo}",
+                s">> ${e.reducesTo}${if (e.waiting.isEmpty) " (Reduce)".red.whiteBg else ""}",
                 IndentedString.indented(
                   s"     seen[${e.seen.size}]: ${e.seen.mkString(" , ".red.toString)}",
                   s"  waiting[${e.waiting.size}]: ${e.waiting.mkString(" , ".red.toString)}",
@@ -177,11 +211,12 @@ object ParsingTable {
 
     private def expandEntries(
         ntMap: Map[ExpandedGrammar.Identifier.NonTerminal, NonEmptyList[ExpandedGrammar.Production]],
-        initial: Set[ExpandedEntry],
-    ): Set[ExpandedEntry] = {
-      val preJoinedExpansion: Set[ExpandedEntry] =
+        initial: Set[Closure.Entry],
+        debugOutput: Boolean = false, // TODO (KR) : Remove
+    ): Closure = {
+      val preJoinedExpansion: Set[Closure.Entry] =
         Helpers.findAll(initial) {
-          case ExpandedEntry(rt, seen, (next: ExpandedGrammar.Identifier.NonTerminal) :: waiting, lookAhead) =>
+          case Closure.Entry(rt, seen, (next: ExpandedGrammar.Identifier.NonTerminal) :: waiting, lookAhead) =>
             val lookup: NonEmptyList[ExpandedGrammar.Production] = ntMap(next)
 
             val newIds: List[(ReducesTo, Int, ExpandedGrammar.Identifier)] =
@@ -191,7 +226,7 @@ object ParsingTable {
               calcLookAhead(ntMap, newIds, Set.empty, lookAhead, MaxLookAhead)
 
             lookup.toList.zipWithIndex.map { (prod, idx) =>
-              ExpandedEntry(
+              Closure.Entry(
                 reducesTo = ReducesTo.Production(next, idx),
                 seen = Nil,
                 waiting = prod.elements,
@@ -202,17 +237,28 @@ object ParsingTable {
             Set.empty
         }
 
-      val joinedExpansion: Set[ExpandedEntry] =
+      val joinedExpansion: Set[Closure.Entry] =
         preJoinedExpansion.groupMap(e => (e.reducesTo, e.seen, e.waiting))(_.lookAhead).toSet.map { case ((rt, seen, waiting), follows) =>
-          ExpandedEntry(rt, seen, waiting, mergeFollows(follows.toList))
+          Closure.Entry(rt, seen, waiting, mergeFollows(follows.toList))
         }
 
-      debugging.showEntries("initial", initial)
-      debugging.showEntries("preJoinedExpansion", preJoinedExpansion)
-      debugging.showEntries("joinedExpansion", joinedExpansion)
+      if (debugOutput) {
+        debugging.showEntries("initial", initial)
+        debugging.showEntries("preJoinedExpansion", preJoinedExpansion)
+        debugging.showEntries("joinedExpansion", joinedExpansion)
+      }
 
-      joinedExpansion
+      Closure(joinedExpansion)
     }
+
+    private def calcAdvanceMap(
+        ntMap: Map[ExpandedGrammar.Identifier.NonTerminal, NonEmptyList[ExpandedGrammar.Production]],
+        closure: Closure,
+    ): Map[ExpandedGrammar.Identifier, Closure] =
+      closure.entries
+        .collect { case Closure.Entry(rt, seen, next :: stillWaiting, lookAhead) => (next, Closure.Entry(rt, seen :+ next, stillWaiting, lookAhead)) }
+        .groupMap(_._1)(_._2)
+        .map { (id, entries) => (id, expandEntries(ntMap, entries)) }
 
   }
 }
