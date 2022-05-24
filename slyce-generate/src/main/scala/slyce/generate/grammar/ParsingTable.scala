@@ -18,7 +18,7 @@ final case class ParsingTable private (
 object ParsingTable {
 
   // TODO (KR) : Make configurable
-  val MaxLookAhead: Int = 1
+  val MaxLookAhead: Int = 2
 
   object fromExpandedGrammar {
 
@@ -81,18 +81,19 @@ object ParsingTable {
           }
         }
 
-        allClosures.parTraverse { (c, _) =>
-          calcActionState(productionsForNT, c)
-        } match {
-          case Right(res) =>
+        allClosures
+          .parTraverse { (c, _) =>
+            calcActionState(productionsForNT, c)
+          }
+          .flatMap { res =>
             println("Success")
             println(s"Total unique closures: ${allClosures.size}")
             println(s"Total unique action-states: ${res.toList.toSet.size}")
-          case Left(fails) => fails.toList.foreach(println(_))
-        }
 
-        // TODO (KR) :
-        Validated.???
+            // TODO (KR) :
+            Validated.???
+          }
+
       }
 
     // =====| Types |=====
@@ -347,7 +348,7 @@ object ParsingTable {
         terminalTransitionMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
       ) = calcSplitTransitionMaps(productionsForNT, closure)
 
-      calcTerminalActions(terminalTransitionMap, closure.finishedEntries)
+      calcTerminalActions(terminalTransitionMap, closure.finishedEntries, Nil)
         .map(ActionState(ntTransitionMap, _))
     }
 
@@ -391,6 +392,7 @@ object ParsingTable {
     private def calcTerminalActions(
         terminalTransitionMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
         finishedEntries: Set[Closure.Entry.Finished], // NOTE : These have their 'follow' already adjusted
+        rFollowedPath: List[ExpandedGrammar.Identifier.Term],
     ): Validated[ActionState.Action.LookAhead] = {
       val (
         fesWithoutLookAhead: Set[Closure.Entry.Finished],
@@ -403,8 +405,14 @@ object ParsingTable {
           }
         }
 
-      if (fesWithoutLookAhead.nonEmpty) Marked(s"No more look-ahead to use, consider increasing max-look-ahead: ${fesWithoutLookAhead.map(_.reducesTo).mkString(", ")}", Span.Unknown).leftNel
-      else if (fesWithLookAhead.isEmpty) {
+      if (fesWithoutLookAhead.nonEmpty) {
+        val fpStr = rFollowedPath.reverse.mkString(", ")
+        val conflictsStr = fesWithoutLookAhead.map(fe => s"\n    - ${fe.reducesTo}[${fe.seen.size}] : ${fe.seen.mkString("  ")}").mkString
+        Marked(
+          s"No more look-ahead to use, consider increasing max-look-ahead.\n  Path followed: $fpStr\n  Conflicts:$conflictsStr",
+          Span.Unknown,
+        ).leftNel
+      } else if (fesWithLookAhead.isEmpty) {
         val actionsOnTerminals = terminalTransitionMap.map { case (t, (c, _)) => (t, ActionState.Action.Push(c)) }
         ActionState.Action.LookAhead(actionsOnTerminals, None).asRight
       } else {
@@ -439,10 +447,10 @@ object ParsingTable {
                     case prod: ReducesTo.Production => (t, ActionState.Action.Reduce(Closure.Production(prod, fe.seen))).asRight
                     case ReducesTo.###              => Marked("I don't think this should be possible... (reduce to ###)", Span.Unknown).leftNel
                   }
-                case (fes, None) => calcTerminalActions(Map.empty, fes.toSet).map((t, _))
+                case (fes, None) => calcTerminalActions(Map.empty, fes.toSet, t :: rFollowedPath).map((t, _))
                 case (fes, Some((c, cfs))) =>
                   cfs.toNel match {
-                    case Some(NonEmptyList(head, tail)) => calcTerminalActions(head.validTerminals.toList.map((_, (c, tail))).toMap, fes.toSet).map((t, _))
+                    case Some(NonEmptyList(head, tail)) => calcTerminalActions(head.validTerminals.toList.map((_, (c, tail))).toMap, fes.toSet, t :: rFollowedPath).map((t, _))
                     case None                           => Marked(s"No more look-ahead for: $c", Span.Unknown).leftNel
                   }
               }

@@ -17,7 +17,15 @@ object TestMain extends ExecutableApp {
       name: String,
       lexerInput: LexerInput,
       grammarInput: GrammarInput,
-  ): (String, Executable) =
+  ): (String, Executable) = {
+    def logErrors(label: String, validated: Validated[Any]): URIO[Logger, Unit] =
+      validated match {
+        case Right(_) => ZIO.unit
+        case Left(value) =>
+          Logger.println.error(s"Found ${value.size} errors for '$label'") *>
+            Logger.withIndent(1)(ZIO.foreachDiscard(value.toList)(e => Logger.println.error(e.value)))
+      }
+
     (
       name,
       Executable
@@ -26,14 +34,21 @@ object TestMain extends ExecutableApp {
         .withExecute { _ =>
           for {
             _ <- Logger.println.info(s"=====| TestMain : $name |=====")
+
             result = Result.build(lexerInput, grammarInput)
             resultFrag = Result.resultToHTML(result)
             resultString = resultFrag.render
+
             outputFile <- File.fromPath("target/test-output.html")
             _ <- outputFile.writeString(resultString)
+
+            _ <- logErrors("NFA", result.nfa)
+            _ <- logErrors("DFA", result.dfa)
+            _ <- logErrors("ParsingTable", result.parsingTable)
           } yield ()
         },
     )
+  }
 
   private val calc: (String, Executable) =
     makeExe(
@@ -112,7 +127,7 @@ object TestMain extends ExecutableApp {
               grammar.liftElements()("Expr")(),
               grammar.liftElements(",")("Expr")(),
             ),
-            ",".optional,
+            // ",".optional,
             ")",
           ),
         )("FunctionCall"),
@@ -162,10 +177,50 @@ object TestMain extends ExecutableApp {
       ),
     )
 
+  private val causeConflict: (String, Executable) =
+    makeExe(
+      "cause-conflict",
+      lexerInput = lexer("General")(
+        lexer.mode("General")(
+          lexer.mode.line(
+            Regex.Sequence(
+              Regex.CharClass.`[a-z]`,
+              Regex.CharClass.`[A-Za-z_\\d]`.anyAmount,
+            ),
+          )(Yields.Yield.Terminal("variable")),
+          lexer.mode.line(Regex.CharClass.inclusive('{', '}', ':', ','))(Yields.Yield.Text()),
+        ),
+      ),
+      grammarInput = grammar("Base")(
+        grammar.nt.`:`(
+          grammar.elements(
+            "{",
+            grammar.nt.*(
+              grammar.liftElements()("variable")(),
+              grammar.liftElements(",")("variable")(),
+            ),
+            "}",
+          ),
+          grammar.elements(
+            "{",
+            grammar.nt.*(
+              grammar.liftElements()("NamedArg")(),
+              grammar.liftElements(",")("NamedArg")(),
+            ),
+            "}",
+          ),
+        )("Base"),
+        grammar.nt.`:`(
+          grammar.elements("variable", ":", "variable"),
+        )("NamedArg"),
+      ),
+    )
+
   override val executable: Executable =
     Executable.fromSubCommands(
       calc,
       simpleExpr,
+      causeConflict,
     )
 
 }
