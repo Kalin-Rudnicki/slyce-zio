@@ -10,6 +10,7 @@ import scala.annotation.tailrec
 
 import slyce.core.*
 import slyce.generate.*
+import slyce.generate.grammar.ExpandedGrammar.Identifier
 
 final case class ParsingTable private (
     // TODO (KR) :
@@ -17,22 +18,16 @@ final case class ParsingTable private (
 object ParsingTable {
 
   // TODO (KR) : Make configurable
-  val MaxLookAhead: Int = 2
+  val MaxLookAhead: Int = 1
 
   object fromExpandedGrammar {
 
-    /*
-       What do we want here?
-       Effectively something along the lines of a List[State].
-       What is a State?
-       Map[Input, Action].
-     */
-
+    // TODO (KR) : Remove all 'println'
     def apply(expandedGrammar: ExpandedGrammar): Validated[ParsingTable] =
       Validated.withValidations(
         validateDefinedNTs(expandedGrammar.startNt, expandedGrammar.deDuplicatedNTGroups),
       ) {
-        val ntMap: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]] =
+        val productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]] =
           expandedGrammar.deDuplicatedNTGroups.flatMap {
             _.rawNTs.toList.map { nt =>
               (
@@ -44,37 +39,36 @@ object ParsingTable {
             }
           }.toMap
 
-        val initialEntries: Set[Closure.Entry] =
-          Set(
-            Closure.Entry(
-              reducesTo = ReducesTo.###,
-              seen = Nil,
-              waiting = ExpandedGrammar.Identifier.NonTerminal.NamedNt(expandedGrammar.startNt.value) :: Nil,
-              lookAhead = Follow(Set.empty, true) :: Nil,
-            ),
+        val initialEntry: Closure.Entry =
+          Closure.Entry(
+            reducesTo = ReducesTo.###,
+            seen = Nil,
+            waiting = ExpandedGrammar.Identifier.NonTerminal.NamedNt(expandedGrammar.startNt.value) :: Nil,
+            lookAhead = Follow(Set.empty, true) :: Nil,
           )
 
-        val closure: Closure = expandEntries(ntMap, initialEntries)
+        val initialClosure: Closure = expandEntries(productionsForNT, Set(initialEntry))
 
         val allClosures: List[(Closure, Int)] =
-          Helpers.findAll(Set(closure)) { c => calcAdvanceMap(ntMap, c).values.toSet }.toList.zipWithIndex
+          Helpers.findAll(Set(initialClosure)) { c => calcTransitionMap(productionsForNT, c).values.toSet }.toList.zipWithIndex
 
         val closureIdMap: Map[Closure, Int] = allClosures.toMap
 
         allClosures.foreach { (closure, id) =>
-          val advMap = calcAdvanceMap(ntMap, closure)
-          val advOnTerms: Set[ExpandedGrammar.Identifier.Term] = advMap.keySet.collect { case t: ExpandedGrammar.Identifier.Term => t }
-          val finishedFollows: Set[Follow] = closure.entries.collect(Closure.Entry.toFinished).map(_.lookAhead.head)
-          val conflicts = advOnTerms & finishedFollows.flatMap(_.validTerminals)
-          debugging.showEntries(id.toString, closure.entries, Closure.Entry.toFinished)
-          advMap.foreach { (id, to) => println(s"  >> $id -> ${closureIdMap(to)}") }
+          val transitionMap = calcTransitionMap(productionsForNT, closure)
+          val terminalsWithTransitions: Set[ExpandedGrammar.Identifier.Term] = transitionMap.keySet.collect { case t: ExpandedGrammar.Identifier.Term => t }
+          val headFollowsForFinishedEntries: Set[Follow] = closure.finishedEntries.map(_.lookAhead.head)
+          // TODO (KR) : Accurate?
+          val conflicts = terminalsWithTransitions & headFollowsForFinishedEntries.flatMap(_.validTerminals)
+          debugging.showEntries(id.toString, closure.entries)
+          transitionMap.foreach { (id, to) => println(s"  >> $id -> ${closureIdMap(to)}") }
           conflicts.toList.sortBy(_.toString).foreach { t => println(s"      >>>> Shift/Reduce conflict : $t".redBg) }
           if (conflicts.nonEmpty) java.lang.System.exit(0)
         }
 
         println()
         println()
-        println(s"Start state: ${closureIdMap(closure)}")
+        println(s"Start state: ${closureIdMap(initialClosure)}")
 
         println()
         println()
@@ -88,12 +82,12 @@ object ParsingTable {
         }
 
         allClosures.parTraverse { (c, _) =>
-          calcActionState(ntMap, c)
+          calcActionState(productionsForNT, c)
         } match {
           case Right(res) =>
             println("Success")
             println(s"Total unique closures: ${allClosures.size}")
-            println(s"Total unique action-states: ${res.size}")
+            println(s"Total unique action-states: ${res.toList.toSet.size}")
           case Left(fails) => fails.toList.foreach(println(_))
         }
 
@@ -104,14 +98,17 @@ object ParsingTable {
     // =====| Types |=====
 
     private final case class Closure(entries: Set[Closure.Entry]) {
-      lazy val (finished: Set[Closure.Entry.Finished], waiting: Set[Closure.Entry.Waiting]) = entries.partitionMap(Closure.Entry.toEither)
+      lazy val (finishedEntries: Set[Closure.Entry.Finished], unfinishedEntries: Set[Closure.Entry.Waiting]) =
+        entries.partitionMap {
+          case e: Closure.Entry.Finished => e.asLeft
+          case e: Closure.Entry.Waiting  => e.asRight
+        }
     }
     private object Closure {
 
-      // TODO (KR) : Consolidate types?
       final case class Production(
           reducesTo: ReducesTo.Production,
-          ids: List[ExpandedGrammar.Identifier],
+          producesIds: List[ExpandedGrammar.Identifier],
       )
 
       // TODO (KR) : I would like for this to be cleaned up a bit
@@ -146,15 +143,6 @@ object ParsingTable {
             case None          => Entry.Finished(reducesTo, seen, lookAhead)
           }
 
-        val toEither: Entry => Either[Entry.Finished, Entry.Waiting] = {
-          case e: Entry.Finished => e.asLeft
-          case e: Entry.Waiting  => e.asRight
-        }
-
-        val toFinished: PartialFunction[Entry, Entry.Finished] = { case e: Entry.Finished => e }
-
-        val toWaiting: PartialFunction[Entry, Entry.Waiting] = { case e: Entry.Waiting => e }
-
       }
 
     }
@@ -183,7 +171,7 @@ object ParsingTable {
     }
 
     private final case class ActionState(
-        ntTransitions: Map[ExpandedGrammar.Identifier.NonTerminal, ActionState.Action.Push],
+        actionsOnNonTerminals: Map[ExpandedGrammar.Identifier.NonTerminal, ActionState.Action.Push],
         lookAhead: ActionState.Action.LookAhead,
     )
     private object ActionState {
@@ -202,8 +190,8 @@ object ParsingTable {
         final case class Reduce(production: Closure.Production) extends Action.EOFAction
         final case class Push(to: Closure) extends Action
         final case class LookAhead(
-            tTransitions: Map[ExpandedGrammar.Identifier.Term, Action],
-            eofTransition: Option[Action.EOFAction],
+            actionsOnTerminals: Map[ExpandedGrammar.Identifier.Term, Action],
+            actionOnEOF: Option[Action.EOFAction],
         ) extends Action
       }
 
@@ -278,7 +266,7 @@ object ParsingTable {
       }
 
     private def calcLookAhead(
-        ntMap: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
+        productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         ids: List[(ReducesTo, Int, ExpandedGrammar.Identifier)],
         alreadyExpanded: Set[(ReducesTo, Int)],
         ifPassThrough: List[Follow],
@@ -295,140 +283,143 @@ object ParsingTable {
                 else {
                   val newExpanded: Set[(ReducesTo, Int)] = alreadyExpanded + (rt -> sc)
                   val inlined: List[List[(ReducesTo, Int, ExpandedGrammar.Identifier)]] = {
-                    ntMap(nt).map { case Closure.Production(rt, waiting) =>
+                    productionsForNT(nt).map { case Closure.Production(rt, waiting) =>
                       waiting.zipWithIndex.map { (i, idx) => (rt, idx, i) }
                     }
                   }
-                  mergeFollows(inlined.map(ids => calcLookAhead(ntMap, ids ::: tail, newExpanded, ifPassThrough, maxLookAhead)))
+                  mergeFollows(inlined.map(ids => calcLookAhead(productionsForNT, ids ::: tail, newExpanded, ifPassThrough, maxLookAhead)))
                 }
               case t: ExpandedGrammar.Identifier.Term =>
-                Follow(Set(t), false) :: calcLookAhead(ntMap, tail, Set.empty, ifPassThrough, maxLookAhead - 1)
+                Follow(Set(t), false) :: calcLookAhead(productionsForNT, tail, Set.empty, ifPassThrough, maxLookAhead - 1)
             }
         }
 
     private def expandEntries(
-        ntMap: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
+        productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         initial: Set[Closure.Entry],
     ): Closure = {
       val preJoinedExpansion: Set[Closure.Entry] =
         Helpers.findAll(initial) {
           case Closure.Entry.Waiting(rt, seen, NonEmptyList(next: ExpandedGrammar.Identifier.NonTerminal, waiting), lookAhead) =>
-            val lookup: List[Closure.Production] = ntMap(next)
+            val lookup: List[Closure.Production] = productionsForNT(next)
 
             val newIds: List[(ReducesTo, Int, ExpandedGrammar.Identifier)] =
               waiting.zipWithIndex.map { (id, idx) => (rt, seen.size + 1 + idx, id) }
 
             val newFollows: List[Follow] =
-              calcLookAhead(ntMap, newIds, Set.empty, lookAhead, MaxLookAhead)
+              calcLookAhead(productionsForNT, newIds, Set.empty, lookAhead, MaxLookAhead)
 
             lookup.map { case Closure.Production(prod, waiting) =>
-              Closure.Entry(
-                reducesTo = prod,
-                seen = Nil,
-                waiting = waiting,
-                lookAhead = newFollows,
-              )
+              Closure.Entry(prod, Nil, waiting, newFollows)
             }.toSet
           case _ =>
             Set.empty
         }
 
       val joinedExpansion: Set[Closure.Entry] =
-        preJoinedExpansion.groupMap(e => (e.reducesTo, e.seen, e.waitingList))(_.lookAhead).toSet.map { case ((rt, seen, waiting), follows) =>
-          Closure.Entry(rt, seen, waiting, mergeFollows(follows.toList))
-        }
+        preJoinedExpansion
+          .groupMap(e => (e.reducesTo, e.seen, e.waitingList))(_.lookAhead)
+          .toSet
+          .map { case ((rt, seen, waiting), follows) =>
+            Closure.Entry(rt, seen, waiting, mergeFollows(follows.toList))
+          }
 
       Closure(joinedExpansion)
     }
 
-    private def calcAdvanceMap(
-        ntMap: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
+    private def calcTransitionMap(
+        productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         closure: Closure,
     ): Map[ExpandedGrammar.Identifier, Closure] =
-      closure.waiting
-        .map { case Closure.Entry.Waiting(rt, seen, NonEmptyList(next, stillWaiting), lookAhead) => (next, Closure.Entry(rt, seen :+ next, stillWaiting, lookAhead)) }
+      closure.unfinishedEntries
+        .map { case Closure.Entry.Waiting(rt, seen, NonEmptyList(next, stillWaiting), lookAhead) =>
+          (next, Closure.Entry(rt, seen :+ next, stillWaiting, lookAhead))
+        }
         .groupMap(_._1)(_._2)
-        .map { (id, entries) => (id, expandEntries(ntMap, entries)) }
+        .map { (id, entries) => (id, expandEntries(productionsForNT, entries)) }
 
     private def calcActionState(
-        ntMap: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
+        productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         closure: Closure,
     ): Validated[ActionState] = {
-      val advMap: Map[ExpandedGrammar.Identifier, Closure] = calcAdvanceMap(ntMap, closure)
       val (
-        ntAdvMap: Map[ExpandedGrammar.Identifier.NonTerminal, ActionState.Action.Push],
-        tAdvMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
-      ) = {
-        val (ntList, tList) = advMap.partitionMap {
-          case (nt: ExpandedGrammar.Identifier.NonTerminal, c) =>
-            (nt, ActionState.Action.Push(c)).asLeft
-          case (t: ExpandedGrammar.Identifier.Term, c) =>
-            (
-              t,
-              (
-                c,
-                // TODO (KR) : I think this might be duplicated elsewhere.
-                //           : If not, this should definitely be split into a separate function.
-                mergeFollows(
-                  c.entries.toList.map { e =>
-                    calcLookAhead(
-                      ntMap,
-                      e.waitingList.zipWithIndex.map { (id, idx) =>
-                        (e.reducesTo, e.seen.size + idx, id)
-                      },
-                      Set.empty,
-                      e.lookAhead,
-                      MaxLookAhead,
-                    )
-                  },
-                ),
-              ),
-            ).asRight
-        }
-        (ntList.toMap, tList.toMap)
-      }
+        ntTransitionMap: Map[ExpandedGrammar.Identifier.NonTerminal, ActionState.Action.Push],
+        terminalTransitionMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
+      ) = calcSplitTransitionMaps(productionsForNT, closure)
 
-      calcTerminalActions(tAdvMap, closure.finished)
-        .map(ActionState(ntAdvMap, _))
+      calcTerminalActions(terminalTransitionMap, closure.finishedEntries)
+        .map(ActionState(ntTransitionMap, _))
     }
 
-    // TODO (KR) : Make some types for these arguments, seems too hacky...
-    //           : tAdvMap might also need a param for EOF?
-    //           : I really don't like this function, and it doesn't seem right...
+    private def calcSplitTransitionMaps(
+        productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
+        closure: Closure,
+    ): (
+        Map[ExpandedGrammar.Identifier.NonTerminal, ActionState.Action.Push],
+        Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
+    ) = {
+      val (ntList, tList) =
+        calcTransitionMap(productionsForNT, closure).partitionMap {
+          case (nt: ExpandedGrammar.Identifier.NonTerminal, c) => (nt, ActionState.Action.Push(c)).asLeft
+          case (t: ExpandedGrammar.Identifier.Term, c)         => (t, (c, calcFollowsForClosure(productionsForNT, c))).asRight
+        }
+
+      (ntList.toMap, tList.toMap)
+    }
+
+    private def calcFollowsForClosure(
+        productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
+        c: Closure,
+    ): List[Follow] =
+      mergeFollows(
+        c.entries.toList.map { e =>
+          calcLookAhead(
+            productionsForNT,
+            e.waitingList.zipWithIndex.map { (id, idx) =>
+              (e.reducesTo, e.seen.size + idx, id)
+            },
+            Set.empty,
+            e.lookAhead,
+            MaxLookAhead,
+          )
+        },
+      )
+
+    // TODO (KR) : It might make sense to create separate types for '(Closure, List[Follow])' and/or 'Set[Closure.Entry.Finished]'.
+    //           : The reason for this is that both have to do with advancing the 'follows',
+    //           : and the way that it is re-using types just does not seem very clear or straight-forward.
     private def calcTerminalActions(
-        tAdvMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
-        finished: Set[Closure.Entry.Finished], // NOTE : These have their 'follow' already adjusted
+        terminalTransitionMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
+        finishedEntries: Set[Closure.Entry.Finished], // NOTE : These have their 'follow' already adjusted
     ): Validated[ActionState.Action.LookAhead] = {
-      val (withoutLookAhead: Set[Closure.Entry.Finished], withLookAhead: Set[(Follow, Closure.Entry.Finished)]) =
-        finished.partitionMap { e =>
+      val (
+        fesWithoutLookAhead: Set[Closure.Entry.Finished],
+        fesWithLookAhead: Set[(Follow, Closure.Entry.Finished)],
+      ) =
+        finishedEntries.partitionMap { e =>
           e.lookAhead.toNel match {
             case Some(NonEmptyList(head, tail)) => (head, Closure.Entry.Finished(e.reducesTo, e.seen, tail)).asRight
             case None                           => e.asLeft
           }
         }
 
-      if (withoutLookAhead.nonEmpty) // TODO (KR) : Clean up error message
-        Marked(s"No more look-ahead to use, consider increasing max-look-ahead: ${withoutLookAhead.map(_.reducesTo).mkString(", ")}", Span.Unknown).leftNel
-      else if (withLookAhead.isEmpty)
-        ActionState.Action
-          .LookAhead(
-            tAdvMap.map { case (t, (c, _)) => (t, ActionState.Action.Push(c)) },
-            None,
-          )
-          .asRight
-      else {
-        val groupedTerms: Map[ExpandedGrammar.Identifier.Term, Set[Closure.Entry.Finished]] =
-          withLookAhead
+      if (fesWithoutLookAhead.nonEmpty) Marked(s"No more look-ahead to use, consider increasing max-look-ahead: ${fesWithoutLookAhead.map(_.reducesTo).mkString(", ")}", Span.Unknown).leftNel
+      else if (fesWithLookAhead.isEmpty) {
+        val actionsOnTerminals = terminalTransitionMap.map { case (t, (c, _)) => (t, ActionState.Action.Push(c)) }
+        ActionState.Action.LookAhead(actionsOnTerminals, None).asRight
+      } else {
+        val fesWithTransitionOnTerminal: Map[ExpandedGrammar.Identifier.Term, Set[Closure.Entry.Finished]] =
+          fesWithLookAhead
             .flatMap { (follow, finished) =>
               follow.validTerminals.toList.map((_, finished))
             }
             .groupMap(_._1)(_._2)
 
-        val groupedEOFs: Set[Closure.Entry.Finished] =
-          withLookAhead.collect { case (Follow(_, true), finish) => finish }
+        val fesWithEOFLookAhead: Set[Closure.Entry.Finished] =
+          fesWithLookAhead.collect { case (Follow(_, true), finish) => finish }
 
-        val eofAction: Validated[Option[ActionState.Action.EOFAction]] =
-          groupedEOFs.toList match {
+        val actionOnEOF: Validated[Option[ActionState.Action.EOFAction]] =
+          fesWithEOFLookAhead.toList match {
             case Nil => None.asRight
             case value :: Nil =>
               value.reducesTo match {
@@ -438,33 +429,36 @@ object ParsingTable {
             case values => Marked(s"Multiple EOF actions: ${values.map(_.reducesTo).mkString(", ")}", Span.Unknown).leftNel
           }
 
-        val tTransitions: Validated[Map[ExpandedGrammar.Identifier.Term, ActionState.Action]] =
-          groupedTerms.toList
-            .parTraverse { (t, fs) =>
-              (fs.toList, tAdvMap.get(t)) match {
+        val partialActionsOnTerminals1: Validated[Map[ExpandedGrammar.Identifier.Term, ActionState.Action]] =
+          fesWithTransitionOnTerminal.toList
+            .parTraverse { (t, fes) =>
+              (fes.toList, terminalTransitionMap.get(t)) match {
                 case (Nil, Some((c, _))) => (t, ActionState.Action.Push(c)).asRight
-                case (f :: Nil, None) =>
-                  f.reducesTo match {
-                    case prod: ReducesTo.Production => (t, ActionState.Action.Reduce(Closure.Production(prod, f.seen))).asRight
+                case (fe :: Nil, None) =>
+                  fe.reducesTo match {
+                    case prod: ReducesTo.Production => (t, ActionState.Action.Reduce(Closure.Production(prod, fe.seen))).asRight
                     case ReducesTo.###              => Marked("I don't think this should be possible... (reduce to ###)", Span.Unknown).leftNel
                   }
-                case (fs, None) => calcTerminalActions(Map.empty, fs.toSet).map((t, _))
-                case (fs, Some((c, cf))) =>
-                  cf.toNel match {
-                    case Some(NonEmptyList(head, tail)) => calcTerminalActions(head.validTerminals.toList.map((_, (c, tail))).toMap, fs.toSet).map((t, _))
+                case (fes, None) => calcTerminalActions(Map.empty, fes.toSet).map((t, _))
+                case (fes, Some((c, cfs))) =>
+                  cfs.toNel match {
+                    case Some(NonEmptyList(head, tail)) => calcTerminalActions(head.validTerminals.toList.map((_, (c, tail))).toMap, fes.toSet).map((t, _))
                     case None                           => Marked(s"No more look-ahead for: $c", Span.Unknown).leftNel
                   }
               }
             }
             .map(_.toMap)
 
-        val used = withLookAhead.flatMap(_._1.validTerminals)
+        (partialActionsOnTerminals1, actionOnEOF).parMapN { (partialActionsOnTerminals1, actionOnEOF) =>
+          val terminalsReferencedByFinishedEntries: Set[Identifier.Term] = fesWithLookAhead.flatMap(_._1.validTerminals)
 
-        val tmp: Map[ExpandedGrammar.Identifier.Term, ActionState.Action] =
-          tAdvMap.filterNot { (t, _) => used.contains(t) }.map { case (t, (c, _)) => (t, ActionState.Action.Push(c)) }
+          // Any terminals referenced in the look-ahead of 'fesWithLookAhead' would end up in 'partialActionsOnTerminals1'
+          val partialActionsOnTerminals2: Map[ExpandedGrammar.Identifier.Term, ActionState.Action] =
+            terminalTransitionMap
+              .filterNot { (t, _) => terminalsReferencedByFinishedEntries.contains(t) }
+              .map { case (t, (c, _)) => (t, ActionState.Action.Push(c)) }
 
-        (tTransitions, eofAction).parMapN { (tTransitions, eofAction) =>
-          ActionState.Action.LookAhead(tTransitions ++ tmp, eofAction)
+          ActionState.Action.LookAhead(partialActionsOnTerminals1 ++ partialActionsOnTerminals2, actionOnEOF)
         }
       }
     }
