@@ -17,9 +17,6 @@ final case class ParsingTable private (
 )
 object ParsingTable {
 
-  // TODO (KR) : Make configurable
-  val MaxLookAhead: Int = 2
-
   final case class ParseState(
       id: Int,
       actionsOnNonTerminals: Map[ExpandedGrammar.Identifier.NonTerminal, ParseState.Action.Push],
@@ -47,6 +44,7 @@ object ParsingTable {
     def apply(expandedGrammar: ExpandedGrammar): Validated[ParsingTable] =
       Validated.withValidations(
         validateDefinedNTs(expandedGrammar.startNt, expandedGrammar.deDuplicatedNTGroups),
+        validateMaxLookAhead(expandedGrammar.maxLookAhead),
       ) {
         val productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]] =
           expandedGrammar.deDuplicatedNTGroups.flatMap {
@@ -68,12 +66,12 @@ object ParsingTable {
             lookAhead = Follow(Set.empty, true) :: Nil,
           )
 
-        val initialClosure: Closure = expandEntries(productionsForNT, Set(initialEntry))
+        val initialClosure: Closure = expandEntries(productionsForNT, Set(initialEntry), expandedGrammar.maxLookAhead.value)
 
         val allClosures: List[Closure] =
-          Helpers.findAll(Set(initialClosure)) { c => calcTransitionMap(productionsForNT, c).values.toSet }.toList
+          Helpers.findAll(Set(initialClosure)) { c => calcTransitionMap(productionsForNT, c, expandedGrammar.maxLookAhead.value).values.toSet }.toList
 
-        allClosures.parTraverse { c => calcActionState(productionsForNT, c).map((c, _)) }.map { pairs =>
+        allClosures.parTraverse { c => calcActionState(productionsForNT, c, expandedGrammar.maxLookAhead.value).map((c, _)) }.map { pairs =>
           val closureToActionState: Map[Closure, TmpActionState] = pairs.toMap
 
           val initialState: TmpActionState = closureToActionState(initialClosure)
@@ -189,7 +187,7 @@ object ParsingTable {
 
     // =====| Helpers |=====
 
-    private def validateDefinedNTs(startName: Marked[String], ntgs: List[ExpandedGrammar.NTGroup]): Validated[Any] = {
+    private def validateDefinedNTs(startName: Marked[String], ntgs: List[ExpandedGrammar.NTGroup]): Validated[Unit] = {
       val allDefinedNTNames: List[ExpandedGrammar.Identifier.NonTerminal] =
         ntgs.flatMap(_.rawNTs.toList).map(_.name)
       val allReferencedNTs: Set[ExpandedGrammar.Identifier.NonTerminal] =
@@ -215,6 +213,10 @@ object ParsingTable {
         else startName.as(s"StartMode references undefined NT: ${startName.value}").leftNel,
       ) { ().asRight }
     }
+
+    private def validateMaxLookAhead(maxLookAhead: Marked[Int]): Validated[Unit] =
+      if (maxLookAhead.value >= 1) ().asRight
+      else maxLookAhead.as("max look ahead must be >= 1").leftNel
 
     private def mergeFollows(follows: List[List[Follow]]): List[Follow] =
       follows.flatMap(_.toNel).toNel match {
@@ -258,6 +260,7 @@ object ParsingTable {
     private def expandEntries(
         productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         initial: Set[Closure.Entry],
+        maxLookAhead: Int,
     ): Closure = {
       val preJoinedExpansion: Set[Closure.Entry] =
         Helpers.findAll(initial) {
@@ -268,7 +271,7 @@ object ParsingTable {
               waiting.zipWithIndex.map { (id, idx) => (rt, seen.size + 1 + idx, id) }
 
             val newFollows: List[Follow] =
-              calcLookAhead(productionsForNT, newIds, Set.empty, lookAhead, MaxLookAhead)
+              calcLookAhead(productionsForNT, newIds, Set.empty, lookAhead, maxLookAhead)
 
             lookup.map { case Closure.Production(prod, waiting) =>
               Closure.Entry(prod, Nil, waiting, newFollows)
@@ -291,22 +294,24 @@ object ParsingTable {
     private def calcTransitionMap(
         productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         closure: Closure,
+        maxLookAhead: Int,
     ): Map[ExpandedGrammar.Identifier, Closure] =
       closure.unfinishedEntries
         .map { case Closure.Entry.Waiting(rt, seen, NonEmptyList(next, stillWaiting), lookAhead) =>
           (next, Closure.Entry(rt, seen :+ next, stillWaiting, lookAhead))
         }
         .groupMap(_._1)(_._2)
-        .map { (id, entries) => (id, expandEntries(productionsForNT, entries)) }
+        .map { (id, entries) => (id, expandEntries(productionsForNT, entries, maxLookAhead)) }
 
     private def calcActionState(
         productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         closure: Closure,
+        maxLookAhead: Int,
     ): Validated[TmpActionState] = {
       val (
         ntTransitionMap: Map[ExpandedGrammar.Identifier.NonTerminal, TmpActionState.Action.Push],
         terminalTransitionMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
-      ) = calcSplitTransitionMaps(productionsForNT, closure)
+      ) = calcSplitTransitionMaps(productionsForNT, closure, maxLookAhead)
 
       calcTerminalActions(terminalTransitionMap, closure.finishedEntries, Nil)
         .map(TmpActionState(ntTransitionMap, _))
@@ -315,14 +320,15 @@ object ParsingTable {
     private def calcSplitTransitionMaps(
         productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         closure: Closure,
+        maxLookAhead: Int,
     ): (
         Map[ExpandedGrammar.Identifier.NonTerminal, TmpActionState.Action.Push],
         Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
     ) = {
       val (ntList, tList) =
-        calcTransitionMap(productionsForNT, closure).partitionMap {
+        calcTransitionMap(productionsForNT, closure, maxLookAhead).partitionMap {
           case (nt: ExpandedGrammar.Identifier.NonTerminal, c) => (nt, TmpActionState.Action.Push(c)).asLeft
-          case (t: ExpandedGrammar.Identifier.Term, c)         => (t, (c, calcFollowsForClosure(productionsForNT, c))).asRight
+          case (t: ExpandedGrammar.Identifier.Term, c)         => (t, (c, calcFollowsForClosure(productionsForNT, c, maxLookAhead))).asRight
         }
 
       (ntList.toMap, tList.toMap)
@@ -331,6 +337,7 @@ object ParsingTable {
     private def calcFollowsForClosure(
         productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         c: Closure,
+        maxLookAhead: Int,
     ): List[Follow] =
       mergeFollows(
         c.entries.toList.map { e =>
@@ -341,7 +348,7 @@ object ParsingTable {
             },
             Set.empty,
             e.lookAhead,
-            MaxLookAhead,
+            maxLookAhead,
           )
         },
       )

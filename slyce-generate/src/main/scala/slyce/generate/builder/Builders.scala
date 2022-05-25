@@ -73,12 +73,13 @@ object Builders {
 
   object grammar {
 
-    def apply(startNT: String)(
+    def apply(startNT: String, maxLookAhead: Int = 1)(
         nts: GrammarInput.NamedNonTerminal*,
     ): GrammarInput =
       GrammarInput(
         startNT = startNT.markedUnknown,
         nonTerminals = nts.toList,
+        maxLookAhead = Marked(maxLookAhead, Span.Unknown),
       )
 
     type Elem = String | GrammarInput.Element

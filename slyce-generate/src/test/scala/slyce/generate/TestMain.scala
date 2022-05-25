@@ -83,7 +83,7 @@ object TestMain extends ExecutableApp {
           lexer.mode.line(Regex.CharClass.inclusive(' ', '\t', '\n'))(),
         ),
       ),
-      grammarInput = grammar("Lines")(
+      grammarInput = grammar("Lines", maxLookAhead = 2)(
         grammar.nt.+(
           grammar.liftElements()("Line")(";"),
         )("Lines"),

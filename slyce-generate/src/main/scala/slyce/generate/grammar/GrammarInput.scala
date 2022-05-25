@@ -8,6 +8,7 @@ import slyce.core.*
 final case class GrammarInput(
     startNT: Marked[String],
     nonTerminals: List[GrammarInput.NamedNonTerminal],
+    maxLookAhead: Marked[Int],
 )
 object GrammarInput {
 

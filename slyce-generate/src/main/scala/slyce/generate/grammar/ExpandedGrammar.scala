@@ -12,6 +12,7 @@ import slyce.generate.*
 
 final case class ExpandedGrammar private (
     startNt: Marked[String],
+    maxLookAhead: Marked[Int],
     initialNTGroups: List[ExpandedGrammar.NTGroup],
     deDuplicatedNTGroups: List[ExpandedGrammar.NTGroup],
 )
@@ -94,6 +95,7 @@ object ExpandedGrammar {
         startNt = grammar.startNT,
         initialNTGroups = initialNTGroups,
         deDuplicatedNTGroups = removeDuplicates(initialNTGroups),
+        maxLookAhead = grammar.maxLookAhead,
       )
     }
 
