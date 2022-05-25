@@ -13,16 +13,37 @@ import slyce.generate.*
 import slyce.generate.grammar.ExpandedGrammar.Identifier
 
 final case class ParsingTable private (
-    // TODO (KR) :
+    parseStates: List[ParsingTable.ParseState],
 )
 object ParsingTable {
 
   // TODO (KR) : Make configurable
   val MaxLookAhead: Int = 2
 
+  final case class ParseState(
+      id: Int,
+      actionsOnNonTerminals: Map[ExpandedGrammar.Identifier.NonTerminal, ParseState.Action.Push],
+      lookAhead: ParseState.Action.LookAhead,
+  )
+  object ParseState {
+
+    sealed trait Action
+    object Action {
+      sealed trait EOFAction extends Action
+
+      case object Accept extends EOFAction
+      final case class Reduce(nt: ExpandedGrammar.Identifier.NonTerminal, prodNIdx: Int) extends EOFAction
+      final case class Push(toStateId: Int) extends Action
+      final case class LookAhead( // TODO (KR) : I don't know if I like this name...
+          actionsOnTerminals: Map[ExpandedGrammar.Identifier.Term, Action],
+          actionOnEOF: Option[Action.EOFAction],
+      ) extends Action
+    }
+
+  }
+
   object fromExpandedGrammar {
 
-    // TODO (KR) : Remove all 'println'
     def apply(expandedGrammar: ExpandedGrammar): Validated[ParsingTable] =
       Validated.withValidations(
         validateDefinedNTs(expandedGrammar.startNt, expandedGrammar.deDuplicatedNTGroups),
@@ -49,51 +70,24 @@ object ParsingTable {
 
         val initialClosure: Closure = expandEntries(productionsForNT, Set(initialEntry))
 
-        val allClosures: List[(Closure, Int)] =
-          Helpers.findAll(Set(initialClosure)) { c => calcTransitionMap(productionsForNT, c).values.toSet }.toList.zipWithIndex
+        val allClosures: List[Closure] =
+          Helpers.findAll(Set(initialClosure)) { c => calcTransitionMap(productionsForNT, c).values.toSet }.toList
 
-        val closureIdMap: Map[Closure, Int] = allClosures.toMap
+        allClosures.parTraverse { c => calcActionState(productionsForNT, c).map((c, _)) }.map { pairs =>
+          val closureToActionState: Map[Closure, TmpActionState] = pairs.toMap
 
-        allClosures.foreach { (closure, id) =>
-          val transitionMap = calcTransitionMap(productionsForNT, closure)
-          val terminalsWithTransitions: Set[ExpandedGrammar.Identifier.Term] = transitionMap.keySet.collect { case t: ExpandedGrammar.Identifier.Term => t }
-          val headFollowsForFinishedEntries: Set[Follow] = closure.finishedEntries.map(_.lookAhead.head)
-          // TODO (KR) : Accurate?
-          val conflicts = terminalsWithTransitions & headFollowsForFinishedEntries.flatMap(_.validTerminals)
-          debugging.showEntries(id.toString, closure.entries)
-          transitionMap.foreach { (id, to) => println(s"  >> $id -> ${closureIdMap(to)}") }
-          conflicts.toList.sortBy(_.toString).foreach { t => println(s"      >>>> Shift/Reduce conflict : $t".redBg) }
-          if (conflicts.nonEmpty) java.lang.System.exit(0)
+          val initialState: TmpActionState = closureToActionState(initialClosure)
+          val otherStates: Set[TmpActionState] = closureToActionState.values.toSet - initialState
+
+          val stateList: List[(TmpActionState, Int)] = (initialState :: otherStates.toList).zipWithIndex
+          val actionStateId: Map[TmpActionState, Int] = stateList.toMap
+
+          val closureToStateId: Map[Closure, Int] = closureToActionState.map { (c, as) => (c, actionStateId(as)) }
+
+          val states: List[ParseState] = stateList.map(convertActionState(closureToStateId, _, _))
+
+          ParsingTable(states)
         }
-
-        println()
-        println()
-        println(s"Start state: ${closureIdMap(initialClosure)}")
-
-        println()
-        println()
-        allClosures.foreach { (c: Closure, i) => // TODO (KR) :
-          c.entries.groupBy(e => e.reducesTo).foreach { (k, v) =>
-            if (v.size > 1) {
-              println(s"  >> Closure#$i : $k <- ${v.size}")
-              v.foreach { e => println(s"    >> [${e.seen.size}] ${e.lookAhead.mkString("  ")}") }
-            }
-          }
-        }
-
-        allClosures
-          .parTraverse { (c, _) =>
-            calcActionState(productionsForNT, c)
-          }
-          .flatMap { res =>
-            println("Success")
-            println(s"Total unique closures: ${allClosures.size}")
-            println(s"Total unique action-states: ${res.toList.toSet.size}")
-
-            // TODO (KR) :
-            Validated.???
-          }
-
       }
 
     // =====| Types |=====
@@ -171,17 +165,12 @@ object ParsingTable {
 
     }
 
-    private final case class ActionState(
-        actionsOnNonTerminals: Map[ExpandedGrammar.Identifier.NonTerminal, ActionState.Action.Push],
-        lookAhead: ActionState.Action.LookAhead,
+    // TODO (KR) : Rename this?
+    private final case class TmpActionState(
+        actionsOnNonTerminals: Map[ExpandedGrammar.Identifier.NonTerminal, TmpActionState.Action.Push],
+        lookAhead: TmpActionState.Action.LookAhead,
     )
-    private object ActionState {
-
-      final case class Finished(
-          reducesTo: ReducesTo,
-          ids: List[ExpandedGrammar.Identifier],
-          lookAhead: List[Follow],
-      )
+    private object TmpActionState {
 
       sealed trait Action
       object Action {
@@ -199,35 +188,6 @@ object ParsingTable {
     }
 
     // =====| Helpers |=====
-
-    // TODO (KR) : Remove
-    private object debugging {
-
-      def showEntries(label: String, entries: Set[Closure.Entry], filter: PartialFunction[Closure.Entry, Closure.Entry] = identity(_)): Unit = {
-        val filtered = entries.toList.collect(filter)
-
-        println()
-        println()
-        println()
-        println(s"=====| $label (${filtered.size} / ${entries.size}) |=====")
-        println {
-          filtered
-            .sortBy(_.toString)
-            .map { e =>
-              IndentedString.inline(
-                s">> ${e.reducesTo}${if (e.waitingList.isEmpty) " (Reduce)".red.whiteBg else ""}",
-                IndentedString.indented(
-                  s"     seen[${e.seen.size}]: ${e.seen.mkString(" , ".red.toString)}",
-                  s"  waiting[${e.waitingList.size}]: ${e.waitingList.mkString(" , ".red.toString)}",
-                  s"lookAhead[${e.lookAhead.size}]: ${e.lookAhead.mkString(" , ".red.toString)}",
-                ),
-              )
-            }
-            .toString("  ")
-        }
-      }
-
-    }
 
     private def validateDefinedNTs(startName: Marked[String], ntgs: List[ExpandedGrammar.NTGroup]): Validated[Any] = {
       val allDefinedNTNames: List[ExpandedGrammar.Identifier.NonTerminal] =
@@ -342,26 +302,26 @@ object ParsingTable {
     private def calcActionState(
         productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         closure: Closure,
-    ): Validated[ActionState] = {
+    ): Validated[TmpActionState] = {
       val (
-        ntTransitionMap: Map[ExpandedGrammar.Identifier.NonTerminal, ActionState.Action.Push],
+        ntTransitionMap: Map[ExpandedGrammar.Identifier.NonTerminal, TmpActionState.Action.Push],
         terminalTransitionMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
       ) = calcSplitTransitionMaps(productionsForNT, closure)
 
       calcTerminalActions(terminalTransitionMap, closure.finishedEntries, Nil)
-        .map(ActionState(ntTransitionMap, _))
+        .map(TmpActionState(ntTransitionMap, _))
     }
 
     private def calcSplitTransitionMaps(
         productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         closure: Closure,
     ): (
-        Map[ExpandedGrammar.Identifier.NonTerminal, ActionState.Action.Push],
+        Map[ExpandedGrammar.Identifier.NonTerminal, TmpActionState.Action.Push],
         Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
     ) = {
       val (ntList, tList) =
         calcTransitionMap(productionsForNT, closure).partitionMap {
-          case (nt: ExpandedGrammar.Identifier.NonTerminal, c) => (nt, ActionState.Action.Push(c)).asLeft
+          case (nt: ExpandedGrammar.Identifier.NonTerminal, c) => (nt, TmpActionState.Action.Push(c)).asLeft
           case (t: ExpandedGrammar.Identifier.Term, c)         => (t, (c, calcFollowsForClosure(productionsForNT, c))).asRight
         }
 
@@ -393,7 +353,7 @@ object ParsingTable {
         terminalTransitionMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
         finishedEntries: Set[Closure.Entry.Finished], // NOTE : These have their 'follow' already adjusted
         rFollowedPath: List[ExpandedGrammar.Identifier.Term],
-    ): Validated[ActionState.Action.LookAhead] = {
+    ): Validated[TmpActionState.Action.LookAhead] = {
       val (
         fesWithoutLookAhead: Set[Closure.Entry.Finished],
         fesWithLookAhead: Set[(Follow, Closure.Entry.Finished)],
@@ -413,8 +373,8 @@ object ParsingTable {
           Span.Unknown,
         ).leftNel
       } else if (fesWithLookAhead.isEmpty) {
-        val actionsOnTerminals = terminalTransitionMap.map { case (t, (c, _)) => (t, ActionState.Action.Push(c)) }
-        ActionState.Action.LookAhead(actionsOnTerminals, None).asRight
+        val actionsOnTerminals = terminalTransitionMap.map { case (t, (c, _)) => (t, TmpActionState.Action.Push(c)) }
+        TmpActionState.Action.LookAhead(actionsOnTerminals, None).asRight
       } else {
         val fesWithTransitionOnTerminal: Map[ExpandedGrammar.Identifier.Term, Set[Closure.Entry.Finished]] =
           fesWithLookAhead
@@ -426,25 +386,25 @@ object ParsingTable {
         val fesWithEOFLookAhead: Set[Closure.Entry.Finished] =
           fesWithLookAhead.collect { case (Follow(_, true), finish) => finish }
 
-        val actionOnEOF: Validated[Option[ActionState.Action.EOFAction]] =
+        val actionOnEOF: Validated[Option[TmpActionState.Action.EOFAction]] =
           fesWithEOFLookAhead.toList match {
             case Nil => None.asRight
             case value :: Nil =>
               value.reducesTo match {
-                case ReducesTo.###            => ActionState.Action.Accept.some.asRight
-                case rt: ReducesTo.Production => ActionState.Action.Reduce(Closure.Production(rt, value.seen)).some.asRight
+                case ReducesTo.###            => TmpActionState.Action.Accept.some.asRight
+                case rt: ReducesTo.Production => TmpActionState.Action.Reduce(Closure.Production(rt, value.seen)).some.asRight
               }
             case values => Marked(s"Multiple EOF actions: ${values.map(_.reducesTo).mkString(", ")}", Span.Unknown).leftNel
           }
 
-        val partialActionsOnTerminals1: Validated[Map[ExpandedGrammar.Identifier.Term, ActionState.Action]] =
+        val partialActionsOnTerminals1: Validated[Map[ExpandedGrammar.Identifier.Term, TmpActionState.Action]] =
           fesWithTransitionOnTerminal.toList
             .parTraverse { (t, fes) =>
               (fes.toList, terminalTransitionMap.get(t)) match {
-                case (Nil, Some((c, _))) => (t, ActionState.Action.Push(c)).asRight
+                case (Nil, Some((c, _))) => (t, TmpActionState.Action.Push(c)).asRight
                 case (fe :: Nil, None) =>
                   fe.reducesTo match {
-                    case prod: ReducesTo.Production => (t, ActionState.Action.Reduce(Closure.Production(prod, fe.seen))).asRight
+                    case prod: ReducesTo.Production => (t, TmpActionState.Action.Reduce(Closure.Production(prod, fe.seen))).asRight
                     case ReducesTo.###              => Marked("I don't think this should be possible... (reduce to ###)", Span.Unknown).leftNel
                   }
                 case (fes, None) => calcTerminalActions(Map.empty, fes.toSet, t :: rFollowedPath).map((t, _))
@@ -461,15 +421,44 @@ object ParsingTable {
           val terminalsReferencedByFinishedEntries: Set[Identifier.Term] = fesWithLookAhead.flatMap(_._1.validTerminals)
 
           // Any terminals referenced in the look-ahead of 'fesWithLookAhead' would end up in 'partialActionsOnTerminals1'
-          val partialActionsOnTerminals2: Map[ExpandedGrammar.Identifier.Term, ActionState.Action] =
+          val partialActionsOnTerminals2: Map[ExpandedGrammar.Identifier.Term, TmpActionState.Action] =
             terminalTransitionMap
               .filterNot { (t, _) => terminalsReferencedByFinishedEntries.contains(t) }
-              .map { case (t, (c, _)) => (t, ActionState.Action.Push(c)) }
+              .map { case (t, (c, _)) => (t, TmpActionState.Action.Push(c)) }
 
-          ActionState.Action.LookAhead(partialActionsOnTerminals1 ++ partialActionsOnTerminals2, actionOnEOF)
+          TmpActionState.Action.LookAhead(partialActionsOnTerminals1 ++ partialActionsOnTerminals2, actionOnEOF)
         }
       }
     }
+
+    private def convertActionState(closureToStateId: Map[Closure, Int], actionState: TmpActionState, idx: Int): ParseState =
+      ParseState(
+        id = idx,
+        actionsOnNonTerminals = actionState.actionsOnNonTerminals.map { (nt, pa) => (nt, convertPushAction(closureToStateId, pa)) },
+        lookAhead = convertLookAheadAction(closureToStateId, actionState.lookAhead),
+      )
+
+    private def convertAction(closureToStateId: Map[Closure, Int], action: TmpActionState.Action): ParseState.Action =
+      action match {
+        case action: TmpActionState.Action.EOFAction => convertEOFAction(action)
+        case lh: TmpActionState.Action.LookAhead     => convertLookAheadAction(closureToStateId, lh)
+        case p: TmpActionState.Action.Push           => convertPushAction(closureToStateId, p)
+      }
+
+    private def convertPushAction(closureToStateId: Map[Closure, Int], action: TmpActionState.Action.Push): ParseState.Action.Push =
+      ParseState.Action.Push(closureToStateId(action.to))
+
+    private def convertLookAheadAction(closureToStateId: Map[Closure, Int], lookAhead: TmpActionState.Action.LookAhead): ParseState.Action.LookAhead =
+      ParseState.Action.LookAhead(
+        actionsOnTerminals = lookAhead.actionsOnTerminals.map { (t, a) => (t, convertAction(closureToStateId, a)) },
+        actionOnEOF = lookAhead.actionOnEOF.map(convertEOFAction),
+      )
+
+    private def convertEOFAction(action: TmpActionState.Action.EOFAction): ParseState.Action.EOFAction =
+      action match {
+        case TmpActionState.Action.Accept             => ParseState.Action.Accept
+        case TmpActionState.Action.Reduce(production) => ParseState.Action.Reduce(production.reducesTo.nt, production.reducesTo.idx)
+      }
 
   }
 }
