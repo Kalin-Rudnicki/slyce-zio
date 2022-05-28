@@ -1,4 +1,4 @@
-package slyce.generate
+package slyce.generate.output
 
 import cats.Order
 import cats.data.NonEmptyList
