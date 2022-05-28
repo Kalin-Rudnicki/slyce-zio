@@ -66,6 +66,15 @@ lazy val `slyce-generate` =
     )
     .dependsOn(`slyce-core` % "test->test;compile->compile")
 
+lazy val `slyce-parse` =
+  project
+    .in(file("slyce-parse"))
+    .settings(
+      name := "slyce-parse",
+      sonatypeCredentialHost := "s01.oss.sonatype.org",
+    )
+    .dependsOn(`slyce-core` % "test->test;compile->compile")
+
 lazy val `slyce-root` =
   project
     .in(file("."))
@@ -76,4 +85,5 @@ lazy val `slyce-root` =
     .aggregate(
       `slyce-core`,
       `slyce-generate`,
+      `slyce-parse`,
     )

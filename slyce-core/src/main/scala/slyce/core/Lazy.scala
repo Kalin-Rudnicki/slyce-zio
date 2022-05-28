@@ -1,4 +1,4 @@
-package slyce.generate
+package slyce.core
 
 final class Lazy[+T](t: => T) {
 

@@ -1,4 +1,4 @@
-package slyce.generate
+package slyce.core
 
 import cats.data.EitherNel
 import cats.syntax.either.*
