@@ -12,8 +12,8 @@ final case class Yields[I](
   def yieldsTerminals: Set[String] =
     yields.flatMap {
       _.value match {
-        case Yields.Yield.Terminal(name, _) => name.some
-        case _                              => None
+        case Yields.Yield.Terminal(name, _, _) => name.some
+        case _                                 => None
       }
     }.toSet
 
@@ -27,6 +27,7 @@ final case class Yields[I](
 
 object Yields {
 
+  // TODO (KR) : Remove default arguments
   sealed trait Yield {
     val subString: (Option[Int], Option[Int])
   }
@@ -36,6 +37,7 @@ object Yields {
     ) extends Yield
     final case class Terminal(
         name: String,
+        text: Option[String] = None,
         subString: (Option[Int], Option[Int]) = (None, None),
     ) extends Yield
     final case class ConstText(

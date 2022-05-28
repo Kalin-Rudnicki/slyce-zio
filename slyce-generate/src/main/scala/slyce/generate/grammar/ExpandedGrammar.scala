@@ -457,7 +457,7 @@ object ExpandedGrammar {
 
   }
 
-  private def ntGroupHead(ntGroup: NTGroup): Identifier.NonTerminal =
+  private[generate] def ntGroupHead(ntGroup: NTGroup): Identifier.NonTerminal =
     ntGroup match {
       case NTGroup.BasicNT(name, _) => Identifier.NonTerminal.NamedNt(name)
       case NTGroup.LiftNT(name, _)  => Identifier.NonTerminal.NamedNt(name)
@@ -471,7 +471,7 @@ object ExpandedGrammar {
             case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, Some(_)) => Identifier.NonTerminal.ListType.Head
           },
         )
-      case NTGroup.AssocNT(name, _, _) => Identifier.NonTerminal.AssocNt(name, 1)
+      case NTGroup.AssocNT(name, _, _) => assocNTId(name, 1)
       case NTGroup.Optional(id)        => Identifier.NonTerminal.AnonOptNt(id)
     }
 
