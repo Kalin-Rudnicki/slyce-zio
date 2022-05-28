@@ -27,12 +27,12 @@ object Main extends ExecutableApp {
 
     }
 
-    private def fileFromPath(path: String): STaskM[File] =
+    private def fileFromPath(path: String): SKTask[File] =
       File.fromPath(path).flatMap { file =>
         file.ensureExists *>
           file.isFile.flatMap {
             case true  => ZIO.succeed(file)
-            case false => ZIO.fail(KError.message.same(s"Not a file: $path"))
+            case false => ZIO.failNEL(KError.UserError(s"Not a file: $path"))
           }
       }
 
@@ -46,10 +46,7 @@ object Main extends ExecutableApp {
             lexerFile <- fileFromPath(config.lexerFile)
             grammarFile <- fileFromPath(config.grammarFile)
             outputFile <- File.fromPath(config.outputFile)
-            targetLanguage <-
-              ZIO
-                .fromOption(TargetLanguage.parse(config.targetLanguage, outputFile.fileName.ext))
-                .orElseFail(KError.message.same("Unable to assume target language"))
+            targetLanguage <- ZIO.fromOptionKError(TargetLanguage.parse(config.targetLanguage, outputFile.fileName.ext))(KError.UserError("Unable to assume target language"))
             _ <- Logger.println.info(targetLanguage)
           } yield ()
         }

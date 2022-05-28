@@ -14,13 +14,15 @@ final case class Source(input: String, name: Option[String]) { self =>
   val chars: List[Char] = input.toList
 
   override def equals(obj: Any): Boolean =
-    if (obj.isInstanceOf[Source]) self.uuid == obj.asInstanceOf[Source].uuid
-    else false
+    obj.asInstanceOf[Matchable] match {
+      case source: Source => self.uuid == source.uuid
+      case _              => false
+    }
 
 }
 object Source {
 
-  def fromFile(file: File): TaskM[Source] =
+  def fromFile(file: File): KTask[Source] =
     file.readString.map(Source(_, file.toPath.toUri.toString.some))
 
   final case class Config(

@@ -6,6 +6,7 @@ import klib.utils.*
 import klib.utils.commandLine.parse.*
 import zio.*
 
+import slyce.core.*
 import slyce.generate.builder.Builders.*
 import slyce.generate.debugging.Result
 import slyce.generate.grammar.*
