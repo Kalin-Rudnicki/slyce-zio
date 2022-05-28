@@ -9,7 +9,7 @@ import scala.annotation.tailrec
 
 import slyce.core.*
 
-final case class Lexer[Tok <: Token](state0: Lexer.State[Tok]) {
+final class Lexer[Tok <: Token](state0: Lexer.State[Tok]) {
   def tokenize(source: Source): Validated[List[Tok]] = Lexer.tokenize(state0)(source)
 }
 object Lexer {
@@ -44,7 +44,7 @@ object Lexer {
   object tokenize {
 
     // TODO (KR) : Make this a normal function if it ends up making sense
-    def apply[Tok <: Token](state0: State[Tok])(source: Source): Validated[List[Tok]] =
+    private[Lexer] def apply[Tok <: Token](state0: State[Tok])(source: Source): Validated[List[Tok]] =
       loop(source, state0, state0, Nil, Span.Pos.Start, source.chars, Nil, Nil, None)
 
     private final case class Hit[Tok](
@@ -89,7 +89,7 @@ object Lexer {
                     case Left(errors)                        => errors.asLeft
                   }
                 case None =>
-                  Marked(s"Unexpected char ${head.unesc}", Span.Highlight(pos, pos, source)).leftNel
+                  Marked(s"Unexpected char : ${head.unesc}", Span.Highlight(pos, pos, source)).leftNel
               }
           }
         case Nil =>
