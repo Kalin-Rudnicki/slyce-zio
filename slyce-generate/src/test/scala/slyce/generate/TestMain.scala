@@ -8,9 +8,10 @@ import zio.*
 
 import slyce.core.*
 import slyce.generate.builder.Builders.*
-import slyce.generate.debugging.Result
+import slyce.generate.debugging.Result as DebugResult
 import slyce.generate.grammar.*
 import slyce.generate.lexer.*
+import slyce.generate.output.*
 
 object TestMain extends ExecutableApp {
 
@@ -19,14 +20,6 @@ object TestMain extends ExecutableApp {
       lexerInput: LexerInput,
       grammarInput: GrammarInput,
   ): (String, Executable) = {
-    def logErrors(label: String, validated: Validated[Any]): URIO[Logger, Unit] =
-      validated match {
-        case Right(_) => ZIO.unit
-        case Left(value) =>
-          Logger.println.error(s"Found ${value.size} errors for '$label'") *>
-            Logger.withIndent(1)(ZIO.foreachDiscard(value.toList)(e => Logger.println.error(e.value)))
-      }
-
     (
       name,
       Executable
@@ -36,16 +29,16 @@ object TestMain extends ExecutableApp {
           for {
             _ <- Logger.println.info(s"=====| TestMain : $name |=====")
 
-            result = Result.build(lexerInput, grammarInput)
-            resultFrag = Result.resultToHTML(result)
-            resultString = resultFrag.render
+            debugResult = DebugResult.build(lexerInput, grammarInput)
+            debugResultFrag = DebugResult.resultToHTML(debugResult)
+            debugResultString = debugResultFrag.render
 
-            outputFile <- File.fromPath("target/test-output.html")
-            _ <- outputFile.writeString(resultString)
+            debugOutputFile <- File.fromPath("target/test-output.html")
+            _ <- debugOutputFile.writeString(debugResultString)
 
-            _ <- logErrors("NFA", result.nfa)
-            _ <- logErrors("DFA", result.dfa)
-            _ <- logErrors("ParsingTable", result.parsingTable)
+            result <- ZIO.fromEither(Result.build(lexerInput, grammarInput).leftMap(_.map(e => KError.UserError(e.toString))))
+
+            _ <- Logger.println.info(formatters.Scala3.format(List("a", "b", "c"), result))
           } yield ()
         },
     )

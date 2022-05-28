@@ -346,7 +346,7 @@ object ExpandedGrammar {
 
   }
 
-  private def listNTId(name: Either[String, UUID], listType: Identifier.NonTerminal.ListType): Identifier.NonTerminal =
+  private[generate] def listNTId(name: Either[String, UUID], listType: Identifier.NonTerminal.ListType): Identifier.NonTerminal =
     name match {
       case Left(name) =>
         listType match {
@@ -357,7 +357,7 @@ object ExpandedGrammar {
       case Right(key) => Identifier.NonTerminal.AnonListNt(key, listType)
     }
 
-  private def assocNTId(name: String, idx: Int): Identifier.NonTerminal =
+  private[generate] def assocNTId(name: String, idx: Int): Identifier.NonTerminal =
     if (idx == 1) Identifier.NonTerminal.NamedNt(name)
     else Identifier.NonTerminal.AssocNt(name, idx)
 
