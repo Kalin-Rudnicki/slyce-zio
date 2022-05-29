@@ -246,9 +246,9 @@ object Extras {
               withs = withsByTarget.get(ntName),
               prods = NonTerminal.Productions(prod1, ntName2 :: Nil)(identity),
               definedTypes =
-                if (idx == 0) List(typeDefinition(ntName, With.Type.Operand, withsByNTAndType), typeDefinition(ntName, With.Type.Operator, withsByNTAndType))
+                if (idx == 1) List(typeDefinition(ntName, With.Type.Operand, withsByNTAndType), typeDefinition(ntName, With.Type.Operator, withsByNTAndType))
                 else Nil,
-              ntg = Option.when(idx == 0)(ntGroup),
+              ntg = Option.when(idx == 1)(ntGroup),
             )
           }
 

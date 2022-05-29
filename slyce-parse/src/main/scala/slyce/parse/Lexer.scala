@@ -22,7 +22,7 @@ object Lexer {
 
     final case class Yield[Tok](
         span: (Option[Int], Option[Int]),
-        build: (String, Span.Highlight) => Validated[Tok],
+        build: Span.Highlight => PartialFunction[String, Tok],
     )
 
     sealed trait ToMode[+Tok]
@@ -126,8 +126,14 @@ object Lexer {
           }
 
           (idx(min.getOrElse(0)), idx(max.getOrElse(-1))).parTupled.flatMap { (min, max) =>
-            if (min <= max) build(str.substring(min, max + 1), Span.Highlight(markedChars.value(min)._2, markedChars.value(max)._2, source))
-            else badLexer("Invalid substring bounds (min > max)", markedChars.span).leftNel
+            if (min <= max) {
+              val text = str.substring(min, max + 1)
+              val span = Span.Highlight(markedChars.value(min)._2, markedChars.value(max)._2, source)
+              build(span).lift(text) match {
+                case Some(tok) => tok.asRight
+                case None      => badLexer(s"Invalid raw-terminal text : ${text.unesc}", span).leftNel
+              }
+            } else badLexer("Invalid substring bounds (min > max)", markedChars.span).leftNel
           } match {
             case Right(tok)   => appendTokens[Tok](source, markedChars, tail, tok :: toks)
             case Left(errors) => errors.asLeft

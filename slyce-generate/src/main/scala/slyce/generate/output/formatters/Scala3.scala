@@ -3,7 +3,9 @@ package slyce.generate.output.formatters
 import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.list.*
-import klib.utils.*
+import cats.syntax.option.*
+import java.util.UUID
+import klib.utils.{given, *}
 
 import slyce.generate.grammar.*
 import slyce.generate.lexer.*
@@ -12,78 +14,493 @@ import slyce.generate.output.*
 object Scala3 extends Formatter {
 
   // TODO (KR) :
-  override def format(pkg: List[String], result: Result): String = {
-    val identifierName: Map[ExpandedGrammar.Identifier, String] = Map.empty // TODO (KR) :
+  override def format(pkg: List[String], name: String, result: Result): String = {
+    val anonUUIDMap: Map[UUID, Int] = result.expandedGrammar.deDuplicatedNTGroups.collect { case ExpandedGrammar.NTGroup.ListNT(Right(uuid), _, _, _) => uuid }.distinct.zipWithIndex.toMap
+    val qualifiedPath: String = ("_root_" :: pkg ::: name :: Nil).mkString(".")
+    def identifierName(id: ExpandedGrammar.Identifier): String =
+      id match {
+        case terminal: ExpandedGrammar.Identifier.NonTerminal =>
+          terminal match {
+            case ExpandedGrammar.Identifier.NonTerminal.NamedNt(name)         => name
+            case ExpandedGrammar.Identifier.NonTerminal.NamedListNtTail(name) => s"${name}Tail"
+            case ExpandedGrammar.Identifier.NonTerminal.AnonListNt(key, _type) =>
+              val suffix =
+                _type match {
+                  case ExpandedGrammar.Identifier.NonTerminal.ListType.Simple => ""
+                  case ExpandedGrammar.Identifier.NonTerminal.ListType.Head   => "Head"
+                  case ExpandedGrammar.Identifier.NonTerminal.ListType.Tail   => "Tail"
+                }
+              s"AnonList${anonUUIDMap(key)}$suffix"
+            case ExpandedGrammar.Identifier.NonTerminal.AssocNt(name, idx) => s"$name$idx"
+            case ExpandedGrammar.Identifier.NonTerminal.AnonOptNt(identifier) =>
+              identifier match {
+                case ExpandedGrammar.Identifier.Term.Raw(name) => s"Optional_$name".unesc("`")
+                case _                                         => s"Optional_${identifierName(identifier)}"
+              }
+          }
+        case term: ExpandedGrammar.Identifier.Term =>
+          term match {
+            case ExpandedGrammar.Identifier.Term.Terminal(name) => name
+            case ExpandedGrammar.Identifier.Term.Raw(name)      => name.unesc("`")
+          }
+      }
+    def qualifiedIdentifierName(id: ExpandedGrammar.Identifier): String = {
+      val prefix =
+        id match {
+          case _: ExpandedGrammar.Identifier.NonTerminal => "Terminal"
+          case _: ExpandedGrammar.Identifier.Term        => "NonTerminal"
+        }
+      s"$qualifiedPath.$prefix.${identifierName(id)}"
+    }
 
     IndentedString
       .inline(
         header,
+        IndentedString.Break,
         packageName(pkg),
-        imports,
-        // TODO (KR) :
-        "// TODO (KR) : ...",
+        "// format: off",
+        IndentedString.Break,
+        s"object $name {",
+        IndentedString.indented(
+          IndentedString.Break,
+          "// =====| Terminals |=====",
+          IndentedString.Break,
+          terminals(qualifiedPath, result.extras.allTerminals, qualifiedIdentifierName),
+          IndentedString.Break,
+          "// =====| Non-Terminals |=====",
+          IndentedString.Break,
+          nonTerminals(qualifiedPath, result.extras.allNTs, identifierName, qualifiedIdentifierName),
+          IndentedString.Break,
+        ),
+        "}",
+        IndentedString.Break,
+        "// format: on",
         IndentedString.Break,
       )
       .toString("  ")
   }
 
-  // =====| Types |=====
+  private val CorePath: String = "_root_.slyce.core"
 
-  private final case class NT(
-      name: ExpandedGrammar.Identifier,
-      prods: NT.Productions,
-      definedTypes: List[NT.TypeDefinition],
-      definedFunctions: List[IndentedString],
-  )
-  private object NT {
-
-    final case class Production(idx: Int, elements: List[ExpandedGrammar.Identifier])
-
-    enum Productions {
-      case Single(elements: List[ExpandedGrammar.Identifier])
-      case Many(productions: NonEmptyList[Production])
-    }
-    object Productions {
-
-      def apply(productions: NonEmptyList[Production]): Productions =
-        productions match {
-          case NonEmptyList(head, Nil) => Single(head.elements)
-          case _                       => Many(productions)
-        }
-
-      def apply[A](nel: NonEmptyList[A])(convert: A => List[ExpandedGrammar.Identifier]): Productions =
-        Productions(nel.zipWithIndex.map { (a, idx) => Production(idx + 1, convert(a)) })
-
-    }
-
-    enum TypeDefinition {
-      case Trait(name: Extras.With.Type)
-      case Type(name: Extras.With.Type, equals: ExpandedGrammar.Identifier)
-    }
-
-  }
-
-  // =====| Helpers |=====
+  private val FindRawTerminalName: String = "__findRawTerminal"
 
   // TODO (KR) : Version and/or date?
   private def header: IndentedString =
     IndentedString.inline(
       "// !!! DO NOT MODIFY !!!",
       "// File was automatically generated by slyce",
-      IndentedString.Break,
     )
 
   private def packageName(pkg: List[String]): IndentedString =
     if (pkg.nonEmpty) IndentedString.inline(pkg.mkString("package ", ".", ""), IndentedString.Break)
     else IndentedString.inline()
 
-  // TODO (KR) : Be smart and make sure imports are only included if necessary
-  private def imports: IndentedString =
+  private def terminals(
+      qualifiedPath: String,
+      ts: Set[Extras.Terminal],
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+  ): IndentedString = {
+    val (terminals, rawTerminals) =
+      ts.partitionMap { term =>
+        term.name match {
+          case t: ExpandedGrammar.Identifier.Term.Terminal => (t.name, term).asLeft
+          case r: ExpandedGrammar.Identifier.Term.Raw      => (r.name, term).asRight
+        }
+      }
+
+    def makeTok(
+        qualifiedPath: String,
+        baseTokName: String,
+        isRaw: Boolean,
+        ws: Option[NonEmptyList[Extras.With]],
+    ): IndentedString = {
+      val className = if (isRaw) baseTokName.unesc("`") else baseTokName
+      val tokName = if (isRaw) baseTokName.unesc("\"\"\"\"") else baseTokName.unesc
+      val params = if (isRaw) s"span: $CorePath.Span.Highlight" else s"text: _root_.scala.Predef.String, span: $CorePath.Span.Highlight"
+      val body = s"final case class $className($params)"
+      val idtStr = " " * body.length
+      val extWiths = ws.fold(List.empty[Extras.With])(_.toList).map { w => s"${qualifiedIdentifierName(w.nt)}.${w.withType}" }.sorted
+      val allWiths = if (isRaw) s"$CorePath.Token.Const" :: extWiths else extWiths
+
+      IndentedString.inline(
+        s"$body extends $qualifiedPath.Terminal($tokName)",
+        allWiths.map { w => s"$idtStr with $w" },
+      )
+    }
+
+    val terminalIdtStrs: IndentedString =
+      IndentedString.inline(
+        terminals.toList.sortBy(_._1).map { (n, t) =>
+          makeTok(qualifiedPath, n, false, t.withs)
+        },
+      )
+
+    lazy val sortedRawTerminals = rawTerminals.toList.sortBy(_._1)
+
+    lazy val rawTerminalIdtStrs: IndentedString =
+      IndentedString.inline(
+        sortedRawTerminals.map { (n, t) =>
+          makeTok(qualifiedPath, n, true, t.withs)
+        },
+      )
+
+    lazy val findRawTerminalIdtStr: IndentedString =
+      IndentedString.inline(
+        s"val $FindRawTerminalName: $CorePath.Span.Highlight => PartialFunction[_root_.scala.Predef.String, Terminal] =",
+        IndentedString.indented(
+          "span => {",
+          IndentedString.indented(
+            sortedRawTerminals.map { (n, _) =>
+              s"case ${n.unesc} => Terminal.${n.unesc("`")}(span)"
+            },
+          ),
+          "}",
+        ),
+      )
+
     IndentedString.inline(
-      "import cats.data.NonEmptyList",
-      "import slyce.core.*",
-      "import slyce.parse.*",
-      IndentedString.Break,
+      s"sealed abstract class Terminal(final val tokName: _root_.scala.Predef.String) extends $CorePath.Token",
+      "object Terminal {",
+      IndentedString.indented(
+        terminalIdtStrs,
+        Option.when(rawTerminals.nonEmpty)(
+          IndentedString.inline(
+            IndentedString.Break,
+            rawTerminalIdtStrs,
+            IndentedString.Break,
+            findRawTerminalIdtStr,
+          ),
+        ),
+      ),
+      "}",
     )
+  }
+
+  extension (idtStrs: List[IndentedString]) {
+    private def surroundWithBreaks: IndentedString =
+      IndentedString.inline(
+        idtStrs
+          .foldLeft(List[IndentedString](IndentedString.Break)) { (l, s) => IndentedString.Break :: s :: l }
+          .reverse,
+      )
+  }
+
+  private def nonTerminals(
+      qualifiedPath: String,
+      nts: Set[Extras.NonTerminal],
+      identifierName: ExpandedGrammar.Identifier => String,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+  ): IndentedString = {
+    val ntIdtStrs: IndentedString =
+      nts.toList
+        .sortBy { nt =>
+          identifierName(nt.name)
+        }
+        .map(nonTerminal(qualifiedPath, _, identifierName, qualifiedIdentifierName))
+        .surroundWithBreaks
+
+    IndentedString.inline(
+      s"sealed abstract class NonTerminal(final val ntName: _root_.scala.Predef.String) extends $CorePath.NonTerminal",
+      "object NonTerminal {",
+      IndentedString.indented(
+        ntIdtStrs,
+      ),
+      "}",
+    )
+  }
+
+  private def nonTerminal(
+      qualifiedPath: String,
+      nt: Extras.NonTerminal,
+      identifierName: ExpandedGrammar.Identifier => String,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+  ): IndentedString = {
+    val ntName = identifierName(nt.name)
+    val functs = nt.ntg.flatMap(functions(_, qualifiedIdentifierName).toNel).map(_.toList.surroundWithBreaks)
+    val types = typeDefs(nt, qualifiedIdentifierName)
+    nt.prods match {
+      case Extras.NonTerminal.Productions.Single(prod) =>
+        IndentedString.inline(
+          production(prod, ntName, qualifiedIdentifierName, s"$qualifiedPath.NonTerminal(${ntName.unesc})", nt.withs, functs),
+          types.map { types =>
+            IndentedString.inline(
+              s"object $ntName {",
+              IndentedString.indented(
+                IndentedString.Break,
+                types,
+                IndentedString.Break,
+              ),
+              "}",
+            )
+          },
+        )
+      case Extras.NonTerminal.Productions.Many(prods) =>
+        IndentedString.inline(
+          buildProd(
+            qualifiedIdentifierName,
+            IndentedString.inline(),
+            s"sealed trait $ntName",
+            s"$qualifiedPath.NonTerminal(${ntName.unesc})",
+            nt.withs,
+            functs,
+          ),
+          s"object $ntName {",
+          IndentedString.indented(
+            types.map { types =>
+              IndentedString.inline(
+                IndentedString.Break,
+                types,
+              )
+            },
+            prods.toList.map { p =>
+              production(p.prod, s"_${p.idx + 1}", qualifiedIdentifierName, s"$qualifiedPath.NonTerminal.$ntName", nt.withs, None)
+            }.surroundWithBreaks,
+          ),
+          "}",
+        )
+    }
+  }
+
+  private def buildProd(
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+      nonLastLines: IndentedString,
+      lastLineBase: String,
+      baseExt: String,
+      ws: Option[NonEmptyList[Extras.With]],
+      functions: Option[IndentedString],
+  ): IndentedString = {
+    val idt = " " * lastLineBase.length
+    def makeBody(functions: IndentedString): IndentedString =
+      IndentedString.inline(
+        IndentedString.indented(
+          functions,
+        ),
+        "}",
+      )
+
+    val (eol: String, withs: List[String], body: IndentedString) =
+      (functions, ws) match {
+        case (Some(fs), Some(ws)) =>
+          val ws1 = ws.map { w => s"${qualifiedIdentifierName(w.nt)}.${w.withType}" }.sorted.reverse
+          val ws2 = NonEmptyList(s"${ws1.head} {", ws1.tail).reverse
+          ("", ws2.toList, makeBody(fs))
+        case (Some(fs), None) =>
+          (" {", Nil, makeBody(fs))
+        case (None, Some(ws)) =>
+          ("", ws.toList.map(w => s"${qualifiedIdentifierName(w.nt)}.${w.withType}").sorted, IndentedString.inline())
+        case (None, None) =>
+          ("", Nil, IndentedString.inline())
+      }
+
+    IndentedString.inline(
+      nonLastLines,
+      s"$lastLineBase extends $baseExt$eol",
+      withs.map { w => s"$idt with $w" },
+      body,
+    )
+  }
+
+  private def production(
+      prod: Extras.NonTerminal.Production,
+      name: String,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+      baseExt: String,
+      ws: Option[NonEmptyList[Extras.With]],
+      functions: Option[IndentedString],
+  ): IndentedString =
+    prod match {
+      case Extras.NonTerminal.Production.CaseObject =>
+        buildProd(
+          qualifiedIdentifierName,
+          IndentedString.inline(),
+          s"case object $name",
+          baseExt,
+          ws,
+          functions,
+        )
+      case Extras.NonTerminal.Production.CaseClass(elements) =>
+        buildProd(
+          qualifiedIdentifierName,
+          IndentedString.inline(
+            s"final case class $name(",
+            IndentedString.indented(
+              elements.toList.zipWithIndex.map { (e, i) =>
+                s"_${i + 1}: ${qualifiedIdentifierName(e)},"
+              },
+            ),
+          ),
+          ")",
+          baseExt,
+          ws,
+          functions,
+        )
+    }
+
+  private def caseParens(liftList: LiftList[Any], liftName: String, lastParam: Option[String] = None): String =
+    (liftList.before.map(_ => "_") ::: liftName :: liftList.after.map(_ => "_") ::: lastParam.toList).mkString("(", ", ", ")")
+
+  private def functions(
+      ntg: ExpandedGrammar.NTGroup,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+  ): List[IndentedString] = {
+    val ntName = qualifiedIdentifierName(ExpandedGrammar.ntGroupHead(ntg))
+    ntg match {
+      case ExpandedGrammar.NTGroup.BasicNT(_, _) =>
+        Nil
+      case ExpandedGrammar.NTGroup.LiftNT(_, prods) =>
+        val functionDef = s"final def lift: $ntName.${Extras.With.Type.Lift} ="
+        prods match {
+          case NonEmptyList(head, Nil) =>
+            s"$functionDef this._${head.liftIdx + 1}" :: Nil
+          case prods =>
+            IndentedString.inline(
+              functionDef,
+              IndentedString.indented(
+                "this match {",
+                IndentedString.indented(
+                  prods.toList.zipWithIndex.map { (prod, idx) =>
+                    s"case $ntName._${idx + 1}${caseParens(prod, "lift")} => lift"
+                  },
+                ),
+                "}",
+              ),
+            ) :: Nil
+        }
+      case ExpandedGrammar.NTGroup.ListNT(name, listType, startProds, repeatProds) =>
+        val ntName2 = qualifiedIdentifierName(ExpandedGrammar.listNTId(name, ExpandedGrammar.Identifier.NonTerminal.ListType.Tail))
+
+        val (loopType: String, repeat: LiftList[ExpandedGrammar.Identifier]) =
+          (listType, repeatProds) match {
+            case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, None)              => (ntName, startProds)
+            case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, Some(repeatProds)) => (ntName2, repeatProds)
+            case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, None)              => (ntName2, startProds)
+            case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, Some(repeatProds)) => (ntName2, repeatProds)
+          }
+
+        val (retTypePath, retType) =
+          listType match {
+            case GrammarInput.NonTerminal.ListNonTerminal.Type.* => ("_root_.scala", "List")
+            case GrammarInput.NonTerminal.ListNonTerminal.Type.+ => ("_root_.cats.data", "NonEmptyList")
+          }
+
+        IndentedString.inline(
+          s"final def to$retType: $retTypePath.$retType[$ntName.${Extras.With.Type.Lift}] = {",
+          IndentedString.indented(
+            "@_root_.scala.annotation.tailrec",
+            s"def loop(queue: $loopType, stack: _root_.scala.List[$ntName.${Extras.With.Type.Lift}] =",
+            IndentedString.indented(
+              "queue match {",
+              IndentedString.indented(
+                s"case $loopType._1${caseParens(repeat, "lift", "next".some)} => loop(next, lift :: stack)",
+                s"case $loopType._2 => stack.reverse",
+              ),
+              "}",
+            ),
+            IndentedString.Break,
+            (listType, repeatProds) match {
+              case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, None) =>
+                "loop(this, Nil)"
+              case (GrammarInput.NonTerminal.ListNonTerminal.Type.*, Some(_)) =>
+                IndentedString.inline(
+                  "this match {",
+                  IndentedString.indented(
+                    s"case $ntName._1${caseParens(startProds, "lift", "next".some)} => loop(next, lift :: Nil)",
+                    s"case $ntName._2 => Nil",
+                  ),
+                  "}",
+                )
+              case (GrammarInput.NonTerminal.ListNonTerminal.Type.+, _) =>
+                s"_root_.cats.data.NonEmptyList[$ntName.${Extras.With.Type.Lift}](this._${startProds.liftIdx + 1}, loop(this._${startProds.size + 1}, Nil))"
+            },
+          ),
+          "}",
+        ) :: Nil
+      case ExpandedGrammar.NTGroup.AssocNT(name, assocs, base) =>
+        val retType = s"_root_.slyce.parse.Expression[$ntName.${Extras.With.Type.Operand}, $ntName.${Extras.With.Type.Operator}]"
+        val baseName = qualifiedIdentifierName(ExpandedGrammar.assocNTId(name, assocs.size + 1))
+
+        val nonBaseSubFunctions: List[IndentedString] =
+          assocs.toList.zipWithIndex.map { case ((_, side), idx) =>
+            val myName = qualifiedIdentifierName(ExpandedGrammar.assocNTId(name, idx + 1))
+            IndentedString.inline(
+              s"def toExpr${idx + 1}(expr: $myName): $retType =",
+              IndentedString.indented(
+                "expr match {",
+                IndentedString.indented(
+                  side match {
+                    case GrammarInput.NonTerminal.AssocNonTerminal.Type.Left =>
+                      s"case $myName._1(left, op, right) => _root_.slyce.parse.Expression(toExpr${idx + 1}(left), op, toExpr${idx + 2}(right))"
+                    case GrammarInput.NonTerminal.AssocNonTerminal.Type.Right =>
+                      s"case $myName._1(left, op, right) => _root_.slyce.parse.Expression(toExpr${idx + 2}(left), op, toExpr${idx + 1}(right))"
+                  },
+                  s"case $myName._2(expr) => toExpr${idx + 2}(expr)",
+                ),
+                "}",
+              ),
+            )
+          }
+
+        val baseSubFunction: IndentedString =
+          IndentedString.inline(
+            s"def toExpr${assocs.size + 1}(expr: $baseName): $retType =",
+            IndentedString.indented(
+              base match {
+                case Left(_) =>
+                  "_root_.slyce.parse.Expression(expr)"
+                case Right(lift) =>
+                  IndentedString.inline(
+                    "expr match {",
+                    IndentedString.indented(
+                      lift.toList.zipWithIndex.map { (prod, idx) =>
+                        val liftType = qualifiedIdentifierName(prod.lift)
+                        if (liftType == ntName) s"case $baseName._${idx + 1}${caseParens(prod, "expr")} => toExpr1(expr)"
+                        else s"case $baseName._${idx + 1}${caseParens(prod, "expr")} => _root_.slyce.parse.Expression(expr)"
+                      },
+                    ),
+                    "}",
+                  )
+              },
+            ),
+          )
+
+        val subsFunctions: IndentedString =
+          (nonBaseSubFunctions :+ baseSubFunction)
+            .map(IndentedString.inline(_, IndentedString.Break))
+
+        IndentedString.inline(
+          s"final def toExpr: $retType = {",
+          IndentedString.indented(
+            subsFunctions,
+            "toExpr1(this)",
+          ),
+          "}",
+        ) :: Nil
+      case ExpandedGrammar.NTGroup.Optional(id) =>
+        IndentedString.inline(
+          s"final def toOption: _root_.scala.Option[${qualifiedIdentifierName(id)}] =",
+          IndentedString.indented(
+            "this match {",
+            IndentedString.indented(
+              s"case $ntName._1(lift) => _root_.scala.Some(lift)",
+              s"case $ntName._2 => _root_.scala.None",
+            ),
+            "}",
+          ),
+        ) :: Nil
+    }
+  }
+
+  private def typeDefs(
+      nt: Extras.NonTerminal,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+  ): Option[IndentedString] =
+    nt.definedTypes.toNel.map { definedTypes =>
+      IndentedString.inline(
+        definedTypes.toList.map {
+          case Extras.NonTerminal.TypeDefinition.Type(n, id) => s"type $n = ${qualifiedIdentifierName(id)}"
+          case Extras.NonTerminal.TypeDefinition.Trait(n)    => s"sealed trait $n"
+        },
+      )
+    }
 
 }

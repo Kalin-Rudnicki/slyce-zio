@@ -38,7 +38,7 @@ object TestMain extends ExecutableApp {
 
             result <- ZIO.fromEither(Result.build(lexerInput, grammarInput).leftMap(_.map(e => KError.UserError(e.toString))))
 
-            _ <- Logger.println.info(formatters.Scala3.format(List("a", "b", "c"), result))
+            _ <- Logger.println.info(formatters.Scala3.format(List("a", "b", "c"), "Tmp", result))
           } yield ()
         },
     )
@@ -89,6 +89,10 @@ object TestMain extends ExecutableApp {
           grammar.elements("variable", "=", "Expr"),
           grammar.elements("variable", "=", "FunctionDef"),
         )("Assign"),
+        grammar.nt.^(
+          grammar.liftElements("[")("Lines")("]"),
+          grammar.liftElements("[", "-")("Expr")("]"),
+        )("Tmp"),
         grammar.nt.~(
           "powOp".asRight,
           "multOp".asLeft,
