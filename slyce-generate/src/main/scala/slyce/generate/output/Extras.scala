@@ -108,9 +108,14 @@ object Extras {
         val allWiths: List[With] = withsList.flatten.distinct
         val withsByNTAndType: Map[(ExpandedGrammar.Identifier.NonTerminal, With.Type), Withs] =
           allWiths.groupByNel(w => (w.nt, w.withType))(Order.by(_.toString)).toMap.map { (k, ws) => (k, Withs(ws)) }
-        // TODO (KR) : This needs to filter out all Withs where the id is the only one
+        val withIsSingular: Map[(ExpandedGrammar.Identifier, With.Type), Boolean] =
+          allWiths.groupByNel(w => (w.target, w.withType))(Order.by(_.toString)).toMap.map { (k, v) => (k, v.size == 1) }
         val withsByTarget: Map[ExpandedGrammar.Identifier, NonEmptyList[With]] =
-          allWiths.groupByNel(_.target)(Order.by(_.toString))
+          allWiths
+            .groupBy(_.target)
+            .toList
+            .flatMap { (k, ws) => ws.filterNot { w => withIsSingular((w.target, w.withType)) }.toNel.map((k, _)) }
+            .toMap
 
         Extras(
           allTerminals = allTerminals.map { n => Terminal(n, withsByTarget.get(n)) },
