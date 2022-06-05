@@ -88,7 +88,7 @@ object Extras {
     }
 
     enum TypeDefinition {
-      case Trait(name: With.Type)
+      case Trait(name: With.Type, allChildrenAreTerms: Boolean)
       case Type(name: With.Type, equals: ExpandedGrammar.Identifier)
     }
 
@@ -171,8 +171,8 @@ object Extras {
         withsByNTAndType: Map[(ExpandedGrammar.Identifier.NonTerminal, With.Type), Withs],
     ): NonTerminal.TypeDefinition =
       withsByNTAndType((nt, name)) match {
-        case Withs.One(w)  => NonTerminal.TypeDefinition.Type(name, w.target)
-        case Withs.Many(_) => NonTerminal.TypeDefinition.Trait(name)
+        case Withs.One(w)   => NonTerminal.TypeDefinition.Type(name, w.target)
+        case Withs.Many(ws) => NonTerminal.TypeDefinition.Trait(name, ws.collect { case With(_: ExpandedGrammar.Identifier.NonTerminal, _, _) => }.isEmpty)
       }
 
     private def convertNTGroup(

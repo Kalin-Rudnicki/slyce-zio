@@ -21,7 +21,7 @@ object Lexer {
   object Yields {
 
     final case class Yield[Tok](
-        span: (Option[Int], Option[Int]),
+        span: (Int, Int),
         build: Span.Highlight => PartialFunction[String, Tok],
     )
 
@@ -40,6 +40,23 @@ object Lexer {
       on: Char => Option[State[Tok]],
       yields: Option[Yields[Tok]],
   )
+  object State {
+
+    def fromMap[Tok](
+        id: Int,
+        on: => Map[Int, Option[State[Tok]]],
+        yields: Option[Yields[Tok]],
+    ): State[Tok] = {
+      lazy val lazyOn: Map[Int, Option[State[Tok]]] = on
+
+      State(
+        id = id,
+        on = c => lazyOn.get(c.toInt).flatten,
+        yields = yields,
+      )
+    }
+
+  }
 
   object tokenize {
 
@@ -125,7 +142,7 @@ object Lexer {
             else badLexer(s"Invalid substring bounds ($i)", markedChars.span).leftNel
           }
 
-          (idx(min.getOrElse(0)), idx(max.getOrElse(-1))).parTupled.flatMap { (min, max) =>
+          (idx(min), idx(max)).parTupled.flatMap { (min, max) =>
             if (min <= max) {
               val text = str.substring(min, max + 1)
               val span = Span.Highlight(markedChars.value(min)._2, markedChars.value(max)._2, source)

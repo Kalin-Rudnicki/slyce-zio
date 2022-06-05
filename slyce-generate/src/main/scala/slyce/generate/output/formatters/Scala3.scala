@@ -7,6 +7,7 @@ import cats.syntax.option.*
 import java.util.UUID
 import klib.utils.{given, *}
 
+import slyce.core.*
 import slyce.generate.grammar.*
 import slyce.generate.lexer.*
 import slyce.generate.output.*
@@ -71,6 +72,14 @@ object Scala3 extends Formatter {
           IndentedString.Break,
           nonTerminals(qualifiedPath, result.extras.allNTs, identifierName, qualifiedIdentifierName),
           IndentedString.Break,
+          "// =====| Lexer |=====",
+          IndentedString.Break,
+          lexer(qualifiedPath, result.dfa),
+          IndentedString.Break,
+          "// =====| Parser |=====",
+          IndentedString.Break,
+          "// TODO (KR) : codegen this",
+          IndentedString.Break,
         ),
         "}",
         IndentedString.Break,
@@ -81,6 +90,7 @@ object Scala3 extends Formatter {
   }
 
   private val CorePath: String = "_root_.slyce.core"
+  private val ParsePath: String = "_root_.slyce.parse"
 
   private val FindRawTerminalName: String = "__findRawTerminal"
 
@@ -146,7 +156,7 @@ object Scala3 extends Formatter {
 
     lazy val findRawTerminalIdtStr: IndentedString =
       IndentedString.inline(
-        s"val $FindRawTerminalName: $CorePath.Span.Highlight => PartialFunction[_root_.scala.Predef.String, Terminal] =",
+        s"val $FindRawTerminalName: $CorePath.Span.Highlight => PartialFunction[_root_.scala.Predef.String, $qualifiedPath.Terminal] =",
         IndentedString.indented(
           "span => {",
           IndentedString.indented(
@@ -416,7 +426,7 @@ object Scala3 extends Formatter {
           "}",
         ) :: Nil
       case ExpandedGrammar.NTGroup.AssocNT(name, assocs, base) =>
-        val retType = s"_root_.slyce.parse.Expression[$ntName.${Extras.With.Type.Operand}, $ntName.${Extras.With.Type.Operator}]"
+        val retType = s"$ParsePath.Expression[$ntName.${Extras.With.Type.Operand}, $ntName.${Extras.With.Type.Operator}]"
         val baseName = qualifiedIdentifierName(ExpandedGrammar.assocNTId(name, assocs.size + 1))
 
         val nonBaseSubFunctions: List[IndentedString] =
@@ -429,9 +439,9 @@ object Scala3 extends Formatter {
                 IndentedString.indented(
                   side match {
                     case GrammarInput.NonTerminal.AssocNonTerminal.Type.Left =>
-                      s"case $myName._1(left, op, right) => _root_.slyce.parse.Expression(toExpr${idx + 1}(left), op, toExpr${idx + 2}(right))"
+                      s"case $myName._1(left, op, right) => $ParsePath.Expression(toExpr${idx + 1}(left), op, toExpr${idx + 2}(right))"
                     case GrammarInput.NonTerminal.AssocNonTerminal.Type.Right =>
-                      s"case $myName._1(left, op, right) => _root_.slyce.parse.Expression(toExpr${idx + 2}(left), op, toExpr${idx + 1}(right))"
+                      s"case $myName._1(left, op, right) => $ParsePath.Expression(toExpr${idx + 2}(left), op, toExpr${idx + 1}(right))"
                   },
                   s"case $myName._2(expr) => toExpr${idx + 2}(expr)",
                 ),
@@ -446,7 +456,7 @@ object Scala3 extends Formatter {
             IndentedString.indented(
               base match {
                 case Left(_) =>
-                  "_root_.slyce.parse.Expression(expr)"
+                  "$ParsePath.Expression(expr)"
                 case Right(lift) =>
                   IndentedString.inline(
                     "expr match {",
@@ -454,7 +464,7 @@ object Scala3 extends Formatter {
                       lift.toList.zipWithIndex.map { (prod, idx) =>
                         val liftType = qualifiedIdentifierName(prod.lift)
                         if (liftType == ntName) s"case $baseName._${idx + 1}${caseParens(prod, "expr")} => toExpr1(expr)"
-                        else s"case $baseName._${idx + 1}${caseParens(prod, "expr")} => _root_.slyce.parse.Expression(expr)"
+                        else s"case $baseName._${idx + 1}${caseParens(prod, "expr")} => $ParsePath.Expression(expr)"
                       },
                     ),
                     "}",
@@ -497,10 +507,146 @@ object Scala3 extends Formatter {
     nt.definedTypes.toNel.map { definedTypes =>
       IndentedString.inline(
         definedTypes.toList.map {
-          case Extras.NonTerminal.TypeDefinition.Type(n, id) => s"type $n = ${qualifiedIdentifierName(id)}"
-          case Extras.NonTerminal.TypeDefinition.Trait(n)    => s"sealed trait $n"
+          case Extras.NonTerminal.TypeDefinition.Type(n, id)   => s"type $n = ${qualifiedIdentifierName(id)}"
+          case Extras.NonTerminal.TypeDefinition.Trait(n, tok) => s"sealed trait $n${if (tok) s" extends $CorePath.Token" else ""}"
         },
       )
     }
+
+  private def lexer(
+      qualifiedPath: String,
+      dfa: DFA,
+  ): IndentedString =
+    IndentedString.inline(
+      s"val lexer: $ParsePath.Lexer = {",
+      IndentedString.indented(
+        dfa.states.map { state =>
+          IndentedString.inline(
+            lexerState(qualifiedPath, state),
+            IndentedString.Break,
+          )
+        },
+        s"$ParsePath.Lexer[$qualifiedPath.NonTerminal](state0)",
+      ),
+      "}",
+    )
+
+  private def lexerState(
+      qualifiedPath: String,
+      state: DFA.State,
+  ): IndentedString =
+    IndentedString.inline(
+      s"lazy val state${state.id} =",
+      IndentedString.indented(
+        s"$ParsePath.Lexer.State.fromMap[$qualifiedPath.Terminal](",
+        IndentedString.indented(
+          s"id = ${state.id},",
+          lexerOn(state),
+          state.yields match {
+            case Some((_, yields)) =>
+              IndentedString.inline(
+                "yields = Some(",
+                IndentedString.indented(
+                  lexerYields(qualifiedPath, yields),
+                ),
+                "),",
+              )
+            case None => "yields = None,"
+          },
+        ),
+        ")",
+      ),
+    )
+
+  private def lexerOn(
+      state: DFA.State,
+  ): IndentedString =
+    IndentedString.inline(
+      // TODO (KR) : Have more options for what this is, try to be as efficient as possible
+      s"on = _root_.scala.collection.immutable.Map(",
+      IndentedString.indented(
+        state.transitions.toList
+          .flatMap { case (chars, toState) =>
+            chars.toList.map((_, toState))
+          }
+          .sortBy(_._1)
+          .map { case (char, toState) =>
+            toState match {
+              case Some(toState) => s"${char.toInt} -> _root_.scala.Some(state${toState.value.id}),"
+              case None          => s"${char.toInt} -> _root_.scala.None,"
+            }
+          },
+      ),
+      state.elseTransition match {
+        case Some(to) => s").withDefaultValue(_root_.scala.Some(state${to.value.id})),"
+        case None     => "),"
+      },
+    )
+
+  private def lexerYields(
+      qualifiedPath: String,
+      yields: Yields[Lazy[DFA.State]],
+  ): IndentedString = {
+    val toMode =
+      yields.toMode.value match {
+        case Yields.ToMode.Same       => s"$ParsePath.Lexer.ToMode.Same"
+        case Yields.ToMode.To(mode)   => s"$ParsePath.Lexer.ToMode.To(state${mode.value.id})"
+        case Yields.ToMode.Push(mode) => s"$ParsePath.Lexer.ToMode.Push(state${mode.value.id})"
+        case Yields.ToMode.Pop        => s"$ParsePath.Lexer.ToMode.Pop"
+      }
+
+    IndentedString.inline(
+      s"$ParsePath.Lexer.Yields(",
+      IndentedString.indented(
+        "yields = _root_.scala.collection.immutable.List(",
+        IndentedString.indented(
+          yields.yields.map { y =>
+            lexerYield(qualifiedPath, y.value)
+          },
+        ),
+        "),",
+        s"toMode = $toMode,",
+      ),
+      "),",
+    )
+  }
+
+  private def lexerYield(
+      qualifiedPath: String,
+      y: Yields.Yield,
+  ): IndentedString = {
+    val (span: (Option[Int], Option[Int]), build: String) =
+      y match {
+        case Yields.Yield.Text(subString) =>
+          (
+            subString,
+            s"$qualifiedPath.Lexer.Terminal.$FindRawTerminalName",
+          )
+        case Yields.Yield.Terminal(name, text, subString) =>
+          (
+            subString,
+            text match {
+              case Some(text) =>
+                s"span => _ => $ParsePath.Terminal.$name(${text.unesc}, span)"
+              case None =>
+                s"span => text => $ParsePath.Terminal.$name(text, span)"
+            },
+          )
+        case Yields.Yield.ConstText(text, subString) =>
+          (
+            subString,
+            s"span => _ => $qualifiedPath.Lexer.Terminal.${text.unesc("`")}(span)",
+          )
+      }
+
+    IndentedString.inline(
+      s"$ParsePath.Lexer.Yields.Yield(",
+      IndentedString.indented(
+        s"span = (${span._1.getOrElse(0)}, ${span._2.getOrElse(-1)}),",
+        s"build = $build,",
+      ),
+      "),",
+    )
+  }
 
 }
