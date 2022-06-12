@@ -17,23 +17,22 @@ private[scala3] object GenGrammar {
       s"${utils.qualifiedPath}.Terminal, ${utils.qualifiedPath}.NonTerminal, ${utils.qualifiedPath}.NonTerminal.${expandedGrammar.startNt.value}"
 
     IndentedString.inline(
-      s"val grammar: $ParsePath.Grammar[$grammarTypeArgs] = {",
+      parsingTable.parseStates.map { state =>
+        IndentedString.inline(
+          parserState(
+            utils,
+            ExpandedGrammar.Identifier.NonTerminal.NamedNt(expandedGrammar.startNt.value),
+            grammarTypeArgs,
+            state,
+            expandedGrammar.deDuplicatedNTGroups.flatMap(_.rawNTs.toList).map { nt => (nt.name, nt) }.toMap,
+          ),
+          IndentedString.Break,
+        )
+      },
+      s"val grammar: $ParsePath.Grammar[$grammarTypeArgs] =",
       IndentedString.indented(
-        parsingTable.parseStates.map { state =>
-          IndentedString.inline(
-            parserState(
-              utils,
-              ExpandedGrammar.Identifier.NonTerminal.NamedNt(expandedGrammar.startNt.value),
-              grammarTypeArgs,
-              state,
-              expandedGrammar.deDuplicatedNTGroups.flatMap(_.rawNTs.toList).map { nt => (nt.name, nt) }.toMap,
-            ),
-            IndentedString.Break,
-          )
-        },
-        s"$ParsePath.Grammar[$grammarTypeArgs](state0)",
+        s"$ParsePath.Grammar[$grammarTypeArgs](grammarState0)",
       ),
-      "}",
     )
   }
 
@@ -45,7 +44,7 @@ private[scala3] object GenGrammar {
       rawNTs: Map[ExpandedGrammar.Identifier.NonTerminal, ExpandedGrammar.RawNT],
   ): IndentedString =
     IndentedString.inline(
-      s"lazy val state${state.id}: $ParsePath.Grammar.State[$grammarTypeArgs] =",
+      s"lazy val grammarState${state.id}: $ParsePath.Grammar.State[$grammarTypeArgs] =",
       IndentedString.indented(
         s"$ParsePath.Grammar.State[$grammarTypeArgs](",
         IndentedString.indented(
@@ -152,7 +151,7 @@ private[scala3] object GenGrammar {
                   s"}",
                 )
               case ParsingTable.ParseState.Action.Push(toStateId) =>
-                s"$ParsePath.Grammar.State.Action.Shift[$grammarTypeArgs](state$toStateId)"
+                s"$ParsePath.Grammar.State.Action.Shift[$grammarTypeArgs](grammarState$toStateId)"
             }
 
           IndentedString.inline(
@@ -204,7 +203,7 @@ private[scala3] object GenGrammar {
         "onNT = {",
         IndentedString.indented(
           state.actionsOnNonTerminals.toList.map { case (nt, action) =>
-            s"case _: ${utils.qualifiedIdentifierName(nt)} => state${action.toStateId}"
+            s"case _: ${utils.qualifiedIdentifierName(nt)} => grammarState${action.toStateId}"
           },
         ),
         "},",

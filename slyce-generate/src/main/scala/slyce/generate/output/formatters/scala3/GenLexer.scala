@@ -15,17 +15,16 @@ private[scala3] object GenLexer {
       dfa: DFA,
   ): IndentedString =
     IndentedString.inline(
-      s"val lexer: $ParsePath.Lexer[${utils.qualifiedPath}.Terminal] = {",
+      dfa.states.map { state =>
+        IndentedString.inline(
+          lexerState(utils, state),
+          IndentedString.Break,
+        )
+      },
+      s"val lexer: $ParsePath.Lexer[${utils.qualifiedPath}.Terminal] =",
       IndentedString.indented(
-        dfa.states.map { state =>
-          IndentedString.inline(
-            lexerState(utils, state),
-            IndentedString.Break,
-          )
-        },
-        s"$ParsePath.Lexer[${utils.qualifiedPath}.Terminal](state0)",
+        s"$ParsePath.Lexer[${utils.qualifiedPath}.Terminal](lexerState0)",
       ),
-      "}",
     )
 
   private def lexerState(
@@ -33,7 +32,7 @@ private[scala3] object GenLexer {
       state: DFA.State,
   ): IndentedString =
     IndentedString.inline(
-      s"lazy val state${state.id}: $ParsePath.Lexer.State[${utils.qualifiedPath}.Terminal] =",
+      s"private lazy val lexerState${state.id}: $ParsePath.Lexer.State[${utils.qualifiedPath}.Terminal] =",
       IndentedString.indented(
         s"$ParsePath.Lexer.State.fromMap[${utils.qualifiedPath}.Terminal](",
         IndentedString.indented(
@@ -69,14 +68,14 @@ private[scala3] object GenLexer {
           .sortBy(_._1)
           .map { case (char, toState) =>
             toState match {
-              case Some(toState) => s"${char.toInt} -> _root_.scala.Some(state${toState.value.id}), // ${char.unesc}"
+              case Some(toState) => s"${char.toInt} -> _root_.scala.Some(lexerState${toState.value.id}), // ${char.unesc}"
               case None          => s"${char.toInt} -> _root_.scala.None, // ${char.unesc}"
             }
           },
       ),
       "),",
       state.elseTransition match {
-        case Some(to) => s"elseOn = _root_.scala.Some(state${to.value.id}),"
+        case Some(to) => s"elseOn = _root_.scala.Some(lexerState${to.value.id}),"
         case None     => s"elseOn = _root_.scala.None,"
       },
     )
@@ -88,8 +87,8 @@ private[scala3] object GenLexer {
     val toMode =
       yields.toMode.value match {
         case Yields.ToMode.Same       => s"$ParsePath.Lexer.Yields.ToMode.Same"
-        case Yields.ToMode.To(mode)   => s"$ParsePath.Lexer.Yields.ToMode.To($CorePath.Lazy(state${mode.value.id}))"
-        case Yields.ToMode.Push(mode) => s"$ParsePath.Lexer.Yields.ToMode.Push($CorePath.Lazy(state${mode.value.id}))"
+        case Yields.ToMode.To(mode)   => s"$ParsePath.Lexer.Yields.ToMode.To($CorePath.Lazy(lexerState${mode.value.id}))"
+        case Yields.ToMode.Push(mode) => s"$ParsePath.Lexer.Yields.ToMode.Push($CorePath.Lazy(lexerState${mode.value.id}))"
         case Yields.ToMode.Pop        => s"$ParsePath.Lexer.Yields.ToMode.Pop"
       }
 

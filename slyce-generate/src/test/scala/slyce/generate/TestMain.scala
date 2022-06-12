@@ -2,7 +2,7 @@ package slyce.generate
 
 import cats.syntax.either.*
 import cats.syntax.option.*
-import klib.utils.*
+import klib.utils.{given, *}
 import klib.utils.commandLine.parse.*
 import zio.*
 
@@ -283,7 +283,7 @@ object TestMain extends ExecutableApp {
           lexer.mode.line(
             Regex.Sequence(
               Regex.CharClass.inclusive('\\'),
-              Regex.CharClass.inclusive('.', '@', ';', 'n', 't', '\\', '[', ']', '(', '|', ')', '{', '}', '?', '*', '+'),
+              Regex.CharClass.inclusive('.', '/', '@', ';', 'n', 't', '\\', '[', ']', '(', '|', ')', '{', '}', '?', '*', '+'),
             ),
           )(Yields.Yield.Terminal("escChar", subString = (1.some, 1.some))),
           lexer.mode.line(Regex.CharClass.inclusive('\n'))(),
@@ -523,6 +523,176 @@ object TestMain extends ExecutableApp {
       ),
     )
 
+  val grammarGen: (String, Executable) =
+    makeExe(
+      "grammar",
+      lexerInput = lexer("General")(
+        lexer.mode("General")(
+          lexer.mode.line(
+            Regex.Sequence(
+              Regex.CharClass.inclusive('/').exactlyN(2),
+              Regex.CharClass.exclusive('\n').anyAmount,
+              Regex.CharClass.inclusive('\n'),
+            ),
+          )(),
+          // TODO (KR) : Block Comment
+          lexer.mode.line(Regex.CharClass.inclusive(' ', '\t', '\n').atLeastOnce)(),
+          lexer.mode.line(
+            Regex.Sequence("@start:"),
+            Yields.ToMode.Push("Mode"),
+          )(Yields.Yield.Text()),
+          lexer.mode.line(
+            Regex.Sequence(
+              Regex.CharClass.`[A-Z]`,
+              Regex.CharClass.`[A-Za-z_\\d]`.anyAmount,
+            ),
+          )(Yields.Yield.Terminal("nonTerminal")),
+          lexer.mode.line(
+            Regex.Sequence(
+              Regex.CharClass.`[a-z]`,
+              Regex.CharClass.`[A-Za-z_\\d]`.anyAmount,
+            ),
+          )(Yields.Yield.Terminal("terminal")),
+          lexer.mode.line(
+            Regex.CharClass.inclusive('"'),
+            Yields.ToMode.Push("String"),
+          )(Yields.Yield.Text()),
+          lexer.mode.line(
+            Regex.CharClass.inclusive(':', '^', '*', '+', '~', '<', '>'),
+          )(Yields.Yield.Text()),
+          lexer.mode.line(
+            Regex.CharClass.inclusive(';', '(', ')', '|', '.', '?'),
+          )(Yields.Yield.Text()),
+        ),
+        lexer.mode("Mode")(
+          lexer.mode.line(Regex.CharClass.inclusive(' ', '\t').atLeastOnce)(),
+          lexer.mode.line(
+            Regex.Sequence(
+              Regex.CharClass.`[A-Z]`,
+              Regex.CharClass.`[A-Za-z_\\d]`.anyAmount,
+            ),
+          )(Yields.Yield.Terminal("mode")),
+          lexer.mode.line(
+            Regex.CharClass.inclusive('\n'),
+            Yields.ToMode.Pop,
+          )(),
+        ),
+        lexer.mode("String")(
+          lexer.mode.line(
+            Regex.CharClass.inclusive('"'),
+            Yields.ToMode.Pop,
+          )(Yields.Yield.Text()),
+          lexer.mode.line(
+            Regex.Sequence(
+              Regex.CharClass.inclusive('\\'),
+              Regex.CharClass.inclusive('\\', 'n', 't', '"'),
+            ),
+          )(Yields.Yield.Terminal("escChar", subString = (1.some, 1.some))),
+          lexer.mode.line(Regex.CharClass.exclusive('\\', '"').atLeastOnce)(Yields.Yield.Terminal("chars")),
+        ),
+      ),
+      grammarInput = grammar("Grammar")(
+        grammar.nt.`:`(
+          grammar.elements(
+            "@start:",
+            "mode",
+            grammar.nt.+(
+              grammar.liftElements()("NT")(";"),
+            ),
+          ),
+        )("Grammar"),
+        grammar.nt.*(
+          grammar.liftElements()("Element")(),
+        )("ElementList"),
+        grammar.nt.`:`(
+          grammar.elements("Element"),
+          grammar.elements("ElementList", "^", "Element", "ElementList"),
+        )("LiftElementList"),
+        grammar.nt.`:`(
+          grammar.elements("nonTerminal", "NTBody"),
+        )("NT"),
+        grammar.nt.^(
+          grammar.liftElements()("StandardNT")(),
+          grammar.liftElements()("ListNT")(),
+          grammar.liftElements()("AssocNT")(),
+        )("NTBody"),
+        grammar.nt.`:`(
+          grammar.elements("BasicNT"),
+          grammar.elements("LiftNT"),
+        )("StandardNT"),
+        grammar.nt.`:`(
+          grammar.elements(
+            ":",
+            grammar.nt.+(
+              grammar.liftElements()("ElementList")(),
+              grammar.liftElements("|")("ElementList")(),
+            ),
+          ),
+        )("BasicNT"),
+        grammar.nt.`:`(
+          grammar.elements(
+            "^",
+            grammar.nt.+(
+              grammar.liftElements()("LiftElementList")(),
+              grammar.liftElements("|")("LiftElementList")(),
+            ),
+          ),
+        )("LiftNT"),
+        grammar.nt.`:`(
+          grammar.elements("ListType", "LiftElementList"),
+          grammar.elements("ListType", "LiftElementList", ".", "LiftElementList"),
+        )("ListNT"),
+        grammar.nt.`^`(
+          grammar.liftElements()("*")(),
+          grammar.liftElements()("+")(),
+        )("ListType"),
+        grammar.nt.`:`(
+          grammar.elements(
+            "~",
+            grammar.nt.+(
+              grammar.liftElements()("AssocPair")(),
+              grammar.liftElements("|")("AssocPair")(),
+            ),
+            "StandardNT",
+          ),
+        )("AssocNT"),
+        grammar.nt.`:`(
+          grammar.elements("AssocType", "Element"),
+        )("AssocPair"),
+        grammar.nt.^(
+          grammar.liftElements()("<")(),
+          grammar.liftElements()(">")(),
+        )("AssocType"),
+        grammar.nt.`:`(
+          grammar.elements("NonOptElement", "?".optional),
+        )("Element"),
+        grammar.nt.`:`(
+          grammar.elements("Element", "ListType"),
+          grammar.elements("(", "LiftElementList", ")", "ListType"),
+          grammar.elements("(", "LiftElementList", ".", "LiftElementList", ")", "ListType"),
+        )("AnonList"),
+        grammar.nt.^(
+          grammar.liftElements()("nonTerminal")(),
+          grammar.liftElements()("terminal")(),
+          grammar.liftElements()("Raw")(),
+          grammar.liftElements()("AnonList")(),
+        )("NonOptElement"),
+        grammar.nt.`:`(
+          grammar.elements(
+            "\"",
+            grammar.nt.+(
+              grammar.liftElements()("Char")(),
+            ),
+            "\"",
+          ),
+        )("Raw"),
+        grammar.nt.^(
+          grammar.liftElements()("chars")(),
+          grammar.liftElements()("escChar")(),
+        )("Char"),
+      ),
+    )
+
   val lexerTest: Executable =
     Executable
       .fromParser(Parser.unit.disallowExtras)
@@ -530,11 +700,73 @@ object TestMain extends ExecutableApp {
       .withExecute { _ =>
         for {
           _ <- Logger.println.info("Lexer Test")
+
           file <- File.fromPath("/home/kalin/dev/archived/slyce-fp/slyce-generate-parsers/src/main/slyce/slyce/generate/parsers/lexer.slf")
           source <- Source.fromFile(file)
+
           _tokens = slyce.generate.test.Lexer.lexer.tokenize(source).leftMap(_.map(e => KError.UserError(e.toString)))
           tokens <- ZIO.fromEither(_tokens)
           _ <- Logger.println.info(tokens.mkString("\n"))
+
+          _ <- Logger.break()
+
+          _ast = slyce.generate.test.Lexer.grammar.buildTree(source, tokens).leftMap(_.map(e => KError.UserError(e.toString)))
+          ast <- ZIO.fromEither(_ast)
+          _ <- Logger.println.info(
+            IndentedString.inline(
+              ast._3.toNonEmptyList.toList.map { mode =>
+                IndentedString.inline(
+                  mode._2.text,
+                  IndentedString.indented(
+                    mode._3.toNonEmptyList.toList.map { line =>
+                      line._1.toString
+                    },
+                  ),
+                )
+              },
+            ),
+          )
+
+        } yield ()
+      }
+
+  val grammarTest: Executable =
+    Executable
+      .fromParser(Parser.unit.disallowExtras)
+      .withLayer { _ => ZIO.unit.toLayer }
+      .withExecute { _ =>
+        for {
+          _ <- Logger.println.info("Grammar Test")
+
+          file <- File.fromPath("/home/kalin/dev/archived/slyce-fp/slyce-generate-parsers/src/main/slyce/slyce/generate/parsers/lexer.sgf")
+          source <- Source.fromFile(file)
+
+          _tokens = slyce.generate.test.Grammar.lexer.tokenize(source).leftMap(_.map(e => KError.UserError(e.toString)))
+          tokens <- ZIO.fromEither(_tokens)
+          _ <- Logger.println.info(tokens.mkString("\n"))
+
+          _ <- Logger.break()
+
+          _ast = slyce.generate.test.Grammar.grammar.buildTree(source, tokens).leftMap(_.map(e => KError.UserError(e.toString)))
+          ast <- ZIO.fromEither(_ast)
+          _ <- Logger.println.info(ast)
+          /*
+          _ <- Logger.println.info(
+            IndentedString.inline(
+              ast._3.toNonEmptyList.toList.map { mode =>
+                IndentedString.inline(
+                  mode._2.text,
+                  IndentedString.indented(
+                    mode._3.toNonEmptyList.toList.map { line =>
+                      line._1.toString
+                    },
+                  ),
+                )
+              },
+            ),
+          )
+           */
+
         } yield ()
       }
 
@@ -546,6 +778,8 @@ object TestMain extends ExecutableApp {
       tmp,
       lexerGen,
       "lexer-test" -> lexerTest,
+      grammarGen,
+      "grammar-test" -> grammarTest,
     )
 
 }

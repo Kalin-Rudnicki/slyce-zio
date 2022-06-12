@@ -72,21 +72,23 @@ object ParsingTable {
         val allClosures: List[Closure] =
           Helpers.findAll(Set(initialClosure)) { c => calcTransitionMap(productionsForNT, c, expandedGrammar.maxLookAhead.value).values.toSet }.toList
 
-        allClosures.parTraverse { c => calcActionState(productionsForNT, c, expandedGrammar.maxLookAhead.value).map((c, _)) }.map { pairs =>
-          val closureToActionState: Map[Closure, TmpActionState] = pairs.toMap
+        allClosures
+          .parTraverse { c => calcActionState(productionsForNT, c, expandedGrammar.maxLookAhead.value).map((c, _)) }
+          .map { pairs =>
+            val closureToActionState: Map[Closure, TmpActionState] = pairs.toMap
 
-          val initialState: TmpActionState = closureToActionState(initialClosure)
-          val otherStates: Set[TmpActionState] = closureToActionState.values.toSet - initialState
+            val initialState: TmpActionState = closureToActionState(initialClosure)
+            val otherStates: Set[TmpActionState] = closureToActionState.values.toSet - initialState
 
-          val stateList: List[(TmpActionState, Int)] = (initialState :: otherStates.toList).zipWithIndex
-          val actionStateId: Map[TmpActionState, Int] = stateList.toMap
+            val stateList: List[(TmpActionState, Int)] = (initialState :: otherStates.toList).zipWithIndex
+            val actionStateId: Map[TmpActionState, Int] = stateList.toMap
 
-          val closureToStateId: Map[Closure, Int] = closureToActionState.map { (c, as) => (c, actionStateId(as)) }
+            val closureToStateId: Map[Closure, Int] = closureToActionState.map { (c, as) => (c, actionStateId(as)) }
 
-          val states: List[ParseState] = stateList.map(convertActionState(closureToStateId, _, _))
+            val states: List[ParseState] = stateList.map(convertActionState(closureToStateId, _, _))
 
-          ParsingTable(states)
-        }
+            ParsingTable(states)
+          }
       }
 
     // =====| Types |=====
