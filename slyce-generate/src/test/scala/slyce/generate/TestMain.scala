@@ -36,10 +36,20 @@ object TestMain extends ExecutableApp {
             debugOutputFile <- File.fromPath("target/test-output.html")
             _ <- debugOutputFile.writeString(debugResultString)
 
+            pkg = List("slyce", "generate", "test")
+            refName = name.split("-").map(_.capitalize).mkString
             result <- ZIO.fromEither(Result.build(lexerInput, grammarInput).leftMap(_.map(e => KError.UserError(e.toString))))
-            resultString = formatters.scala3.Scala3Formatter.format(List("a", "b", "c"), "Tmp", result)
+            resultString = formatters.scala3.Scala3Formatter.format(pkg, refName, result)
             _ <- Logger.println.info(resultString)
             _ <- Logger.println.info(s"Generated ${resultString.count(_ == '\n')} line(s)")
+
+            _ <- Logger.break()
+            dirPath = (List(".", "slyce-generate", "src", "test", "scala") ::: pkg).mkString("/")
+            dirFile <- File.fromPath(dirPath)
+            _ <- dirFile.createDirectories()
+            outFile <- dirFile.child(s"$refName.scala")
+            _ <- Logger.println.info(s"writing to: ${outFile.toJavaFile.getCanonicalPath}")
+            _ <- outFile.writeString(resultString)
           } yield ()
         },
     )
@@ -226,7 +236,7 @@ object TestMain extends ExecutableApp {
               Regex.CharClass.`[A-Za-z_\\d]`.anyAmount,
             ),
           )(Yields.Yield.Terminal("variable")),
-          lexer.mode.line(Regex.CharClass.inclusive('[', ']'))(Yields.Yield.Text()),
+          lexer.mode.line(Regex.CharClass.inclusive('[', ']', ','))(Yields.Yield.Text()),
           lexer.mode.line(Regex.CharClass.inclusive(' ', '\t', '\n'))(),
         ),
       ),

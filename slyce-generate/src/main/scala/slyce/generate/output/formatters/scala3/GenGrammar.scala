@@ -45,7 +45,7 @@ private[scala3] object GenGrammar {
       rawNTs: Map[ExpandedGrammar.Identifier.NonTerminal, ExpandedGrammar.RawNT],
   ): IndentedString =
     IndentedString.inline(
-      s"lazy val state${state.id} =",
+      s"lazy val state${state.id}: $ParsePath.Grammar.State[$grammarTypeArgs] =",
       IndentedString.indented(
         s"$ParsePath.Grammar.State[$grammarTypeArgs](",
         IndentedString.indented(
@@ -80,7 +80,12 @@ private[scala3] object GenGrammar {
                   "}",
                 )
               case ParsingTable.ParseState.Action.Reduce(nt, prodNIdx) =>
-                val prod = rawNTs(nt).productions.toList(prodNIdx)
+                val rawNT = rawNTs(nt)
+                val prod = rawNT.productions.toList(prodNIdx)
+
+                val fqNT =
+                  if (rawNT.productions.size == 1) s"${utils.qualifiedIdentifierName(nt)}"
+                  else s"${utils.qualifiedIdentifierName(nt)}._${prodNIdx + 1}"
 
                 val (
                   matchCurrent: String,
@@ -95,7 +100,7 @@ private[scala3] object GenGrammar {
                         "toState",
                         "stack,": IndentedString,
                         "toState",
-                        s"${utils.qualifiedIdentifierName(nt)}._$prodNIdx",
+                        fqNT,
                         "stack",
                       )
                     case Some(elements) =>
@@ -109,6 +114,8 @@ private[scala3] object GenGrammar {
                           if (idx == 0) "toState"
                           else "_"
 
+                        // TODO (KR) : I think this will break if there is '1 production' with '0 elements',
+                        //           : and a '.type' needs to be appended, I think.
                         s"$ParsePath.Grammar.StackElement(_root_.scala.$side(_${idx + 1}: ${utils.qualifiedIdentifierName(id)}), $stateName) ::"
                       }
 
@@ -124,8 +131,8 @@ private[scala3] object GenGrammar {
                           ),
                         ),
                         "toState",
+                        s"$fqNT(${(1 to elements.size).mkString("_", ", _", "")})",
                         "stack",
-                        s"${utils.qualifiedIdentifierName(nt)}._${prodNIdx + 1}(${(1 to elements.size).mkString("_", ", _", "")})",
                       )
                   }
 
@@ -149,7 +156,7 @@ private[scala3] object GenGrammar {
             }
 
           IndentedString.inline(
-            s"$matchOnStr =>",
+            s"case $matchOnStr =>",
             IndentedString.indented(
               actionIdtStr,
             ),
@@ -197,7 +204,7 @@ private[scala3] object GenGrammar {
         "onNT = {",
         IndentedString.indented(
           state.actionsOnNonTerminals.toList.map { case (nt, action) =>
-            s"_: ${utils.qualifiedIdentifierName(nt)} => state${action.toStateId}"
+            s"case _: ${utils.qualifiedIdentifierName(nt)} => state${action.toStateId}"
           },
         ),
         "},",

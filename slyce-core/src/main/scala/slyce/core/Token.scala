@@ -1,6 +1,8 @@
 package slyce.core
 
-trait Token {
+import klib.utils.*
+
+trait Token extends Product {
   val tokName: String
   val text: String
   val span: Span
@@ -10,6 +12,7 @@ object Token {
 
   trait Const { self: Token =>
     final val text = tokName
+    override def productPrefix: String = tokName
   }
 
 }

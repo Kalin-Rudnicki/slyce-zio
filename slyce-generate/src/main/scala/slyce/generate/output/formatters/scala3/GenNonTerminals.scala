@@ -62,7 +62,7 @@ private[scala3] object GenNonTerminals {
           buildProd(
             utils,
             IndentedString.inline(),
-            s"sealed trait $ntName",
+            s"sealed abstract class $ntName",
             s"${utils.qualifiedPath}.NonTerminal(${ntName.unesc})",
             nt.withs,
             functs,
@@ -210,7 +210,7 @@ private[scala3] object GenNonTerminals {
           s"final def to$retType: $retTypePath.$retType[$ntName.${Extras.With.Type.Lift}] = {",
           IndentedString.indented(
             "@_root_.scala.annotation.tailrec",
-            s"def loop(queue: $loopType, stack: _root_.scala.List[$ntName.${Extras.With.Type.Lift}] =",
+            s"def loop(queue: $loopType, stack: _root_.scala.List[$ntName.${Extras.With.Type.Lift}]): _root_.scala.List[$ntName.${Extras.With.Type.Lift}] =",
             IndentedString.indented(
               "queue match {",
               IndentedString.indented(

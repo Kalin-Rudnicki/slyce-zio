@@ -43,8 +43,8 @@ private[scala3] final class GenUtils(pkg: List[String], name: String, result: Re
   def qualifiedIdentifierName(id: ExpandedGrammar.Identifier): String = {
     val prefix =
       id match {
-        case _: ExpandedGrammar.Identifier.NonTerminal => "Terminal"
-        case _: ExpandedGrammar.Identifier.Term        => "NonTerminal"
+        case _: ExpandedGrammar.Identifier.NonTerminal => "NonTerminal"
+        case _: ExpandedGrammar.Identifier.Term        => "Terminal"
       }
     s"$qualifiedPath.$prefix.${identifierName(id)}"
   }

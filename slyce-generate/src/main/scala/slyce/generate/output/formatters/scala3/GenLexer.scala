@@ -33,7 +33,7 @@ private[scala3] object GenLexer {
       state: DFA.State,
   ): IndentedString =
     IndentedString.inline(
-      s"lazy val state${state.id} =",
+      s"lazy val state${state.id}: $ParsePath.Lexer.State[${utils.qualifiedPath}.Terminal] =",
       IndentedString.indented(
         s"$ParsePath.Lexer.State.fromMap[${utils.qualifiedPath}.Terminal](",
         IndentedString.indented(
@@ -86,10 +86,10 @@ private[scala3] object GenLexer {
   ): IndentedString = {
     val toMode =
       yields.toMode.value match {
-        case Yields.ToMode.Same       => s"$ParsePath.Lexer.ToMode.Same"
-        case Yields.ToMode.To(mode)   => s"$ParsePath.Lexer.ToMode.To(state${mode.value.id})"
-        case Yields.ToMode.Push(mode) => s"$ParsePath.Lexer.ToMode.Push(state${mode.value.id})"
-        case Yields.ToMode.Pop        => s"$ParsePath.Lexer.ToMode.Pop"
+        case Yields.ToMode.Same       => s"$ParsePath.Lexer.Yields.ToMode.Same"
+        case Yields.ToMode.To(mode)   => s"$ParsePath.Lexer.Yields.ToMode.To(state${mode.value.id})"
+        case Yields.ToMode.Push(mode) => s"$ParsePath.Lexer.Yields.ToMode.Push(state${mode.value.id})"
+        case Yields.ToMode.Pop        => s"$ParsePath.Lexer.Yields.ToMode.Pop"
       }
 
     IndentedString.inline(
@@ -117,22 +117,22 @@ private[scala3] object GenLexer {
         case Yields.Yield.Text(subString) =>
           (
             subString,
-            s"${utils.qualifiedPath}.Lexer.Terminal.$FindRawTerminalName",
+            s"${utils.qualifiedPath}.Terminal.$FindRawTerminalName",
           )
         case Yields.Yield.Terminal(name, text, subString) =>
           (
             subString,
             text match {
               case Some(text) =>
-                s"span => _ => $ParsePath.Terminal.$name(${text.unesc}, span)"
+                s"span => _ => ${utils.qualifiedPath}.Terminal.$name(${text.unesc}, span)"
               case None =>
-                s"span => text => $ParsePath.Terminal.$name(text, span)"
+                s"span => text => ${utils.qualifiedPath}.Terminal.$name(text, span)"
             },
           )
         case Yields.Yield.ConstText(text, subString) =>
           (
             subString,
-            s"span => _ => ${utils.qualifiedPath}.Lexer.Terminal.${text.unesc("`")}(span)",
+            s"span => _ => ${utils.qualifiedPath}.Terminal.${text.unesc("`")}(span)",
           )
       }
 
