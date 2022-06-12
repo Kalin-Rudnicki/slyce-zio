@@ -114,42 +114,31 @@ object ConvertLexer {
     }
 
   private def convertYield(_yield: Lexer.NonTerminal.Yield): Marked[Yields.Yield] = {
-    val tmp: (
-        ((Option[Int], Option[Int])) => Yields.Yield,
-        Source,
-        Span.Pos,
-        Span.Pos,
-    ) =
+    val tmp: (((Option[Int], Option[Int])) => Yields.Yield, Span.Highlight) =
       _yield._1 match {
         case Lexer.NonTerminal.YieldType._1(at) =>
           (
             Yields.Yield.Text(_),
-            at.span.source,
-            at.span.start,
-            at.span.end,
+            at.span,
           )
         case Lexer.NonTerminal.YieldType._2(term) =>
           (
             Yields.Yield.Terminal(term.text, None, _),
-            term.span.source,
-            term.span.start,
-            term.span.end,
+            term.span,
           )
         case Lexer.NonTerminal.YieldType._3(raw) =>
           (
             Yields.Yield.ConstText(convertRaw(raw), _),
-            raw._1.span.source,
-            raw._1.span.start,
-            raw._3.span.end,
+            raw._1.span,
           )
       }
 
-    val (build, source, startPos, endPos1) = tmp
-    val (subStr, endPos2) = convertSubString(_yield._2)
+    val (build, h1) = tmp
+    val (subStr, h2) = convertSubString(_yield._2)
 
     Marked(
       build(subStr),
-      Span.Highlight(startPos, endPos2.getOrElse(endPos1), source),
+      h1 <> h2,
     )
   }
 
@@ -161,19 +150,19 @@ object ConvertLexer {
 
   private def convertSubString(
       subString: Lexer.NonTerminal.SubString,
-  ): ((Option[Int], Option[Int]), Option[Span.Pos]) =
+  ): ((Option[Int], Option[Int]), Option[Span.Highlight]) =
     subString match {
       case Lexer.NonTerminal.SubString._1 =>
         ((None, None), None)
       case Lexer.NonTerminal.SubString._2(_, exact, l) =>
         val exactInt = exact.text.toInt.some
-        ((exactInt, exactInt), l.span.end.some)
+        ((exactInt, exactInt), l.span.some)
       case Lexer.NonTerminal.SubString._3(_, start, _, l) =>
-        ((start.text.toInt.some, None), l.span.end.some)
+        ((start.text.toInt.some, None), l.span.some)
       case Lexer.NonTerminal.SubString._4(_, _, stop, l) =>
-        ((None, stop.text.toInt.some), l.span.end.some)
+        ((None, stop.text.toInt.some), l.span.some)
       case Lexer.NonTerminal.SubString._5(_, start, _, stop, l) =>
-        ((start.text.toInt.some, stop.text.toInt.some), l.span.end.some)
+        ((start.text.toInt.some, stop.text.toInt.some), l.span.some)
     }
 
   private def convertToMode(
@@ -189,12 +178,12 @@ object ConvertLexer {
       case Lexer.NonTerminal.ToMode._2(arrow, to) =>
         Marked(
           Yields.ToMode.Push(to.text),
-          Span.Highlight(arrow.span.start, to.span.end, source),
+          arrow.span <> to.span,
         )
       case Lexer.NonTerminal.ToMode._3(arrow, to) =>
         Marked(
           Yields.ToMode.To(to.text),
-          Span.Highlight(arrow.span.start, to.span.end, source),
+          arrow.span <> to.span,
         )
       case Lexer.NonTerminal.ToMode._4(arrow) =>
         Marked(

@@ -5,7 +5,7 @@ import klib.utils.*
 trait Token extends Product {
   val tokName: String
   val text: String
-  val span: Span
+  val span: Span.Highlight
   final val markedText: Marked[String] = Marked(text, span)
 }
 object Token {

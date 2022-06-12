@@ -30,10 +30,21 @@ object Span {
       start: Span.Pos,
       end: Span.Pos,
       source: Source,
-  ) extends HasSource
+  ) extends HasSource {
+
+    def <>(other: Highlight): Highlight = Highlight(this.start, other.end, this.source)
+    def <>(other: Option[Highlight]): Highlight =
+      other match {
+        case Some(other) => this <> other
+        case None        => this
+      }
+
+  }
+
   final case class EOF(
       source: Source,
   ) extends HasSource
+
   case object Unknown extends Span {
     override val optionalSource: Option[Source] = None
   }
