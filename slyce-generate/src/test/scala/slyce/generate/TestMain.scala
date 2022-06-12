@@ -37,7 +37,7 @@ object TestMain extends ExecutableApp {
             _ <- debugOutputFile.writeString(debugResultString)
 
             result <- ZIO.fromEither(Result.build(lexerInput, grammarInput).leftMap(_.map(e => KError.UserError(e.toString))))
-            resultString = formatters.Scala3.format(List("a", "b", "c"), "Tmp", result)
+            resultString = formatters.scala3.Scala3Formatter.format(List("a", "b", "c"), "Tmp", result)
             _ <- Logger.println.info(resultString)
             _ <- Logger.println.info(s"Generated ${resultString.count(_ == '\n')} line(s)")
           } yield ()
