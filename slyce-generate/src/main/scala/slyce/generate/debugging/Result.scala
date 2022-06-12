@@ -431,12 +431,7 @@ object Result {
             shared.verticalSpace,
             expandedGrammarSection(result.expandedGrammar),
             shared.verticalSpace,
-            shared.eitherSection("ParsingTable", result.parsingTable, false) { parsingTable =>
-              // TODO (KR) :
-              shared.frag(
-                shared.todo,
-              )
-            },
+            shared.eitherSection("ParsingTable", result.parsingTable, false)(parsingTable),
           )
         }
 
@@ -504,6 +499,61 @@ object Result {
             },
           ),
         )
+
+      private def parsingTable(parsingTable: ParsingTable): Frag =
+        shared.frag(
+          shared.makeTable(
+            "State" -> 100,
+            "LookAhead" -> 750,
+            "ActionsOnNonTerminals" -> 750,
+          )(
+            parsingTable.parseStates.map { state =>
+              tr(
+                shared.makeCenteredCell(
+                  a(htmlId := s"parse-state-${state.id}")(s"#${state.id}"),
+                  shared.makeCell(lookAheadFrag(state.lookAhead)),
+                  shared.makeCell(actionsOnNTFrag(state.actionsOnNonTerminals)),
+                ),
+              )
+            },
+          ),
+        )
+
+      private def lookAheadFrag(lookAhead: ParsingTable.ParseState.Action.LookAhead): Frag =
+        ul(
+          lookAhead.actionsOnTerminals.toList.sortBy(_._1.toString).map { (term, action) =>
+            li(
+              s"$term : ",
+              action match {
+                case simple: ParsingTable.ParseState.Action.Simple       => simpleActionFrag(simple)
+                case lookAhead: ParsingTable.ParseState.Action.LookAhead => lookAheadFrag(lookAhead)
+              },
+            )
+          },
+          lookAhead.actionOnEOF.map { action =>
+            li(
+              "EOF : ",
+              simpleActionFrag(action),
+            )
+          },
+        )
+
+      private def actionsOnNTFrag(actionsOnNonTerminals: Map[ExpandedGrammar.Identifier.NonTerminal, ParsingTable.ParseState.Action.Push]): Frag =
+        ul(
+          actionsOnNonTerminals.toList.sortBy(_._1.toString).map { (nt, action) =>
+            li(
+              s"$nt : ",
+              simpleActionFrag(action),
+            )
+          },
+        )
+
+      private def simpleActionFrag(action: ParsingTable.ParseState.Action.Simple): Frag =
+        action match {
+          case ParsingTable.ParseState.Action.Accept          => "Accept"
+          case ParsingTable.ParseState.Action.Reduce(nt, idx) => s"Reduce -> $nt[$idx]"
+          case ParsingTable.ParseState.Action.Push(toId)      => shared.frag("Push(", a(href := s"#parse-state-$toId")(s"#$toId"), ")")
+        }
 
     }
 

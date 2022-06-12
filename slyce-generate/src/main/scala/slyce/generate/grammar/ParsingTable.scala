@@ -26,11 +26,12 @@ object ParsingTable {
 
     sealed trait Action
     object Action {
-      sealed trait EOFAction extends Action
+      sealed trait Simple extends Action
+      sealed trait EOFAction extends Simple
 
       case object Accept extends EOFAction
       final case class Reduce(nt: ExpandedGrammar.Identifier.NonTerminal, prodNIdx: Int) extends EOFAction
-      final case class Push(toStateId: Int) extends Action
+      final case class Push(toStateId: Int) extends Simple
       final case class LookAhead( // TODO (KR) : I don't know if I like this name...
           actionsOnTerminals: Map[ExpandedGrammar.Identifier.Term, Action],
           actionOnEOF: Option[Action.EOFAction],

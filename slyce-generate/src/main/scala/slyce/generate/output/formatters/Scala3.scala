@@ -76,9 +76,9 @@ object Scala3 extends Formatter {
           IndentedString.Break,
           lexer(qualifiedPath, result.dfa),
           IndentedString.Break,
-          "// =====| Parser |=====",
+          "// =====| Grammar |=====",
           IndentedString.Break,
-          "// TODO (KR) : codegen this",
+          parser(qualifiedPath, result.expandedGrammar, result.parsingTable, qualifiedIdentifierName),
           IndentedString.Break,
         ),
         "}",
@@ -104,6 +104,8 @@ object Scala3 extends Formatter {
   private def packageName(pkg: List[String]): IndentedString =
     if (pkg.nonEmpty) IndentedString.inline(pkg.mkString("package ", ".", ""), IndentedString.Break)
     else IndentedString.inline()
+
+  // =====| Terminal |=====
 
   private def terminals(
       qualifiedPath: String,
@@ -194,6 +196,8 @@ object Scala3 extends Formatter {
           .reverse,
       )
   }
+
+  // =====| NonTerminal |=====
 
   private def nonTerminals(
       qualifiedPath: String,
@@ -513,12 +517,14 @@ object Scala3 extends Formatter {
       )
     }
 
+  // =====| Lexer |=====
+
   private def lexer(
       qualifiedPath: String,
       dfa: DFA,
   ): IndentedString =
     IndentedString.inline(
-      s"val lexer: $ParsePath.Lexer = {",
+      s"val lexer: $ParsePath.Lexer[$qualifiedPath.Terminal] = {",
       IndentedString.indented(
         dfa.states.map { state =>
           IndentedString.inline(
@@ -526,7 +532,7 @@ object Scala3 extends Formatter {
             IndentedString.Break,
           )
         },
-        s"$ParsePath.Lexer[$qualifiedPath.NonTerminal](state0)",
+        s"$ParsePath.Lexer[$qualifiedPath.Terminal](state0)",
       ),
       "}",
     )
@@ -572,8 +578,8 @@ object Scala3 extends Formatter {
           .sortBy(_._1)
           .map { case (char, toState) =>
             toState match {
-              case Some(toState) => s"${char.toInt} -> _root_.scala.Some(state${toState.value.id}),"
-              case None          => s"${char.toInt} -> _root_.scala.None,"
+              case Some(toState) => s"${char.toInt} -> _root_.scala.Some(state${toState.value.id}), // ${char.unesc}"
+              case None          => s"${char.toInt} -> _root_.scala.None, // ${char.unesc}"
             }
           },
       ),
@@ -648,5 +654,203 @@ object Scala3 extends Formatter {
       "),",
     )
   }
+
+  // =====| Parser |=====
+
+  private def parser(
+      qualifiedPath: String,
+      expandedGrammar: ExpandedGrammar,
+      parsingTable: ParsingTable,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+  ): IndentedString = {
+    val grammarTypeArgs: String =
+      s"$qualifiedPath.Terminal, $qualifiedPath.NonTerminal, $qualifiedPath.NonTerminal.${expandedGrammar.startNt.value}"
+
+    IndentedString.inline(
+      s"val grammar: $ParsePath.Grammar[$grammarTypeArgs] = {",
+      IndentedString.indented(
+        parsingTable.parseStates.map { state =>
+          IndentedString.inline(
+            parserState(
+              ExpandedGrammar.Identifier.NonTerminal.NamedNt(expandedGrammar.startNt.value),
+              grammarTypeArgs,
+              state,
+              qualifiedIdentifierName,
+              expandedGrammar.deDuplicatedNTGroups.flatMap(_.rawNTs.toList).map { nt => (nt.name, nt) }.toMap,
+            ),
+            IndentedString.Break,
+          )
+        },
+        s"$ParsePath.Grammar[$grammarTypeArgs](state0)",
+      ),
+      "}",
+    )
+  }
+
+  private def parserState(
+      startNT: ExpandedGrammar.Identifier.NonTerminal,
+      grammarTypeArgs: String,
+      state: ParsingTable.ParseState,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+      rawNTs: Map[ExpandedGrammar.Identifier.NonTerminal, ExpandedGrammar.RawNT],
+  ): IndentedString =
+    IndentedString.inline(
+      s"lazy val state${state.id} =",
+      IndentedString.indented(
+        s"$ParsePath.Grammar.State[$grammarTypeArgs](",
+        IndentedString.indented(
+          s"id = ${state.id},",
+          parserStateOnTerm(startNT, grammarTypeArgs, state, qualifiedIdentifierName, rawNTs),
+          parserStateOnNT(state, qualifiedIdentifierName),
+        ),
+        ")",
+      ),
+    )
+
+  private def parserStateOnTerm(
+      startNT: ExpandedGrammar.Identifier.NonTerminal,
+      grammarTypeArgs: String,
+      state: ParsingTable.ParseState,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+      rawNTs: Map[ExpandedGrammar.Identifier.NonTerminal, ExpandedGrammar.RawNT],
+  ): IndentedString =
+    IndentedString.inline(
+      "onTerm = {",
+      IndentedString.indented(
+        parserOnTermItems(Nil, state.lookAhead, qualifiedIdentifierName).map { case (list, action) =>
+          val matchOnStr: String = list.mkString(" :: ")
+          val actionIdtStr: IndentedString =
+            action match {
+              case ParsingTable.ParseState.Action.Accept =>
+                IndentedString.inline(
+                  s"$ParsePath.Grammar.State.Action.Accept[$grammarTypeArgs] {",
+                  IndentedString.indented(
+                    s"case $ParsePath.Grammar.StackElement(_root_.scala.Right(root: ${qualifiedIdentifierName(startNT)}), _) :: _root_.scala.Nil => root",
+                  ),
+                  "}",
+                )
+              case ParsingTable.ParseState.Action.Reduce(nt, prodNIdx) =>
+                val prod = rawNTs(nt).productions.toList(prodNIdx)
+
+                val (
+                  matchCurrent: String,
+                  matchStack: IndentedString,
+                  retState: String,
+                  retNT: String,
+                  retStack: String,
+                ) =
+                  prod.elements.toNel match {
+                    case None =>
+                      (
+                        "toState",
+                        "stack,": IndentedString,
+                        "toState",
+                        s"${qualifiedIdentifierName(nt)}._$prodNIdx",
+                        "stack",
+                      )
+                    case Some(elements) =>
+                      def elemStr(id: ExpandedGrammar.Identifier, idx: Int): String = {
+                        val side =
+                          id match {
+                            case _: ExpandedGrammar.Identifier.Term        => "Left"
+                            case _: ExpandedGrammar.Identifier.NonTerminal => "Right"
+                          }
+                        val stateName =
+                          if (idx == 0) "toState"
+                          else "_"
+
+                        s"$ParsePath.Grammar.StackElement(_root_.scala.$side(_${idx + 1}: ${qualifiedIdentifierName(id)}), $stateName) ::"
+                      }
+
+                      val reversed = elements.toList.zipWithIndex.map(elemStr).reverse
+
+                      (
+                        "_",
+                        IndentedString.inline(
+                          reversed.head,
+                          IndentedString.indented(
+                            reversed.tail,
+                            "stack,",
+                          ),
+                        ),
+                        "toState",
+                        "stack",
+                        s"${qualifiedIdentifierName(nt)}._${prodNIdx + 1}(${(1 to elements.size).mkString("_", ", _", "")})",
+                      )
+                  }
+
+                IndentedString.inline(
+                  s"$ParsePath.Grammar.State.Action.Reduce[$grammarTypeArgs] {",
+                  IndentedString.indented(
+                    s"case (",
+                    IndentedString.indented(
+                      s"$matchCurrent,",
+                      matchStack,
+                    ),
+                    s") =>",
+                    IndentedString.indented(
+                      s"($retState, $retNT, $retStack)",
+                    ),
+                  ),
+                  s"}",
+                )
+              case ParsingTable.ParseState.Action.Push(toStateId) =>
+                s"$ParsePath.Grammar.State.Action.Shift[$grammarTypeArgs](state$toStateId)"
+            }
+
+          IndentedString.inline(
+            s"$matchOnStr =>",
+            IndentedString.indented(
+              actionIdtStr,
+            ),
+          )
+        },
+      ),
+      "},",
+    )
+
+  private def parserOnTermItems(
+      prefix: List[String],
+      lookAhead: ParsingTable.ParseState.Action.LookAhead,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+  ): List[(List[String], ParsingTable.ParseState.Action.Simple)] =
+    lookAhead.actionsOnTerminals.toList.flatMap { case (term, action) =>
+      parserActionsOnTerminals(prefix :+ s"(${if (prefix.isEmpty) "tok" else "_"}: ${qualifiedIdentifierName(term)})", qualifiedIdentifierName, action)
+    } :::
+      lookAhead.actionOnEOF.map(parseActionOnEOF(prefix, _)).toList
+
+  private def parserActionsOnTerminals(
+      prefix: List[String],
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+      action: ParsingTable.ParseState.Action,
+  ): List[(List[String], ParsingTable.ParseState.Action.Simple)] =
+    action match {
+      case action: ParsingTable.ParseState.Action.EOFAction    => (prefix :+ "_", action) :: Nil
+      case action: ParsingTable.ParseState.Action.Push         => (prefix :+ "_", action) :: Nil
+      case lookAhead: ParsingTable.ParseState.Action.LookAhead => parserOnTermItems(prefix, lookAhead, qualifiedIdentifierName)
+    }
+
+  private def parseActionOnEOF(
+      prefix: List[String],
+      eofAction: ParsingTable.ParseState.Action.EOFAction,
+  ): (List[String], ParsingTable.ParseState.Action.Simple) =
+    (prefix :+ "_root_.scala.Nil", eofAction)
+
+  private def parserStateOnNT(
+      state: ParsingTable.ParseState,
+      qualifiedIdentifierName: ExpandedGrammar.Identifier => String,
+  ): IndentedString =
+    if (state.actionsOnNonTerminals.isEmpty)
+      "onNT = PartialFunction.empty"
+    else
+      IndentedString.inline(
+        "onNT = {",
+        IndentedString.indented(
+          state.actionsOnNonTerminals.toList.map { case (nt, action) =>
+            s"_: ${qualifiedIdentifierName(nt)} => state${action.toStateId}"
+          },
+        ),
+        "},",
+      )
 
 }

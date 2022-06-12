@@ -215,11 +215,41 @@ object TestMain extends ExecutableApp {
       ),
     )
 
+  private val tmp: (String, Executable) =
+    makeExe(
+      "tmp",
+      lexerInput = lexer("General")(
+        lexer.mode("General")(
+          lexer.mode.line(
+            Regex.Sequence(
+              Regex.CharClass.`[a-z]`,
+              Regex.CharClass.`[A-Za-z_\\d]`.anyAmount,
+            ),
+          )(Yields.Yield.Terminal("variable")),
+          lexer.mode.line(Regex.CharClass.inclusive('[', ']'))(Yields.Yield.Text()),
+          lexer.mode.line(Regex.CharClass.inclusive(' ', '\t', '\n'))(),
+        ),
+      ),
+      grammarInput = grammar("Root")(
+        grammar.nt.`:`(
+          grammar.elements(
+            "[",
+            grammar.nt.*(
+              grammar.liftElements()("variable")(),
+              grammar.liftElements(",")("variable")(),
+            ),
+            "]",
+          ),
+        )("Root"),
+      ),
+    )
+
   override val executable: Executable =
     Executable.fromSubCommands(
       calc,
       simpleExpr,
       causeConflict,
+      tmp,
     )
 
 }
