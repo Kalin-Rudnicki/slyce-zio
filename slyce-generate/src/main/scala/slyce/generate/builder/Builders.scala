@@ -2,6 +2,8 @@ package slyce.generate.builder
 
 import cats.data.NonEmptyList
 import cats.syntax.option.*
+import zio.ZTraceElement
+import zio.internal.stacktracer.Tracer
 
 import slyce.core.*
 import slyce.generate.grammar.*
@@ -24,48 +26,41 @@ object Builders {
       GrammarInput.Element.Optional(grammar.NonOptElem(nonOpt))
   }
 
-  final class LineNoCounter {
-    private var _lineNo: Int = 1
-
-    def newMode(): Unit = _lineNo += 2
-
-    def calcLineNo(): Int = {
-      val lineNo = _lineNo
-      _lineNo += 1
-      lineNo
-    }
-
-  }
-
   object lexer {
 
-    def apply(startMode: String)(modes: (LineNoCounter ?=> LexerInput.Mode)*): LexerInput = {
-      val lineNoCounter: LineNoCounter = new LineNoCounter
+    def apply(startMode: String)(modes: LexerInput.Mode*): LexerInput =
       LexerInput(
         startMode.markedUnknown,
-        modes.toList.map(_(using lineNoCounter)),
+        modes.toList,
       )
-    }
 
     object mode {
 
-      def apply(modeName: String)(lines: (LineNoCounter ?=> LexerInput.Mode.Line)*)(using lineNoCounter: LineNoCounter): LexerInput.Mode = {
-        lineNoCounter.newMode()
+      def apply(modeName: String)(lines: LexerInput.Mode.Line*): LexerInput.Mode =
         LexerInput.Mode(
           modeName.markedUnknown,
-          lines.toList.map(_(using lineNoCounter)),
+          lines.toList,
         )
-      }
 
-      def line(reg: Regex, toMode: Yields.ToMode[String] = Yields.ToMode.Same)(yields: Yields.Yield*)(using lineNoCounter: LineNoCounter): LexerInput.Mode.Line =
+      def line(
+          reg: Regex,
+          toMode: Yields.ToMode[String] = Yields.ToMode.Same,
+      )(
+          yields: Yields.Yield*,
+      )(using
+          trace: ZTraceElement,
+      ): LexerInput.Mode.Line = {
+        val lineNo = Tracer.instance.unapply(trace).get._3
+
         LexerInput.Mode.Line(
-          lineNoCounter.calcLineNo(),
+          lineNo,
           reg.markedUnknown,
           Yields(
             yields.toList.map(_.markedUnknown),
             toMode.markedUnknown,
           ),
         )
+      }
 
     }
 

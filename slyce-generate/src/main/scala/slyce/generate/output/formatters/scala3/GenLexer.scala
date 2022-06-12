@@ -74,9 +74,10 @@ private[scala3] object GenLexer {
             }
           },
       ),
+      "),",
       state.elseTransition match {
-        case Some(to) => s").withDefaultValue(_root_.scala.Some(state${to.value.id})),"
-        case None     => "),"
+        case Some(to) => s"elseOn = _root_.scala.Some(state${to.value.id}),"
+        case None     => s"elseOn = _root_.scala.None,"
       },
     )
 
@@ -87,8 +88,8 @@ private[scala3] object GenLexer {
     val toMode =
       yields.toMode.value match {
         case Yields.ToMode.Same       => s"$ParsePath.Lexer.Yields.ToMode.Same"
-        case Yields.ToMode.To(mode)   => s"$ParsePath.Lexer.Yields.ToMode.To(state${mode.value.id})"
-        case Yields.ToMode.Push(mode) => s"$ParsePath.Lexer.Yields.ToMode.Push(state${mode.value.id})"
+        case Yields.ToMode.To(mode)   => s"$ParsePath.Lexer.Yields.ToMode.To($CorePath.Lazy(state${mode.value.id}))"
+        case Yields.ToMode.Push(mode) => s"$ParsePath.Lexer.Yields.ToMode.Push($CorePath.Lazy(state${mode.value.id}))"
         case Yields.ToMode.Pop        => s"$ParsePath.Lexer.Yields.ToMode.Pop"
       }
 

@@ -109,7 +109,18 @@ object Extras {
         val withsByNTAndType: Map[(ExpandedGrammar.Identifier.NonTerminal, With.Type), Withs] =
           allWiths.groupByNel(w => (w.nt, w.withType))(Order.by(_.toString)).toMap.map { (k, ws) => (k, Withs(ws)) }
         val withIsSingular: Map[(ExpandedGrammar.Identifier, With.Type), Boolean] =
-          allWiths.groupByNel(w => (w.target, w.withType))(Order.by(_.toString)).toMap.map { (k, v) => (k, v.size == 1) }
+          withsByNTAndType.toList.flatMap { case ((_, t), withs) =>
+            withs match {
+              case Withs.One(w) =>
+                List(
+                  ((w.target, t), true),
+                )
+              case Withs.Many(ws) =>
+                ws.toList.map { w =>
+                  ((w.target, t), false)
+                }
+            }
+          }.toMap
         val withsByTarget: Map[ExpandedGrammar.Identifier, NonEmptyList[With]] =
           allWiths
             .groupBy(_.target)

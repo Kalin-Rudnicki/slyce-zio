@@ -45,13 +45,14 @@ object Lexer {
     def fromMap[Tok](
         id: Int,
         on: => Map[Int, Option[State[Tok]]],
+        elseOn: => Option[State[Tok]],
         yields: Option[Yields[Tok]],
     ): State[Tok] = {
       lazy val lazyOn: Map[Int, Option[State[Tok]]] = on
 
       State(
         id = id,
-        on = c => lazyOn.get(c.toInt).flatten,
+        on = c => lazyOn.getOrElse(c.toInt, elseOn),
         yields = yields,
       )
     }

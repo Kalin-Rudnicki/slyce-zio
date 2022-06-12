@@ -36,6 +36,7 @@ private[scala3] final class GenUtils(pkg: List[String], name: String, result: Re
       case term: ExpandedGrammar.Identifier.Term =>
         term match {
           case ExpandedGrammar.Identifier.Term.Terminal(name) => name
+          case ExpandedGrammar.Identifier.Term.Raw("?")       => "`\\\\?`"
           case ExpandedGrammar.Identifier.Term.Raw(name)      => name.unesc("`")
         }
     }
