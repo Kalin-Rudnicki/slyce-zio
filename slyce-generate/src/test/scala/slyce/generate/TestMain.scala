@@ -15,11 +15,13 @@ import slyce.generate.output.*
 
 object TestMain extends ExecutableApp {
 
-  private def makeExe(
+  private[generate] def makeExe(
       name: String,
       lexerInput: LexerInput,
       grammarInput: GrammarInput,
-  ): (String, Executable) = {
+      baseDir: List[String] = List(".", "slyce-generate", "src", "test", "scala"),
+      pkg: List[String] = List("slyce", "generate", "test"),
+  ): (String, Executable) =
     (
       name,
       Executable
@@ -36,7 +38,6 @@ object TestMain extends ExecutableApp {
             debugOutputFile <- File.fromPath("target/test-output.html")
             _ <- debugOutputFile.writeString(debugResultString)
 
-            pkg = List("slyce", "generate", "test")
             refName = name.split("-").map(_.capitalize).mkString
             result <- ZIO.fromEither(Result.build(lexerInput, grammarInput).leftMap(_.map(e => KError.UserError(e.toString))))
             resultString = formatters.scala3.Scala3Formatter.format(pkg, refName, result)
@@ -44,7 +45,7 @@ object TestMain extends ExecutableApp {
             _ <- Logger.println.info(s"Generated ${resultString.count(_ == '\n')} line(s)")
 
             _ <- Logger.break()
-            dirPath = (List(".", "slyce-generate", "src", "test", "scala") ::: pkg).mkString("/")
+            dirPath = (baseDir ::: pkg).mkString("/")
             dirFile <- File.fromPath(dirPath)
             _ <- dirFile.createDirectories()
             outFile <- dirFile.child(s"$refName.scala")
@@ -53,7 +54,6 @@ object TestMain extends ExecutableApp {
           } yield ()
         },
     )
-  }
 
   private val calc: (String, Executable) =
     makeExe(
@@ -253,6 +253,14 @@ object TestMain extends ExecutableApp {
         )("Root"),
       ),
     )
+
+  // =====| Bootstrap |=====
+
+  private val parsersDir =
+    List(".", "slyce-generate", "src", "main", "scala")
+
+  private val parsersPkg =
+    List("slyce", "generate", "parsers")
 
   // =====| Lexer |=====
 
@@ -521,6 +529,8 @@ object TestMain extends ExecutableApp {
           grammar.elements("escChar"),
         )("CCChar"),
       ),
+      parsersDir,
+      parsersPkg,
     )
 
   val grammarGen: (String, Executable) =
@@ -691,84 +701,9 @@ object TestMain extends ExecutableApp {
           grammar.liftElements()("escChar")(),
         )("Char"),
       ),
+      parsersDir,
+      parsersPkg,
     )
-
-  val lexerTest: Executable =
-    Executable
-      .fromParser(Parser.unit.disallowExtras)
-      .withLayer { _ => ZIO.unit.toLayer }
-      .withExecute { _ =>
-        for {
-          _ <- Logger.println.info("Lexer Test")
-
-          file <- File.fromPath("/home/kalin/dev/archived/slyce-fp/slyce-generate-parsers/src/main/slyce/slyce/generate/parsers/lexer.slf")
-          source <- Source.fromFile(file)
-
-          _tokens = slyce.generate.test.Lexer.lexer.tokenize(source).leftMap(_.map(e => KError.UserError(e.toString)))
-          tokens <- ZIO.fromEither(_tokens)
-          _ <- Logger.println.info(tokens.mkString("\n"))
-
-          _ <- Logger.break()
-
-          _ast = slyce.generate.test.Lexer.grammar.buildTree(source, tokens).leftMap(_.map(e => KError.UserError(e.toString)))
-          ast <- ZIO.fromEither(_ast)
-          _ <- Logger.println.info(
-            IndentedString.inline(
-              ast._3.toNonEmptyList.toList.map { mode =>
-                IndentedString.inline(
-                  mode._2.text,
-                  IndentedString.indented(
-                    mode._3.toNonEmptyList.toList.map { line =>
-                      line._1.toString
-                    },
-                  ),
-                )
-              },
-            ),
-          )
-
-        } yield ()
-      }
-
-  val grammarTest: Executable =
-    Executable
-      .fromParser(Parser.unit.disallowExtras)
-      .withLayer { _ => ZIO.unit.toLayer }
-      .withExecute { _ =>
-        for {
-          _ <- Logger.println.info("Grammar Test")
-
-          file <- File.fromPath("/home/kalin/dev/archived/slyce-fp/slyce-generate-parsers/src/main/slyce/slyce/generate/parsers/lexer.sgf")
-          source <- Source.fromFile(file)
-
-          _tokens = slyce.generate.test.Grammar.lexer.tokenize(source).leftMap(_.map(e => KError.UserError(e.toString)))
-          tokens <- ZIO.fromEither(_tokens)
-          _ <- Logger.println.info(tokens.mkString("\n"))
-
-          _ <- Logger.break()
-
-          _ast = slyce.generate.test.Grammar.grammar.buildTree(source, tokens).leftMap(_.map(e => KError.UserError(e.toString)))
-          ast <- ZIO.fromEither(_ast)
-          _ <- Logger.println.info(ast)
-          /*
-          _ <- Logger.println.info(
-            IndentedString.inline(
-              ast._3.toNonEmptyList.toList.map { mode =>
-                IndentedString.inline(
-                  mode._2.text,
-                  IndentedString.indented(
-                    mode._3.toNonEmptyList.toList.map { line =>
-                      line._1.toString
-                    },
-                  ),
-                )
-              },
-            ),
-          )
-           */
-
-        } yield ()
-      }
 
   override val executable: Executable =
     Executable.fromSubCommands(
@@ -777,9 +712,7 @@ object TestMain extends ExecutableApp {
       causeConflict,
       tmp,
       lexerGen,
-      "lexer-test" -> lexerTest,
       grammarGen,
-      "grammar-test" -> grammarTest,
     )
 
 }
