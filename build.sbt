@@ -2,7 +2,7 @@
 
 // =====|  |=====
 
-val Scala_3 = "3.1.2-RC3"
+val Scala_3 = "3.1.3-RC5"
 
 val MyOrg = "io.github.kalin-rudnicki"
 val githubUsername = "Kalin-Rudnicki"
