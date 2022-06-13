@@ -7,6 +7,7 @@ import scala.annotation.tailrec
 sealed trait Span {
 
   val optionalSource: Option[Source]
+  val hasSource: Option[Span.HasSource]
 
   def toString(showAbsolute: Boolean): String =
     this match {
@@ -24,6 +25,7 @@ object Span {
   sealed trait HasSource extends Span {
     val source: Source
     override val optionalSource: Option[Source] = source.some
+    override val hasSource: Option[HasSource] = this.some
   }
 
   final case class Highlight(
@@ -47,6 +49,7 @@ object Span {
 
   case object Unknown extends Span {
     override val optionalSource: Option[Source] = None
+    override val hasSource: Option[HasSource] = None
   }
 
   def apply(start: Pos, end: Pos, source: Source): Highlight =

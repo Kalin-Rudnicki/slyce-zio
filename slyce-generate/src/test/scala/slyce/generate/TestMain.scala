@@ -705,6 +705,24 @@ object TestMain extends ExecutableApp {
       parsersPkg,
     )
 
+  private val colorize: Executable =
+    Executable
+      .fromParser(Parser.unit.disallowExtras)
+      .withLayer { _ => ZIO.unit.toLayer }
+      .withExecute { _ =>
+        for {
+          _ <- Logger.println.info("--- colorize ---")
+          file <- File.fromPath("/home/kalin/dev/current/slyce-zio/slyce-generate/src/main/slyce/slyce/generate/parsers/Grammar.sgf")
+          source <- Source.fromFile(file)
+          toks = slyce.generate.parsers.Grammar.lexer.tokenize(source)
+          str = toks match {
+            case Left(errors)  => source.mark(errors.toList)
+            case Right(tokens) => source.mark(tokens.map(t => Marked(s"${t.tokName} : ${t.text.unesc}", t.span)))
+          }
+          _ <- Logger.println.info(str)
+        } yield ()
+      }
+
   override val executable: Executable =
     Executable.fromSubCommands(
       calc,
@@ -713,6 +731,7 @@ object TestMain extends ExecutableApp {
       tmp,
       lexerGen,
       grammarGen,
+      "colorize" -> colorize,
     )
 
 }
