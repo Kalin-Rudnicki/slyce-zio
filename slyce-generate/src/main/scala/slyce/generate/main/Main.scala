@@ -12,12 +12,6 @@ object Main extends ExecutableApp {
 
   private object generate {
 
-    private def convertValidated[A](validated: Validated[A]): KTask[A] =
-      validated match {
-        case Left(errors) => ZIO.fail(errors.map(e => KError.UserError(e.toString)))
-        case Right(value) => ZIO.succeed(value)
-      }
-
     private def generate(
         lexerFile: File,
         grammarFile: File,
@@ -32,9 +26,9 @@ object Main extends ExecutableApp {
           _ <- Logger.println.info("--- slf ---")
           lexerSource <- Source.fromFile(lexerFile)
           _ <- Logger.println.info("tokenizing")
-          lexerTokens <- convertValidated(parsers.Lexer.lexer.tokenize(lexerSource))
+          lexerTokens <- Validated.toKTask(parsers.Lexer.lexer.tokenize(lexerSource))
           _ <- Logger.println.info("building parse tree")
-          lexerAST <- convertValidated(parsers.Lexer.grammar.buildTree(lexerSource, lexerTokens))
+          lexerAST <- Validated.toKTask(parsers.Lexer.grammar.buildTree(lexerSource, lexerTokens))
         } yield lexerAST
 
       val grammarEffect: SKTask[parsers.Grammar.NonTerminal.Grammar] =
@@ -42,9 +36,9 @@ object Main extends ExecutableApp {
           _ <- Logger.println.info("--- sgf ---")
           grammarSource <- Source.fromFile(grammarFile)
           _ <- Logger.println.info("tokenizing")
-          grammarTokens <- convertValidated(parsers.Grammar.lexer.tokenize(grammarSource))
+          grammarTokens <- Validated.toKTask(parsers.Grammar.lexer.tokenize(grammarSource))
           _ <- Logger.println.info("building parse tree")
-          grammarAST <- convertValidated(parsers.Grammar.grammar.buildTree(grammarSource, grammarTokens))
+          grammarAST <- Validated.toKTask(parsers.Grammar.grammar.buildTree(grammarSource, grammarTokens))
         } yield grammarAST
 
       Logger.println.info(s"Generating : $name") *>
@@ -55,7 +49,7 @@ object Main extends ExecutableApp {
             lexerInput = ConvertLexer.convertLexer(lexerAST)
             grammarInput = ConvertGrammar.convertGrammar(grammarAST)
             _ <- Logger.println.info("--- result ---")
-            result <- convertValidated(output.Result.build(lexerInput, grammarInput))
+            result <- Validated.toKTask(output.Result.build(lexerInput, grammarInput))
             resultString = output.formatters.Formatter.format(targetLanguage, pkg, name, result)
 
             _ <- Logger.println.info("--- output ---")
