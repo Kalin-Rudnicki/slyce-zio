@@ -27,24 +27,24 @@ object Main extends ExecutableApp {
     ): SKTask[Unit] = {
       val name = outputFile.fileName.base
 
-      val lexerEffect: SKTask[parsers.Lexer2.NonTerminal.Lexer] =
+      val lexerEffect: SKTask[parsers.Lexer.NonTerminal.Lexer] =
         for {
           _ <- Logger.println.info("--- slf ---")
           lexerSource <- Source.fromFile(lexerFile)
           _ <- Logger.println.info("tokenizing")
-          lexerTokens <- convertValidated(parsers.Lexer2.lexer.tokenize(lexerSource))
+          lexerTokens <- convertValidated(parsers.Lexer.lexer.tokenize(lexerSource))
           _ <- Logger.println.info("building parse tree")
-          lexerAST <- convertValidated(parsers.Lexer2.grammar.buildTree(lexerSource, lexerTokens))
+          lexerAST <- convertValidated(parsers.Lexer.grammar.buildTree(lexerSource, lexerTokens))
         } yield lexerAST
 
-      val grammarEffect: SKTask[parsers.Grammar2.NonTerminal.Grammar] =
+      val grammarEffect: SKTask[parsers.Grammar.NonTerminal.Grammar] =
         for {
           _ <- Logger.println.info("--- sgf ---")
           grammarSource <- Source.fromFile(grammarFile)
           _ <- Logger.println.info("tokenizing")
-          grammarTokens <- convertValidated(parsers.Grammar2.lexer.tokenize(grammarSource))
+          grammarTokens <- convertValidated(parsers.Grammar.lexer.tokenize(grammarSource))
           _ <- Logger.println.info("building parse tree")
-          grammarAST <- convertValidated(parsers.Grammar2.grammar.buildTree(grammarSource, grammarTokens))
+          grammarAST <- convertValidated(parsers.Grammar.grammar.buildTree(grammarSource, grammarTokens))
         } yield grammarAST
 
       Logger.println.info(s"Generating : $name") *>
@@ -154,7 +154,7 @@ object Main extends ExecutableApp {
               pkg: List[String],
           ): SKTask[List[Entry]] =
             for {
-              _ <- Logger.println.info(s"Searching in: $dir")
+              _ <- Logger.println.debug(s"Searching in: $dir")
               children <- dir.children.map(_.toList)
               fileChildren <- ZIO.filter(children)(_.isFile)
               dirChildren <- ZIO.filter(children)(_.isDirectory)
