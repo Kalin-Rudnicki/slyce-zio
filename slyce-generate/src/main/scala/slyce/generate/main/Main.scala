@@ -1,6 +1,7 @@
 package slyce.generate.main
 
-import klib.utils.*
+import cats.syntax.option.*
+import klib.utils.{given, *}
 import klib.utils.commandLine.parse.*
 import zio.*
 
@@ -10,6 +11,61 @@ import slyce.generate.*
 object Main extends ExecutableApp {
 
   private object generate {
+
+    private def convertValidated[A](validated: Validated[A]): KTask[A] =
+      validated match {
+        case Left(errors) => ZIO.fail(errors.map(e => KError.UserError(e.toString)))
+        case Right(value) => ZIO.succeed(value)
+      }
+
+    private def generate(
+        lexerFile: File,
+        grammarFile: File,
+        outputFile: File,
+        targetLanguage: TargetLanguage,
+        pkg: List[String],
+    ): SKTask[Unit] = {
+      val name = outputFile.fileName.base
+
+      val lexerEffect: SKTask[parsers.Lexer2.NonTerminal.Lexer] =
+        for {
+          _ <- Logger.println.info("--- slf ---")
+          lexerSource <- Source.fromFile(lexerFile)
+          _ <- Logger.println.info("tokenizing")
+          lexerTokens <- convertValidated(parsers.Lexer2.lexer.tokenize(lexerSource))
+          _ <- Logger.println.info("building parse tree")
+          lexerAST <- convertValidated(parsers.Lexer2.grammar.buildTree(lexerSource, lexerTokens))
+        } yield lexerAST
+
+      val grammarEffect: SKTask[parsers.Grammar2.NonTerminal.Grammar] =
+        for {
+          _ <- Logger.println.info("--- sgf ---")
+          grammarSource <- Source.fromFile(grammarFile)
+          _ <- Logger.println.info("tokenizing")
+          grammarTokens <- convertValidated(parsers.Grammar2.lexer.tokenize(grammarSource))
+          _ <- Logger.println.info("building parse tree")
+          grammarAST <- convertValidated(parsers.Grammar2.grammar.buildTree(grammarSource, grammarTokens))
+        } yield grammarAST
+
+      Logger.println.info(s"Generating : $name") *>
+        Logger.withIndent(1) {
+          for {
+            (lexerAST, grammarAST) <- lexerEffect <**> grammarEffect
+
+            lexerInput = ConvertLexer.convertLexer(lexerAST)
+            grammarInput = ConvertGrammar.convertGrammar(grammarAST)
+            _ <- Logger.println.info("--- result ---")
+            result <- convertValidated(output.Result.build(lexerInput, grammarInput))
+            resultString = output.formatters.Formatter.format(targetLanguage, pkg, name, result)
+
+            _ <- Logger.println.info("--- output ---")
+            outputParent <- ZIO.kAttempt("Failed to get parent of output file")(File.fromNIOPath(outputFile.toPath.getParent))
+            _ <- outputParent.createDirectories()
+
+            _ <- outputFile.writeString(resultString)
+          } yield ()
+        }
+    }
 
     final case class SingleConfig(
         lexerFile: String,
@@ -30,26 +86,20 @@ object Main extends ExecutableApp {
 
     }
 
-    private def fileFromPath(path: String): SKTask[File] =
-      File.fromPath(path).flatMap { file =>
-        file.ensureExists *>
-          file.isFile.flatMap {
-            case true  => ZIO.succeed(file)
-            case false => ZIO.failNEL(KError.UserError(s"Not a file: $path"))
-          }
-      }
-
-    private def convertValidated[A](validated: Validated[A]): KTask[A] =
-      validated match {
-        case Left(errors) => ZIO.fail(errors.map(e => KError.UserError(e.toString)))
-        case Right(value) => ZIO.succeed(value)
-      }
-
     private val single: Executable =
       Executable
         .fromParser(SingleConfig.parser.disallowExtras)
         .withLayer(_ => ZIO.unit.toLayer)
         .withExecute { config =>
+          def fileFromPath(path: String): SKTask[File] =
+            File.fromPath(path).flatMap { file =>
+              file.ensureExists *>
+                file.isFile.flatMap {
+                  case true  => ZIO.succeed(file)
+                  case false => ZIO.failNEL(KError.UserError(s"Not a file: $path"))
+                }
+            }
+
           for {
             _ <- Logger.println.info("Running generate/single")
 
@@ -58,34 +108,98 @@ object Main extends ExecutableApp {
             outputFile <- File.fromPath(config.outputFile)
             targetLanguage <- ZIO.fromOptionKError(TargetLanguage.parse(config.targetLanguage, outputFile.fileName.ext))(KError.UserError("Unable to assume target language"))
 
-            _ <- Logger.println.info("--- slf ---")
-            lexerSource <- Source.fromFile(lexerFile)
-            _ <- Logger.println.info("tokenizing")
-            lexerTokens <- convertValidated(parsers.Lexer2.lexer.tokenize(lexerSource))
-            _ <- Logger.println.info("building parse tree")
-            lexerAST <- convertValidated(parsers.Lexer2.grammar.buildTree(lexerSource, lexerTokens))
+            _ <- generate(lexerFile, grammarFile, outputFile, targetLanguage, config.pkg)
+          } yield ()
+        }
 
-            _ <- Logger.println.info("--- sgf ---")
-            grammarSource <- Source.fromFile(grammarFile)
-            _ <- Logger.println.info("tokenizing")
-            grammarTokens <- convertValidated(parsers.Grammar2.lexer.tokenize(grammarSource))
-            _ <- Logger.println.info("building parse tree")
-            grammarAST <- convertValidated(parsers.Grammar2.grammar.buildTree(grammarSource, grammarTokens))
+    final case class ForSrcDirConfig(
+        srcFile: String,
+        targetLanguage: TargetLanguage,
+        snapshot: Boolean,
+    )
+    object ForSrcDirConfig {
 
-            lexerInput = ConvertLexer.convertLexer(lexerAST)
-            grammarInput = ConvertGrammar.convertGrammar(grammarAST)
-            _ <- Logger.println.info("--- result ---")
-            result <- convertValidated(output.Result.build(lexerInput, grammarInput))
-            resultString = output.formatters.Formatter.format(targetLanguage, config.pkg, outputFile.fileName.base, result)
+      val parser: Parser[ForSrcDirConfig] = {
+        Parser.singleValue[String]("src-file").required >&>
+          Parser.singleValue.enumValues("target-language", TargetLanguage.values).default(TargetLanguage.Scala3) >&>
+          Parser.flag("snapshot", primaryShortParamName = Defaultable.Some('S')).required
+      }.map(ForSrcDirConfig.apply)
 
-            _ <- Logger.println.info("--- output ---")
-            _ <- outputFile.writeString(resultString)
+    }
+
+    private final case class Entry(
+        baseName: String,
+        lexerFile: File,
+        grammarFile: File,
+        pkg: List[String],
+    )
+
+    private val forSrcDir: Executable =
+      Executable
+        .fromParser(ForSrcDirConfig.parser.disallowExtras)
+        .withLayer(_ => ZIO.unit.toLayer)
+        .withExecute { config =>
+          def dirFromPath(path: String): SKTask[File] =
+            File.fromPath(path).flatMap(ensureDir)
+
+          def ensureDir(file: File): SKTask[File] =
+            file.ensureExists *>
+              file.isDirectory.flatMap {
+                case true  => ZIO.succeed(file)
+                case false => ZIO.failNEL(KError.UserError(s"Not a directory: $file"))
+              }
+
+          def findEntries(
+              dir: File,
+              pkg: List[String],
+          ): SKTask[List[Entry]] =
+            for {
+              _ <- Logger.println.info(s"Searching in: $dir")
+              children <- dir.children.map(_.toList)
+              fileChildren <- ZIO.filter(children)(_.isFile)
+              dirChildren <- ZIO.filter(children)(_.isDirectory)
+
+              fileEntries = fileChildren.toList.groupBy(_.fileName.base).toList.flatMap { (baseName, files) =>
+                files.map(f => (f, f.fileName.ext)).sortBy(_._2) match {
+                  case List((grammarFile, Some("sgf")), (lexerFile, Some("slf"))) =>
+                    Entry(
+                      baseName = baseName,
+                      lexerFile = lexerFile,
+                      grammarFile = grammarFile,
+                      pkg = pkg,
+                    ).some
+                  case _ =>
+                    None
+                }
+              }
+              dirEntries <- ZIO.traverseNEL(dirChildren.toList) { d =>
+                findEntries(d, pkg :+ d.fileName.name)
+              }
+            } yield (fileEntries :: dirEntries).flatten
+
+          for {
+            _ <- Logger.println.info("Running generate/src-dir")
+
+            srcDir <- dirFromPath(config.srcFile)
+            extName = TargetLanguage.extName(config.targetLanguage)
+            slyceRoot <- srcDir.child("main/slyce").flatMap(ensureDir)
+            srcRoot <- srcDir.child(s"main/$extName")
+            tail = if (config.snapshot) "Snapshot" else ""
+
+            entries <- findEntries(slyceRoot, Nil)
+            _ <- ZIO.traverseNEL(entries) { entry =>
+              for {
+                outputFile <- srcRoot.child((entry.pkg :+ s"${entry.baseName}$tail.$extName").mkString("/"))
+                _ <- generate(entry.lexerFile, entry.grammarFile, outputFile, config.targetLanguage, entry.pkg)
+              } yield ()
+            }
           } yield ()
         }
 
     val executable: Executable =
       Executable.fromSubCommands(
         "single" -> single,
+        "src-dir" -> forSrcDir,
       )
 
   }
