@@ -4,7 +4,7 @@ import cats.syntax.option.*
 
 import slyce.core.*
 import slyce.generate.lexer.*
-import slyce.generate.parsers.Lexer
+import slyce.generate.parsers.Lexer2 as Lexer
 
 object ConvertLexer {
 

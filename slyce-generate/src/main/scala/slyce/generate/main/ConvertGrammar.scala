@@ -4,8 +4,7 @@ import cats.syntax.option.*
 
 import slyce.core.*
 import slyce.generate.grammar.*
-import slyce.generate.parsers.Grammar
-import slyce.generate.parsers.Grammar.Terminal
+import slyce.generate.parsers.Grammar2 as Grammar
 
 object ConvertGrammar {
 

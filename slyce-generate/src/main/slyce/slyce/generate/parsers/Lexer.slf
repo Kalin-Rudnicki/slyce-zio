@@ -1,0 +1,51 @@
+
+@start: General
+
+@mode: General
+\@(start|mode):              ; @ -> Mode
+\/\/[^\n]*\n                 ;
+/\*([^*]|\*[^/])*\*/         ;
+\\[./@;nt\\[\](|){}?*+]      ; escChar[1]
+\n                           ;
+\;                           ; @ -> LineEnd
+[(|)?*+]                     ; @
+\[                           ; @ -> CharClass
+\{                           ; @ -> Quant
+\\d                          ; escChars[1]
+\.                           ; escChars
+[^\\]                        ; char
+[ ]{2,}                      ;
+
+@mode: Mode
+[ \t]+                       ;
+[A-Z][A-Za-z_\d]*            ; mode
+\n                           ; <-
+
+@mode: String
+"                            ; @ <-
+\\[\\nt"]                    ; escChar[1]
+[^\\"]+                      ; chars
+
+@mode: LineEnd
+[ \t]+                       ;
+\/\/[^\n]*\n                 ; <-
+/\*([^*]|\*[^/])*\*/         ;
+[[\],@]|>>|->|<-             ; @
+-?\d+                        ; int
+"                            ; @ -> String
+[A-Z][A-Za-z_\d]*            ; mode
+[a-z][A-Za-z_\d]*            ; term
+\n                           ; <-
+
+@mode: CharClass
+]                            ; @ <-
+[\^\-]                       ; @
+\\[\\\]\^nt\-]               ; escChar[1]
+\\d                          ; escChars[1]
+[^\\]                        ; char
+
+@mode: Quant
+[ \t]+                       ;
+-?\d+                        ; int
+,                            ; @
+}                            ; @ <-
