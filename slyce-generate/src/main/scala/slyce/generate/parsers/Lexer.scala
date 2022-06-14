@@ -5,7 +5,9 @@ package slyce.generate.parsers
 
 // format: off
 
-object Lexer {
+object Lexer extends _root_.slyce.parse.Parser {
+  
+  override type NTRoot = _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer
   
   // =====| Terminals |=====
   
@@ -663,38 +665,36 @@ object Lexer {
     _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 0,
       on = _root_.scala.collection.immutable.Map(
-        10 -> _root_.scala.Some(lexerState22), // '\n'
+        10 -> _root_.scala.Some(lexerState14), // '\n'
         32 -> _root_.scala.Some(lexerState40), // ' '
-        40 -> _root_.scala.Some(lexerState5), // '('
-        41 -> _root_.scala.Some(lexerState5), // ')'
-        42 -> _root_.scala.Some(lexerState5), // '*'
-        43 -> _root_.scala.Some(lexerState5), // '+'
-        46 -> _root_.scala.Some(lexerState63), // '.'
-        47 -> _root_.scala.Some(lexerState4), // '/'
-        59 -> _root_.scala.Some(lexerState30), // ';'
-        63 -> _root_.scala.Some(lexerState5), // '?'
-        64 -> _root_.scala.Some(lexerState20), // '@'
-        91 -> _root_.scala.Some(lexerState43), // '['
-        92 -> _root_.scala.Some(lexerState64), // '\\'
-        123 -> _root_.scala.Some(lexerState32), // '{'
-        124 -> _root_.scala.Some(lexerState5), // '|'
+        40 -> _root_.scala.Some(lexerState12), // '('
+        41 -> _root_.scala.Some(lexerState12), // ')'
+        42 -> _root_.scala.Some(lexerState12), // '*'
+        43 -> _root_.scala.Some(lexerState12), // '+'
+        46 -> _root_.scala.Some(lexerState55), // '.'
+        47 -> _root_.scala.Some(lexerState35), // '/'
+        59 -> _root_.scala.Some(lexerState16), // ';'
+        63 -> _root_.scala.Some(lexerState12), // '?'
+        64 -> _root_.scala.Some(lexerState23), // '@'
+        91 -> _root_.scala.Some(lexerState13), // '['
+        92 -> _root_.scala.Some(lexerState53), // '\\'
+        123 -> _root_.scala.Some(lexerState44), // '{'
+        124 -> _root_.scala.Some(lexerState12), // '|'
       ),
-      elseOn = _root_.scala.Some(lexerState26),
+      elseOn = _root_.scala.Some(lexerState4),
       yields = None,
     )
   
   private lazy val lexerState1: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 1,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
             _root_.slyce.parse.Lexer.Yields.Yield(
               span = (1, 1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.escChars(text, span),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.escChar(text, span),
             ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
@@ -703,42 +703,28 @@ object Lexer {
     )
   
   private lazy val lexerState2: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 2,
-      on = _root_.scala.collection.immutable.Map(
-        62 -> _root_.scala.Some(lexerState55), // '>'
-      ),
-      elseOn = _root_.scala.None,
       yields = None,
-    )
+    ) {
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState18) // '0' - '9'
+    }
   
   private lazy val lexerState3: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 3,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
-        ),
-      ),
-    )
+      yields = None,
+    ) {
+      case c if c >= 65 && c <= 90 => _root_.scala.Some(lexerState20) // 'A' - 'Z'
+      case 32 => _root_.scala.Some(lexerState37) // ' '
+      case 9 => _root_.scala.Some(lexerState37) // '\t'
+      case 10 => _root_.scala.Some(lexerState51) // '\n'
+    }
   
   private lazy val lexerState4: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 4,
-      on = _root_.scala.collection.immutable.Map(
-        42 -> _root_.scala.Some(lexerState18), // '*'
-        47 -> _root_.scala.Some(lexerState38), // '/'
-      ),
-      elseOn = _root_.scala.None,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -753,470 +739,46 @@ object Lexer {
     )
   
   private lazy val lexerState5: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 5,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
-            ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
-    )
+    ) {
+      case 32 => _root_.scala.Some(lexerState5) // ' '
+      case 9 => _root_.scala.Some(lexerState5) // '\t'
+    }
   
   private lazy val lexerState6: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 6,
-      on = _root_.scala.collection.immutable.Map(
-        42 -> _root_.scala.Some(lexerState29), // '*'
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
       ),
-      elseOn = _root_.scala.Some(lexerState6),
-      yields = None,
-    )
+    ) {
+      case 32 => _root_.scala.Some(lexerState6) // ' '
+    }
   
   private lazy val lexerState7: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 7,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState35)),
-        ),
-      ),
-    )
+      yields = None,
+    ) {
+      case 42 => _root_.scala.Some(lexerState27) // '*'
+      case 47 => _root_.scala.Some(lexerState25) // '/'
+    }
   
   private lazy val lexerState8: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 8,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState9: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 9,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState10: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 10,
-      on = _root_.scala.collection.immutable.Map(
-        47 -> _root_.scala.Some(lexerState8), // '/'
-      ),
-      elseOn = _root_.scala.Some(lexerState18),
-      yields = None,
-    )
-  
-  private lazy val lexerState11: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 11,
-      on = _root_.scala.collection.immutable.Map(
-        48 -> _root_.scala.Some(lexerState11), // '0'
-        49 -> _root_.scala.Some(lexerState11), // '1'
-        50 -> _root_.scala.Some(lexerState11), // '2'
-        51 -> _root_.scala.Some(lexerState11), // '3'
-        52 -> _root_.scala.Some(lexerState11), // '4'
-        53 -> _root_.scala.Some(lexerState11), // '5'
-        54 -> _root_.scala.Some(lexerState11), // '6'
-        55 -> _root_.scala.Some(lexerState11), // '7'
-        56 -> _root_.scala.Some(lexerState11), // '8'
-        57 -> _root_.scala.Some(lexerState11), // '9'
-        65 -> _root_.scala.Some(lexerState11), // 'A'
-        66 -> _root_.scala.Some(lexerState11), // 'B'
-        67 -> _root_.scala.Some(lexerState11), // 'C'
-        68 -> _root_.scala.Some(lexerState11), // 'D'
-        69 -> _root_.scala.Some(lexerState11), // 'E'
-        70 -> _root_.scala.Some(lexerState11), // 'F'
-        71 -> _root_.scala.Some(lexerState11), // 'G'
-        72 -> _root_.scala.Some(lexerState11), // 'H'
-        73 -> _root_.scala.Some(lexerState11), // 'I'
-        74 -> _root_.scala.Some(lexerState11), // 'J'
-        75 -> _root_.scala.Some(lexerState11), // 'K'
-        76 -> _root_.scala.Some(lexerState11), // 'L'
-        77 -> _root_.scala.Some(lexerState11), // 'M'
-        78 -> _root_.scala.Some(lexerState11), // 'N'
-        79 -> _root_.scala.Some(lexerState11), // 'O'
-        80 -> _root_.scala.Some(lexerState11), // 'P'
-        81 -> _root_.scala.Some(lexerState11), // 'Q'
-        82 -> _root_.scala.Some(lexerState11), // 'R'
-        83 -> _root_.scala.Some(lexerState11), // 'S'
-        84 -> _root_.scala.Some(lexerState11), // 'T'
-        85 -> _root_.scala.Some(lexerState11), // 'U'
-        86 -> _root_.scala.Some(lexerState11), // 'V'
-        87 -> _root_.scala.Some(lexerState11), // 'W'
-        88 -> _root_.scala.Some(lexerState11), // 'X'
-        89 -> _root_.scala.Some(lexerState11), // 'Y'
-        90 -> _root_.scala.Some(lexerState11), // 'Z'
-        95 -> _root_.scala.Some(lexerState11), // '_'
-        97 -> _root_.scala.Some(lexerState11), // 'a'
-        98 -> _root_.scala.Some(lexerState11), // 'b'
-        99 -> _root_.scala.Some(lexerState11), // 'c'
-        100 -> _root_.scala.Some(lexerState11), // 'd'
-        101 -> _root_.scala.Some(lexerState11), // 'e'
-        102 -> _root_.scala.Some(lexerState11), // 'f'
-        103 -> _root_.scala.Some(lexerState11), // 'g'
-        104 -> _root_.scala.Some(lexerState11), // 'h'
-        105 -> _root_.scala.Some(lexerState11), // 'i'
-        106 -> _root_.scala.Some(lexerState11), // 'j'
-        107 -> _root_.scala.Some(lexerState11), // 'k'
-        108 -> _root_.scala.Some(lexerState11), // 'l'
-        109 -> _root_.scala.Some(lexerState11), // 'm'
-        110 -> _root_.scala.Some(lexerState11), // 'n'
-        111 -> _root_.scala.Some(lexerState11), // 'o'
-        112 -> _root_.scala.Some(lexerState11), // 'p'
-        113 -> _root_.scala.Some(lexerState11), // 'q'
-        114 -> _root_.scala.Some(lexerState11), // 'r'
-        115 -> _root_.scala.Some(lexerState11), // 's'
-        116 -> _root_.scala.Some(lexerState11), // 't'
-        117 -> _root_.scala.Some(lexerState11), // 'u'
-        118 -> _root_.scala.Some(lexerState11), // 'v'
-        119 -> _root_.scala.Some(lexerState11), // 'w'
-        120 -> _root_.scala.Some(lexerState11), // 'x'
-        121 -> _root_.scala.Some(lexerState11), // 'y'
-        122 -> _root_.scala.Some(lexerState11), // 'z'
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.mode(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState12: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 12,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState12), // '\t'
-        32 -> _root_.scala.Some(lexerState12), // ' '
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState13: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 13,
-      on = _root_.scala.collection.immutable.Map(
-        111 -> _root_.scala.Some(lexerState15), // 'o'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState14: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 14,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState15: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 15,
-      on = _root_.scala.collection.immutable.Map(
-        100 -> _root_.scala.Some(lexerState34), // 'd'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState16: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 16,
-      on = _root_.scala.collection.immutable.Map(
-        48 -> _root_.scala.Some(lexerState39), // '0'
-        49 -> _root_.scala.Some(lexerState39), // '1'
-        50 -> _root_.scala.Some(lexerState39), // '2'
-        51 -> _root_.scala.Some(lexerState39), // '3'
-        52 -> _root_.scala.Some(lexerState39), // '4'
-        53 -> _root_.scala.Some(lexerState39), // '5'
-        54 -> _root_.scala.Some(lexerState39), // '6'
-        55 -> _root_.scala.Some(lexerState39), // '7'
-        56 -> _root_.scala.Some(lexerState39), // '8'
-        57 -> _root_.scala.Some(lexerState39), // '9'
-        62 -> _root_.scala.Some(lexerState55), // '>'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState17: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 17,
-      on = _root_.scala.collection.immutable.Map(
-        45 -> _root_.scala.Some(lexerState55), // '-'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState18: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 18,
-      on = _root_.scala.collection.immutable.Map(
-        42 -> _root_.scala.Some(lexerState10), // '*'
-      ),
-      elseOn = _root_.scala.Some(lexerState18),
-      yields = None,
-    )
-  
-  private lazy val lexerState19: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 19,
-      on = _root_.scala.collection.immutable.Map(
-        32 -> _root_.scala.Some(lexerState19), // ' '
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState20: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 20,
-      on = _root_.scala.collection.immutable.Map(
-        109 -> _root_.scala.Some(lexerState13), // 'm'
-        115 -> _root_.scala.Some(lexerState21), // 's'
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.char(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState21: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 21,
-      on = _root_.scala.collection.immutable.Map(
-        116 -> _root_.scala.Some(lexerState33), // 't'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState22: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 22,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState23: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 23,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState24: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 24,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState25: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 25,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState26: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 26,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.char(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState27: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 27,
-      on = _root_.scala.collection.immutable.Map(
-        48 -> _root_.scala.Some(lexerState27), // '0'
-        49 -> _root_.scala.Some(lexerState27), // '1'
-        50 -> _root_.scala.Some(lexerState27), // '2'
-        51 -> _root_.scala.Some(lexerState27), // '3'
-        52 -> _root_.scala.Some(lexerState27), // '4'
-        53 -> _root_.scala.Some(lexerState27), // '5'
-        54 -> _root_.scala.Some(lexerState27), // '6'
-        55 -> _root_.scala.Some(lexerState27), // '7'
-        56 -> _root_.scala.Some(lexerState27), // '8'
-        57 -> _root_.scala.Some(lexerState27), // '9'
-        65 -> _root_.scala.Some(lexerState27), // 'A'
-        66 -> _root_.scala.Some(lexerState27), // 'B'
-        67 -> _root_.scala.Some(lexerState27), // 'C'
-        68 -> _root_.scala.Some(lexerState27), // 'D'
-        69 -> _root_.scala.Some(lexerState27), // 'E'
-        70 -> _root_.scala.Some(lexerState27), // 'F'
-        71 -> _root_.scala.Some(lexerState27), // 'G'
-        72 -> _root_.scala.Some(lexerState27), // 'H'
-        73 -> _root_.scala.Some(lexerState27), // 'I'
-        74 -> _root_.scala.Some(lexerState27), // 'J'
-        75 -> _root_.scala.Some(lexerState27), // 'K'
-        76 -> _root_.scala.Some(lexerState27), // 'L'
-        77 -> _root_.scala.Some(lexerState27), // 'M'
-        78 -> _root_.scala.Some(lexerState27), // 'N'
-        79 -> _root_.scala.Some(lexerState27), // 'O'
-        80 -> _root_.scala.Some(lexerState27), // 'P'
-        81 -> _root_.scala.Some(lexerState27), // 'Q'
-        82 -> _root_.scala.Some(lexerState27), // 'R'
-        83 -> _root_.scala.Some(lexerState27), // 'S'
-        84 -> _root_.scala.Some(lexerState27), // 'T'
-        85 -> _root_.scala.Some(lexerState27), // 'U'
-        86 -> _root_.scala.Some(lexerState27), // 'V'
-        87 -> _root_.scala.Some(lexerState27), // 'W'
-        88 -> _root_.scala.Some(lexerState27), // 'X'
-        89 -> _root_.scala.Some(lexerState27), // 'Y'
-        90 -> _root_.scala.Some(lexerState27), // 'Z'
-        95 -> _root_.scala.Some(lexerState27), // '_'
-        97 -> _root_.scala.Some(lexerState27), // 'a'
-        98 -> _root_.scala.Some(lexerState27), // 'b'
-        99 -> _root_.scala.Some(lexerState27), // 'c'
-        100 -> _root_.scala.Some(lexerState27), // 'd'
-        101 -> _root_.scala.Some(lexerState27), // 'e'
-        102 -> _root_.scala.Some(lexerState27), // 'f'
-        103 -> _root_.scala.Some(lexerState27), // 'g'
-        104 -> _root_.scala.Some(lexerState27), // 'h'
-        105 -> _root_.scala.Some(lexerState27), // 'i'
-        106 -> _root_.scala.Some(lexerState27), // 'j'
-        107 -> _root_.scala.Some(lexerState27), // 'k'
-        108 -> _root_.scala.Some(lexerState27), // 'l'
-        109 -> _root_.scala.Some(lexerState27), // 'm'
-        110 -> _root_.scala.Some(lexerState27), // 'n'
-        111 -> _root_.scala.Some(lexerState27), // 'o'
-        112 -> _root_.scala.Some(lexerState27), // 'p'
-        113 -> _root_.scala.Some(lexerState27), // 'q'
-        114 -> _root_.scala.Some(lexerState27), // 'r'
-        115 -> _root_.scala.Some(lexerState27), // 's'
-        116 -> _root_.scala.Some(lexerState27), // 't'
-        117 -> _root_.scala.Some(lexerState27), // 'u'
-        118 -> _root_.scala.Some(lexerState27), // 'v'
-        119 -> _root_.scala.Some(lexerState27), // 'w'
-        120 -> _root_.scala.Some(lexerState27), // 'x'
-        121 -> _root_.scala.Some(lexerState27), // 'y'
-        122 -> _root_.scala.Some(lexerState27), // 'z'
-      ),
-      elseOn = _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1228,160 +790,17 @@ object Lexer {
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
-    )
+    ) {
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState8) // 'a' - 'z'
+      case c if c >= 65 && c <= 90 => _root_.scala.Some(lexerState8) // 'A' - 'Z'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState8) // '0' - '9'
+      case 95 => _root_.scala.Some(lexerState8) // '_'
+    }
   
-  private lazy val lexerState28: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 28,
-      on = _root_.scala.collection.immutable.Map(
-        58 -> _root_.scala.Some(lexerState7), // ':'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState29: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 29,
-      on = _root_.scala.collection.immutable.Map(
-        47 -> _root_.scala.Some(lexerState25), // '/'
-      ),
-      elseOn = _root_.scala.Some(lexerState6),
-      yields = None,
-    )
-  
-  private lazy val lexerState30: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 30,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState46)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState31: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 31,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (1, 1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.escChar(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState32: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 32,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState41)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState33: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 33,
-      on = _root_.scala.collection.immutable.Map(
-        97 -> _root_.scala.Some(lexerState45), // 'a'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState34: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 34,
-      on = _root_.scala.collection.immutable.Map(
-        101 -> _root_.scala.Some(lexerState28), // 'e'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState35: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 35,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState12), // '\t'
-        10 -> _root_.scala.Some(lexerState65), // '\n'
-        32 -> _root_.scala.Some(lexerState12), // ' '
-        65 -> _root_.scala.Some(lexerState54), // 'A'
-        66 -> _root_.scala.Some(lexerState54), // 'B'
-        67 -> _root_.scala.Some(lexerState54), // 'C'
-        68 -> _root_.scala.Some(lexerState54), // 'D'
-        69 -> _root_.scala.Some(lexerState54), // 'E'
-        70 -> _root_.scala.Some(lexerState54), // 'F'
-        71 -> _root_.scala.Some(lexerState54), // 'G'
-        72 -> _root_.scala.Some(lexerState54), // 'H'
-        73 -> _root_.scala.Some(lexerState54), // 'I'
-        74 -> _root_.scala.Some(lexerState54), // 'J'
-        75 -> _root_.scala.Some(lexerState54), // 'K'
-        76 -> _root_.scala.Some(lexerState54), // 'L'
-        77 -> _root_.scala.Some(lexerState54), // 'M'
-        78 -> _root_.scala.Some(lexerState54), // 'N'
-        79 -> _root_.scala.Some(lexerState54), // 'O'
-        80 -> _root_.scala.Some(lexerState54), // 'P'
-        81 -> _root_.scala.Some(lexerState54), // 'Q'
-        82 -> _root_.scala.Some(lexerState54), // 'R'
-        83 -> _root_.scala.Some(lexerState54), // 'S'
-        84 -> _root_.scala.Some(lexerState54), // 'T'
-        85 -> _root_.scala.Some(lexerState54), // 'U'
-        86 -> _root_.scala.Some(lexerState54), // 'V'
-        87 -> _root_.scala.Some(lexerState54), // 'W'
-        88 -> _root_.scala.Some(lexerState54), // 'X'
-        89 -> _root_.scala.Some(lexerState54), // 'Y'
-        90 -> _root_.scala.Some(lexerState54), // 'Z'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState36: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 36,
-      on = _root_.scala.collection.immutable.Map(
-        42 -> _root_.scala.Some(lexerState6), // '*'
-        47 -> _root_.scala.Some(lexerState62), // '/'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState37: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 37,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState9: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 9,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1395,32 +814,110 @@ object Lexer {
       ),
     )
   
-  private lazy val lexerState38: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 38,
-      on = _root_.scala.collection.immutable.Map(
-        10 -> _root_.scala.Some(lexerState53), // '\n'
-      ),
-      elseOn = _root_.scala.Some(lexerState38),
+  private lazy val lexerState10: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 10,
       yields = None,
+    ) {
+      case 116 => _root_.scala.Some(lexerState39) // 't'
+    }
+  
+  private lazy val lexerState11: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 11,
+      yields = None,
+    ) {
+      case 10 => _root_.scala.Some(lexerState21) // '\n'
+      case _ => _root_.scala.Some(lexerState11)
+    }
+  
+  private lazy val lexerState12: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 12,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
     )
   
-  private lazy val lexerState39: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 39,
-      on = _root_.scala.collection.immutable.Map(
-        48 -> _root_.scala.Some(lexerState39), // '0'
-        49 -> _root_.scala.Some(lexerState39), // '1'
-        50 -> _root_.scala.Some(lexerState39), // '2'
-        51 -> _root_.scala.Some(lexerState39), // '3'
-        52 -> _root_.scala.Some(lexerState39), // '4'
-        53 -> _root_.scala.Some(lexerState39), // '5'
-        54 -> _root_.scala.Some(lexerState39), // '6'
-        55 -> _root_.scala.Some(lexerState39), // '7'
-        56 -> _root_.scala.Some(lexerState39), // '8'
-        57 -> _root_.scala.Some(lexerState39), // '9'
+  private lazy val lexerState13: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 13,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState59)),
+        ),
       ),
-      elseOn = _root_.scala.None,
+    )
+  
+  private lazy val lexerState14: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 14,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState15: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 15,
+      yields = None,
+    ) {
+      case 47 => _root_.scala.Some(lexerState31) // '/'
+      case _ => _root_.scala.Some(lexerState27)
+    }
+  
+  private lazy val lexerState16: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 16,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState65)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState17: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 17,
+      yields = None,
+    ) {
+      case 116 => _root_.scala.Some(lexerState1) // 't'
+      case 110 => _root_.scala.Some(lexerState1) // 'n'
+      case 92 => _root_.scala.Some(lexerState1) // '\\'
+      case 34 => _root_.scala.Some(lexerState1) // '\"'
+    }
+  
+  private lazy val lexerState18: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 18,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1432,58 +929,66 @@ object Lexer {
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
-    )
+    ) {
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState18) // '0' - '9'
+    }
   
-  private lazy val lexerState40: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 40,
-      on = _root_.scala.collection.immutable.Map(
-        32 -> _root_.scala.Some(lexerState19), // ' '
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState19: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 19,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
             _root_.slyce.parse.Lexer.Yields.Yield(
               span = (0, -1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.char(text, span),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.int(text, span),
             ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState19) // '0' - '9'
+    }
+  
+  private lazy val lexerState20: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 20,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.mode(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState20) // 'a' - 'z'
+      case c if c >= 65 && c <= 90 => _root_.scala.Some(lexerState20) // 'A' - 'Z'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState20) // '0' - '9'
+      case 95 => _root_.scala.Some(lexerState20) // '_'
+    }
+  
+  private lazy val lexerState21: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 21,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
     )
   
-  private lazy val lexerState41: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 41,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState48), // '\t'
-        32 -> _root_.scala.Some(lexerState48), // ' '
-        44 -> _root_.scala.Some(lexerState24), // ','
-        45 -> _root_.scala.Some(lexerState67), // '-'
-        48 -> _root_.scala.Some(lexerState52), // '0'
-        49 -> _root_.scala.Some(lexerState52), // '1'
-        50 -> _root_.scala.Some(lexerState52), // '2'
-        51 -> _root_.scala.Some(lexerState52), // '3'
-        52 -> _root_.scala.Some(lexerState52), // '4'
-        53 -> _root_.scala.Some(lexerState52), // '5'
-        54 -> _root_.scala.Some(lexerState52), // '6'
-        55 -> _root_.scala.Some(lexerState52), // '7'
-        56 -> _root_.scala.Some(lexerState52), // '8'
-        57 -> _root_.scala.Some(lexerState52), // '9'
-        125 -> _root_.scala.Some(lexerState3), // '}'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState42: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 42,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState22: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 22,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1497,12 +1002,283 @@ object Lexer {
       ),
     )
   
-  private lazy val lexerState43: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 43,
-      on = _root_.scala.collection.immutable.Map(
+  private lazy val lexerState23: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 23,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.char(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
       ),
-      elseOn = _root_.scala.None,
+    ) {
+      case 115 => _root_.scala.Some(lexerState10) // 's'
+      case 109 => _root_.scala.Some(lexerState34) // 'm'
+    }
+  
+  private lazy val lexerState24: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 24,
+      yields = None,
+    ) {
+      case 116 => _root_.scala.Some(lexerState63) // 't'
+    }
+  
+  private lazy val lexerState25: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 25,
+      yields = None,
+    ) {
+      case 10 => _root_.scala.Some(lexerState41) // '\n'
+      case _ => _root_.scala.Some(lexerState25)
+    }
+  
+  private lazy val lexerState26: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 26,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.mode(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState26) // 'a' - 'z'
+      case c if c >= 65 && c <= 90 => _root_.scala.Some(lexerState26) // 'A' - 'Z'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState26) // '0' - '9'
+      case 95 => _root_.scala.Some(lexerState26) // '_'
+    }
+  
+  private lazy val lexerState27: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 27,
+      yields = None,
+    ) {
+      case 42 => _root_.scala.Some(lexerState15) // '*'
+      case _ => _root_.scala.Some(lexerState27)
+    }
+  
+  private lazy val lexerState28: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 28,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState29: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 29,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState30: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 30,
+      yields = None,
+    ) {
+      case 45 => _root_.scala.Some(lexerState58) // '-'
+    }
+  
+  private lazy val lexerState31: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 31,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState32: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 32,
+      yields = None,
+    ) {
+      case 47 => _root_.scala.Some(lexerState33) // '/'
+      case _ => _root_.scala.Some(lexerState42)
+    }
+  
+  private lazy val lexerState33: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 33,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState34: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 34,
+      yields = None,
+    ) {
+      case 111 => _root_.scala.Some(lexerState54) // 'o'
+    }
+  
+  private lazy val lexerState35: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 35,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.char(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 42 => _root_.scala.Some(lexerState42) // '*'
+      case 47 => _root_.scala.Some(lexerState11) // '/'
+    }
+  
+  private lazy val lexerState36: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 36,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.char(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState37: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 37,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 32 => _root_.scala.Some(lexerState37) // ' '
+      case 9 => _root_.scala.Some(lexerState37) // '\t'
+    }
+  
+  private lazy val lexerState38: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 38,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState39: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 39,
+      yields = None,
+    ) {
+      case 97 => _root_.scala.Some(lexerState47) // 'a'
+    }
+  
+  private lazy val lexerState40: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 40,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.char(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 32 => _root_.scala.Some(lexerState6) // ' '
+    }
+  
+  private lazy val lexerState41: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 41,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState42: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 42,
+      yields = None,
+    ) {
+      case 42 => _root_.scala.Some(lexerState32) // '*'
+      case _ => _root_.scala.Some(lexerState42)
+    }
+  
+  private lazy val lexerState43: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 43,
+      yields = None,
+    ) {
+      case 92 => _root_.scala.Some(lexerState17) // '\\'
+      case 34 => _root_.scala.Some(lexerState38) // '\"'
+      case _ => _root_.scala.Some(lexerState46)
+    }
+  
+  private lazy val lexerState44: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 44,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1516,12 +1292,10 @@ object Lexer {
       ),
     )
   
-  private lazy val lexerState44: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 44,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState45: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 45,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1530,161 +1304,14 @@ object Lexer {
               build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState58)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
         ),
       ),
-    )
-  
-  private lazy val lexerState45: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 45,
-      on = _root_.scala.collection.immutable.Map(
-        114 -> _root_.scala.Some(lexerState60), // 'r'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
     )
   
   private lazy val lexerState46: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 46,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState56), // '\t'
-        10 -> _root_.scala.Some(lexerState23), // '\n'
-        32 -> _root_.scala.Some(lexerState56), // ' '
-        34 -> _root_.scala.Some(lexerState44), // '\"'
-        44 -> _root_.scala.Some(lexerState55), // ','
-        45 -> _root_.scala.Some(lexerState16), // '-'
-        47 -> _root_.scala.Some(lexerState36), // '/'
-        48 -> _root_.scala.Some(lexerState39), // '0'
-        49 -> _root_.scala.Some(lexerState39), // '1'
-        50 -> _root_.scala.Some(lexerState39), // '2'
-        51 -> _root_.scala.Some(lexerState39), // '3'
-        52 -> _root_.scala.Some(lexerState39), // '4'
-        53 -> _root_.scala.Some(lexerState39), // '5'
-        54 -> _root_.scala.Some(lexerState39), // '6'
-        55 -> _root_.scala.Some(lexerState39), // '7'
-        56 -> _root_.scala.Some(lexerState39), // '8'
-        57 -> _root_.scala.Some(lexerState39), // '9'
-        60 -> _root_.scala.Some(lexerState17), // '<'
-        62 -> _root_.scala.Some(lexerState2), // '>'
-        64 -> _root_.scala.Some(lexerState55), // '@'
-        65 -> _root_.scala.Some(lexerState11), // 'A'
-        66 -> _root_.scala.Some(lexerState11), // 'B'
-        67 -> _root_.scala.Some(lexerState11), // 'C'
-        68 -> _root_.scala.Some(lexerState11), // 'D'
-        69 -> _root_.scala.Some(lexerState11), // 'E'
-        70 -> _root_.scala.Some(lexerState11), // 'F'
-        71 -> _root_.scala.Some(lexerState11), // 'G'
-        72 -> _root_.scala.Some(lexerState11), // 'H'
-        73 -> _root_.scala.Some(lexerState11), // 'I'
-        74 -> _root_.scala.Some(lexerState11), // 'J'
-        75 -> _root_.scala.Some(lexerState11), // 'K'
-        76 -> _root_.scala.Some(lexerState11), // 'L'
-        77 -> _root_.scala.Some(lexerState11), // 'M'
-        78 -> _root_.scala.Some(lexerState11), // 'N'
-        79 -> _root_.scala.Some(lexerState11), // 'O'
-        80 -> _root_.scala.Some(lexerState11), // 'P'
-        81 -> _root_.scala.Some(lexerState11), // 'Q'
-        82 -> _root_.scala.Some(lexerState11), // 'R'
-        83 -> _root_.scala.Some(lexerState11), // 'S'
-        84 -> _root_.scala.Some(lexerState11), // 'T'
-        85 -> _root_.scala.Some(lexerState11), // 'U'
-        86 -> _root_.scala.Some(lexerState11), // 'V'
-        87 -> _root_.scala.Some(lexerState11), // 'W'
-        88 -> _root_.scala.Some(lexerState11), // 'X'
-        89 -> _root_.scala.Some(lexerState11), // 'Y'
-        90 -> _root_.scala.Some(lexerState11), // 'Z'
-        91 -> _root_.scala.Some(lexerState55), // '['
-        93 -> _root_.scala.Some(lexerState55), // ']'
-        97 -> _root_.scala.Some(lexerState27), // 'a'
-        98 -> _root_.scala.Some(lexerState27), // 'b'
-        99 -> _root_.scala.Some(lexerState27), // 'c'
-        100 -> _root_.scala.Some(lexerState27), // 'd'
-        101 -> _root_.scala.Some(lexerState27), // 'e'
-        102 -> _root_.scala.Some(lexerState27), // 'f'
-        103 -> _root_.scala.Some(lexerState27), // 'g'
-        104 -> _root_.scala.Some(lexerState27), // 'h'
-        105 -> _root_.scala.Some(lexerState27), // 'i'
-        106 -> _root_.scala.Some(lexerState27), // 'j'
-        107 -> _root_.scala.Some(lexerState27), // 'k'
-        108 -> _root_.scala.Some(lexerState27), // 'l'
-        109 -> _root_.scala.Some(lexerState27), // 'm'
-        110 -> _root_.scala.Some(lexerState27), // 'n'
-        111 -> _root_.scala.Some(lexerState27), // 'o'
-        112 -> _root_.scala.Some(lexerState27), // 'p'
-        113 -> _root_.scala.Some(lexerState27), // 'q'
-        114 -> _root_.scala.Some(lexerState27), // 'r'
-        115 -> _root_.scala.Some(lexerState27), // 's'
-        116 -> _root_.scala.Some(lexerState27), // 't'
-        117 -> _root_.scala.Some(lexerState27), // 'u'
-        118 -> _root_.scala.Some(lexerState27), // 'v'
-        119 -> _root_.scala.Some(lexerState27), // 'w'
-        120 -> _root_.scala.Some(lexerState27), // 'x'
-        121 -> _root_.scala.Some(lexerState27), // 'y'
-        122 -> _root_.scala.Some(lexerState27), // 'z'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState47: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 47,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (1, 1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.escChars(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState48: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 48,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState48), // '\t'
-        32 -> _root_.scala.Some(lexerState48), // ' '
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState49: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 49,
-      on = _root_.scala.collection.immutable.Map(
-        45 -> _root_.scala.Some(lexerState61), // '-'
-        92 -> _root_.scala.Some(lexerState66), // '\\'
-        93 -> _root_.scala.Some(lexerState37), // ']'
-        94 -> _root_.scala.Some(lexerState61), // '^'
-      ),
-      elseOn = _root_.scala.Some(lexerState51),
-      yields = None,
-    )
-  
-  private lazy val lexerState50: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 50,
-      on = _root_.scala.collection.immutable.Map(
-        34 -> _root_.scala.None, // '\"'
-        92 -> _root_.scala.None, // '\\'
-      ),
-      elseOn = _root_.scala.Some(lexerState50),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1696,219 +1323,24 @@ object Lexer {
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
-    )
+    ) {
+      case 92 => _root_.scala.None // '\\'
+      case 34 => _root_.scala.None // '\"'
+      case _ => _root_.scala.Some(lexerState46)
+    }
   
-  private lazy val lexerState51: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 51,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.char(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState52: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 52,
-      on = _root_.scala.collection.immutable.Map(
-        48 -> _root_.scala.Some(lexerState52), // '0'
-        49 -> _root_.scala.Some(lexerState52), // '1'
-        50 -> _root_.scala.Some(lexerState52), // '2'
-        51 -> _root_.scala.Some(lexerState52), // '3'
-        52 -> _root_.scala.Some(lexerState52), // '4'
-        53 -> _root_.scala.Some(lexerState52), // '5'
-        54 -> _root_.scala.Some(lexerState52), // '6'
-        55 -> _root_.scala.Some(lexerState52), // '7'
-        56 -> _root_.scala.Some(lexerState52), // '8'
-        57 -> _root_.scala.Some(lexerState52), // '9'
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.int(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState53: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 53,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState54: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 54,
-      on = _root_.scala.collection.immutable.Map(
-        48 -> _root_.scala.Some(lexerState54), // '0'
-        49 -> _root_.scala.Some(lexerState54), // '1'
-        50 -> _root_.scala.Some(lexerState54), // '2'
-        51 -> _root_.scala.Some(lexerState54), // '3'
-        52 -> _root_.scala.Some(lexerState54), // '4'
-        53 -> _root_.scala.Some(lexerState54), // '5'
-        54 -> _root_.scala.Some(lexerState54), // '6'
-        55 -> _root_.scala.Some(lexerState54), // '7'
-        56 -> _root_.scala.Some(lexerState54), // '8'
-        57 -> _root_.scala.Some(lexerState54), // '9'
-        65 -> _root_.scala.Some(lexerState54), // 'A'
-        66 -> _root_.scala.Some(lexerState54), // 'B'
-        67 -> _root_.scala.Some(lexerState54), // 'C'
-        68 -> _root_.scala.Some(lexerState54), // 'D'
-        69 -> _root_.scala.Some(lexerState54), // 'E'
-        70 -> _root_.scala.Some(lexerState54), // 'F'
-        71 -> _root_.scala.Some(lexerState54), // 'G'
-        72 -> _root_.scala.Some(lexerState54), // 'H'
-        73 -> _root_.scala.Some(lexerState54), // 'I'
-        74 -> _root_.scala.Some(lexerState54), // 'J'
-        75 -> _root_.scala.Some(lexerState54), // 'K'
-        76 -> _root_.scala.Some(lexerState54), // 'L'
-        77 -> _root_.scala.Some(lexerState54), // 'M'
-        78 -> _root_.scala.Some(lexerState54), // 'N'
-        79 -> _root_.scala.Some(lexerState54), // 'O'
-        80 -> _root_.scala.Some(lexerState54), // 'P'
-        81 -> _root_.scala.Some(lexerState54), // 'Q'
-        82 -> _root_.scala.Some(lexerState54), // 'R'
-        83 -> _root_.scala.Some(lexerState54), // 'S'
-        84 -> _root_.scala.Some(lexerState54), // 'T'
-        85 -> _root_.scala.Some(lexerState54), // 'U'
-        86 -> _root_.scala.Some(lexerState54), // 'V'
-        87 -> _root_.scala.Some(lexerState54), // 'W'
-        88 -> _root_.scala.Some(lexerState54), // 'X'
-        89 -> _root_.scala.Some(lexerState54), // 'Y'
-        90 -> _root_.scala.Some(lexerState54), // 'Z'
-        95 -> _root_.scala.Some(lexerState54), // '_'
-        97 -> _root_.scala.Some(lexerState54), // 'a'
-        98 -> _root_.scala.Some(lexerState54), // 'b'
-        99 -> _root_.scala.Some(lexerState54), // 'c'
-        100 -> _root_.scala.Some(lexerState54), // 'd'
-        101 -> _root_.scala.Some(lexerState54), // 'e'
-        102 -> _root_.scala.Some(lexerState54), // 'f'
-        103 -> _root_.scala.Some(lexerState54), // 'g'
-        104 -> _root_.scala.Some(lexerState54), // 'h'
-        105 -> _root_.scala.Some(lexerState54), // 'i'
-        106 -> _root_.scala.Some(lexerState54), // 'j'
-        107 -> _root_.scala.Some(lexerState54), // 'k'
-        108 -> _root_.scala.Some(lexerState54), // 'l'
-        109 -> _root_.scala.Some(lexerState54), // 'm'
-        110 -> _root_.scala.Some(lexerState54), // 'n'
-        111 -> _root_.scala.Some(lexerState54), // 'o'
-        112 -> _root_.scala.Some(lexerState54), // 'p'
-        113 -> _root_.scala.Some(lexerState54), // 'q'
-        114 -> _root_.scala.Some(lexerState54), // 'r'
-        115 -> _root_.scala.Some(lexerState54), // 's'
-        116 -> _root_.scala.Some(lexerState54), // 't'
-        117 -> _root_.scala.Some(lexerState54), // 'u'
-        118 -> _root_.scala.Some(lexerState54), // 'v'
-        119 -> _root_.scala.Some(lexerState54), // 'w'
-        120 -> _root_.scala.Some(lexerState54), // 'x'
-        121 -> _root_.scala.Some(lexerState54), // 'y'
-        122 -> _root_.scala.Some(lexerState54), // 'z'
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.mode(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState55: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 55,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState56: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 56,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState56), // '\t'
-        32 -> _root_.scala.Some(lexerState56), // ' '
-      ),
-      elseOn = _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState57: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 57,
-      on = _root_.scala.collection.immutable.Map(
-        34 -> _root_.scala.Some(lexerState31), // '\"'
-        92 -> _root_.scala.Some(lexerState31), // '\\'
-        110 -> _root_.scala.Some(lexerState31), // 'n'
-        116 -> _root_.scala.Some(lexerState31), // 't'
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState47: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 47,
       yields = None,
-    )
+    ) {
+      case 114 => _root_.scala.Some(lexerState24) // 'r'
+    }
   
-  private lazy val lexerState58: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 58,
-      on = _root_.scala.collection.immutable.Map(
-        34 -> _root_.scala.Some(lexerState14), // '\"'
-        92 -> _root_.scala.Some(lexerState57), // '\\'
-      ),
-      elseOn = _root_.scala.Some(lexerState50),
-      yields = None,
-    )
-  
-  private lazy val lexerState59: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 59,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState48: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 48,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1922,22 +1354,23 @@ object Lexer {
       ),
     )
   
-  private lazy val lexerState60: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 60,
-      on = _root_.scala.collection.immutable.Map(
-        116 -> _root_.scala.Some(lexerState28), // 't'
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState49: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 49,
       yields = None,
-    )
+    ) {
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState18) // '0' - '9'
+      case 45 => _root_.scala.Some(lexerState2) // '-'
+      case 125 => _root_.scala.Some(lexerState45) // '}'
+      case 44 => _root_.scala.Some(lexerState64) // ','
+      case 32 => _root_.scala.Some(lexerState62) // ' '
+      case 9 => _root_.scala.Some(lexerState62) // '\t'
+    }
   
-  private lazy val lexerState61: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 61,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState50: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 50,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1946,27 +1379,80 @@ object Lexer {
               build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
             ),
           ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState43)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState51: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 51,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState52: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 52,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (1, 1),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.escChars(text, span),
+            ),
+          ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
     )
   
-  private lazy val lexerState62: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+  private lazy val lexerState53: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 62,
+      id = 53,
       on = _root_.scala.collection.immutable.Map(
-        10 -> _root_.scala.Some(lexerState9), // '\n'
+        40 -> _root_.scala.Some(lexerState22), // '('
+        41 -> _root_.scala.Some(lexerState22), // ')'
+        42 -> _root_.scala.Some(lexerState22), // '*'
+        43 -> _root_.scala.Some(lexerState22), // '+'
+        46 -> _root_.scala.Some(lexerState22), // '.'
+        47 -> _root_.scala.Some(lexerState22), // '/'
+        59 -> _root_.scala.Some(lexerState22), // ';'
+        63 -> _root_.scala.Some(lexerState22), // '?'
+        64 -> _root_.scala.Some(lexerState22), // '@'
+        91 -> _root_.scala.Some(lexerState22), // '['
+        92 -> _root_.scala.Some(lexerState22), // '\\'
+        93 -> _root_.scala.Some(lexerState22), // ']'
+        100 -> _root_.scala.Some(lexerState52), // 'd'
+        110 -> _root_.scala.Some(lexerState22), // 'n'
+        116 -> _root_.scala.Some(lexerState22), // 't'
+        123 -> _root_.scala.Some(lexerState22), // '{'
+        124 -> _root_.scala.Some(lexerState22), // '|'
+        125 -> _root_.scala.Some(lexerState22), // '}'
       ),
-      elseOn = _root_.scala.Some(lexerState62),
+      elseOn = _root_.scala.None,
       yields = None,
     )
   
-  private lazy val lexerState63: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 63,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState54: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 54,
+      yields = None,
+    ) {
+      case 100 => _root_.scala.Some(lexerState60) // 'd'
+    }
+  
+  private lazy val lexerState55: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 55,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1980,84 +1466,169 @@ object Lexer {
       ),
     )
   
-  private lazy val lexerState64: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 64,
-      on = _root_.scala.collection.immutable.Map(
-        40 -> _root_.scala.Some(lexerState42), // '('
-        41 -> _root_.scala.Some(lexerState42), // ')'
-        42 -> _root_.scala.Some(lexerState42), // '*'
-        43 -> _root_.scala.Some(lexerState42), // '+'
-        46 -> _root_.scala.Some(lexerState42), // '.'
-        47 -> _root_.scala.Some(lexerState42), // '/'
-        59 -> _root_.scala.Some(lexerState42), // ';'
-        63 -> _root_.scala.Some(lexerState42), // '?'
-        64 -> _root_.scala.Some(lexerState42), // '@'
-        91 -> _root_.scala.Some(lexerState42), // '['
-        92 -> _root_.scala.Some(lexerState42), // '\\'
-        93 -> _root_.scala.Some(lexerState42), // ']'
-        100 -> _root_.scala.Some(lexerState47), // 'd'
-        110 -> _root_.scala.Some(lexerState42), // 'n'
-        116 -> _root_.scala.Some(lexerState42), // 't'
-        123 -> _root_.scala.Some(lexerState42), // '{'
-        124 -> _root_.scala.Some(lexerState42), // '|'
-        125 -> _root_.scala.Some(lexerState42), // '}'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState65: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 65,
-      on = _root_.scala.collection.immutable.Map(
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState56: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 56,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
+            ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState3)),
         ),
       ),
     )
   
-  private lazy val lexerState66: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
-      id = 66,
-      on = _root_.scala.collection.immutable.Map(
-        45 -> _root_.scala.Some(lexerState59), // '-'
-        92 -> _root_.scala.Some(lexerState59), // '\\'
-        93 -> _root_.scala.Some(lexerState59), // ']'
-        94 -> _root_.scala.Some(lexerState59), // '^'
-        100 -> _root_.scala.Some(lexerState1), // 'd'
-        110 -> _root_.scala.Some(lexerState59), // 'n'
-        116 -> _root_.scala.Some(lexerState59), // 't'
-      ),
-      elseOn = _root_.scala.None,
+  private lazy val lexerState57: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 57,
       yields = None,
+    ) {
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState19) // '0' - '9'
+      case 62 => _root_.scala.Some(lexerState58) // '>'
+    }
+  
+  private lazy val lexerState58: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 58,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
     )
+  
+  private lazy val lexerState59: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 59,
+      yields = None,
+    ) {
+      case 93 => _root_.scala.Some(lexerState9) // ']'
+      case 92 => _root_.scala.Some(lexerState61) // '\\'
+      case 94 => _root_.scala.Some(lexerState28) // '^'
+      case 45 => _root_.scala.Some(lexerState28) // '-'
+      case _ => _root_.scala.Some(lexerState36)
+    }
+  
+  private lazy val lexerState60: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 60,
+      yields = None,
+    ) {
+      case 101 => _root_.scala.Some(lexerState63) // 'e'
+    }
+  
+  private lazy val lexerState61: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 61,
+      yields = None,
+    ) {
+      case c if c >= 92 && c <= 94 => _root_.scala.Some(lexerState48) // '\\' - '^'
+      case 116 => _root_.scala.Some(lexerState48) // 't'
+      case 110 => _root_.scala.Some(lexerState48) // 'n'
+      case 45 => _root_.scala.Some(lexerState48) // '-'
+      case 100 => _root_.scala.Some(lexerState67) // 'd'
+    }
+  
+  private lazy val lexerState62: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 62,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 32 => _root_.scala.Some(lexerState62) // ' '
+      case 9 => _root_.scala.Some(lexerState62) // '\t'
+    }
+  
+  private lazy val lexerState63: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 63,
+      yields = None,
+    ) {
+      case 58 => _root_.scala.Some(lexerState56) // ':'
+    }
+  
+  private lazy val lexerState64: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 64,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.generate.parsers.Lexer.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState65: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 65,
+      yields = None,
+    ) {
+      case c if c >= 65 && c <= 90 => _root_.scala.Some(lexerState26) // 'A' - 'Z'
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState8) // 'a' - 'z'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState19) // '0' - '9'
+      case 47 => _root_.scala.Some(lexerState7) // '/'
+      case 60 => _root_.scala.Some(lexerState30) // '<'
+      case 45 => _root_.scala.Some(lexerState57) // '-'
+      case 34 => _root_.scala.Some(lexerState50) // '\"'
+      case 93 => _root_.scala.Some(lexerState58) // ']'
+      case 91 => _root_.scala.Some(lexerState58) // '['
+      case 64 => _root_.scala.Some(lexerState58) // '@'
+      case 44 => _root_.scala.Some(lexerState58) // ','
+      case 10 => _root_.scala.Some(lexerState29) // '\n'
+      case 62 => _root_.scala.Some(lexerState66) // '>'
+      case 32 => _root_.scala.Some(lexerState5) // ' '
+      case 9 => _root_.scala.Some(lexerState5) // '\t'
+    }
+  
+  private lazy val lexerState66: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.generate.parsers.Lexer.Terminal](
+      id = 66,
+      yields = None,
+    ) {
+      case 62 => _root_.scala.Some(lexerState58) // '>'
+    }
   
   private lazy val lexerState67: _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.generate.parsers.Lexer.Terminal](
+    _root_.slyce.parse.Lexer.State[_root_.slyce.generate.parsers.Lexer.Terminal](
       id = 67,
-      on = _root_.scala.collection.immutable.Map(
-        48 -> _root_.scala.Some(lexerState52), // '0'
-        49 -> _root_.scala.Some(lexerState52), // '1'
-        50 -> _root_.scala.Some(lexerState52), // '2'
-        51 -> _root_.scala.Some(lexerState52), // '3'
-        52 -> _root_.scala.Some(lexerState52), // '4'
-        53 -> _root_.scala.Some(lexerState52), // '5'
-        54 -> _root_.scala.Some(lexerState52), // '6'
-        55 -> _root_.scala.Some(lexerState52), // '7'
-        56 -> _root_.scala.Some(lexerState52), // '8'
-        57 -> _root_.scala.Some(lexerState52), // '9'
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (1, 1),
+              build = span => text => _root_.slyce.generate.parsers.Lexer.Terminal.escChars(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
       ),
-      elseOn = _root_.scala.None,
-      yields = None,
     )
   
-  val lexer: _root_.slyce.parse.Lexer[_root_.slyce.generate.parsers.Lexer.Terminal] =
+  override val lexer: _root_.slyce.parse.Lexer[_root_.slyce.generate.parsers.Lexer.Terminal] =
     _root_.slyce.parse.Lexer[_root_.slyce.generate.parsers.Lexer.Terminal](lexerState0)
   
   // =====| Grammar |=====
@@ -2067,10 +1638,10 @@ object Lexer {
       id = 0,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@start:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState13)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState151)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer => grammarState163
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer => grammarState165
       },
     )
   
@@ -2078,58 +1649,10 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 1,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState140)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState110)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState136)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState103)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._2, stack)
-          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState94)
       },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState62
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail => grammarState38
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState106
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState70
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState10
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line => grammarState113
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState99
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState2: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
@@ -2137,12 +1660,12 @@ object Lexer {
       id = 2,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState112)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState109)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState160)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState161)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState154
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState153
       },
     )
   
@@ -2289,7 +1812,7 @@ object Lexer {
       id = 4,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState52)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState59)
       },
       onNT = PartialFunction.empty
     )
@@ -2438,18 +1961,116 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 6,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState114)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState136)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail => grammarState163
+      },
     )
   
   lazy val grammarState7: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 7,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState69)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState113)
       },
       onNT = PartialFunction.empty
     )
@@ -2458,8 +2079,156 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 8,
       onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState110)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState9: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 9,
+      onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState42
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head => grammarState8
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState63
+      },
+    )
+  
+  lazy val grammarState10: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 10,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState80)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode => grammarState34
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Head => grammarState139
+      },
+    )
+  
+  lazy val grammarState11: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 11,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState12: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 12,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -2469,8 +2238,519 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState89)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState155)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState168
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState160
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState146
+      },
+    )
+  
+  lazy val grammarState13: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 13,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState14: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 14,
+      onTerm = {
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Head(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState15: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 15,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState12)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState91)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState121
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState39
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState21
+      },
+    )
+  
+  lazy val grammarState16: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 16,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState17: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 17,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState18: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 18,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._1(_1, _2), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState19: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 19,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState20: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 20,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState102)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               toState,
@@ -2481,624 +2761,24 @@ object Lexer {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState15)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState159)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState145
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState80
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
-      },
-    )
-  
-  lazy val grammarState9: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 9,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState96)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState10: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 10,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState85)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState56)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState98)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState60)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState135)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState11: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 11,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._3(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState12: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 12,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState75)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState122)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState84)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char => grammarState24
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head => grammarState156
-      },
-    )
-  
-  lazy val grammarState13: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 13,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.mode) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState36)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState14: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 14,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState150
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState30
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head => grammarState19
-      },
-    )
-  
-  lazy val grammarState15: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 15,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState147)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState54)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState125
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState116
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState63
-      },
-    )
-  
-  lazy val grammarState16: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 16,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._2(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState17: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 17,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._1(_1, _2), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState18: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 18,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._1(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState19: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 19,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState117)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState20: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 20,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState112)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState160)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState154
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState20
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState71
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState11
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant => grammarState40
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState122
       },
     )
   
@@ -3106,107 +2786,20 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 21,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
           }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState144)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState115
+      },
     )
   
   lazy val grammarState22: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
@@ -3221,7 +2814,7 @@ object Lexer {
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._1(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head(_1, _2), stack)
           }
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -3231,7 +2824,7 @@ object Lexer {
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._1(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head(_1, _2), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -3240,6 +2833,273 @@ object Lexer {
   lazy val grammarState23: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 23,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState109)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState161)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState153
+      },
+    )
+  
+  lazy val grammarState24: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 24,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState25: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 25,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState26: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 26,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState42
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head => grammarState116
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState63
+      },
+    )
+  
+  lazy val grammarState27: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 27,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -3377,103 +3237,42 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState24: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState28: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 24,
+      id = 28,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail._2, stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
           }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState75)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState122)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char => grammarState157
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail => grammarState44
-      },
-    )
-  
-  lazy val grammarState25: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 25,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState152)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState81)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState26: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 26,
-      onTerm = {
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState102)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState15)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState85)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`^`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`^`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`^`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._1(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState27: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 27,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState94)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState28: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 28,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.term) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState79)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState18)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState12)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState135)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw => grammarState11
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType => grammarState111
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield => grammarState29
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState20
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState11
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState82
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState71
       },
     )
   
@@ -3481,113 +3280,64 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 29,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState28)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState150)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState83)
       },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail => grammarState86
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState30: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 30,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`^`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`^`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`^`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState31: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 31,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState29)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState97)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState32: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 32,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -3631,9 +3381,9 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState31: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState33: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 31,
+      id = 33,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -3771,246 +3521,55 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState32: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 32,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState103)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState140)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState110)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState136)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState62
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head => grammarState93
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState106
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState70
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState10
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line => grammarState1
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState99
-      },
-    )
-  
-  lazy val grammarState33: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 33,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState132
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState57
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head => grammarState7
-      },
-    )
-  
   lazy val grammarState34: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 34,
       onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState80)
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Head(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail._2, stack)
           }
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail => grammarState14
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode => grammarState103
+      },
     )
   
   lazy val grammarState35: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 35,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState158
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head => grammarState46
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState32
+      },
     )
   
   lazy val grammarState36: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 36,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState109)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState65)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState128)
       },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Head => grammarState162
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode => grammarState77
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState37: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
@@ -4070,81 +3629,93 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 38,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
           }
-        case _root_.scala.Nil =>
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
           }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState38)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState123)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState141
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState68
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState138
+      },
     )
   
   lazy val grammarState39: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 39,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState61)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState129)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState12)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState91)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState162)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState117)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState132)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState169)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState39
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant => grammarState90
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState16
+      },
     )
   
   lazy val grammarState40: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 40,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`^`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState26)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^` => grammarState102
-      },
-    )
-  
-  lazy val grammarState41: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 41,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -4260,21 +3831,21 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState42: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState41: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 42,
+      id = 41,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState6)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState7)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState129)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState128)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState43: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState42: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 43,
+      id = 42,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -4289,29 +3860,33 @@ object Lexer {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState43
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState65
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState130
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState111
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState157
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState63
       },
+    )
+  
+  lazy val grammarState43: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 43,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState73)
+      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState44: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 44,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head(_1, _2), stack)
-          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState99)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState51)
       },
       onNT = PartialFunction.empty
     )
@@ -4320,10 +3895,149 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 45,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState92)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState129)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw(_1, _2, _3), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -4332,10 +4046,8 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 46,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState98)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState48)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState50)
       },
       onNT = PartialFunction.empty
     )
@@ -4344,126 +4056,10 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 47,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._1(_1, _2), stack)
-          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState92)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState128)
       },
       onNT = PartialFunction.empty
     )
@@ -4472,30 +4068,182 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 48,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState68)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState131
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState48
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState129
+      },
     )
   
   lazy val grammarState49: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 49,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState85)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState55)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState133
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head => grammarState70
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState129
+      },
     )
   
   lazy val grammarState50: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 50,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState158)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -4504,8 +4252,8 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 51,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState5)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState69)
       },
       onNT = PartialFunction.empty
     )
@@ -4514,8 +4262,8 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 52,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState5)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState93)
       },
       onNT = PartialFunction.empty
     )
@@ -4523,6 +4271,26 @@ object Lexer {
   lazy val grammarState53: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 53,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState156)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState54: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 54,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState5)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState55: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 55,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -4539,55 +4307,131 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState54: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState56: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 54,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`^`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState26)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^` => grammarState33
-      },
-    )
-  
-  lazy val grammarState55: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 55,
+      id = 56,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState95)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState87)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState52)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState56: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState57: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 56,
+      id = 57,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState15)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState85)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState135)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState102)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._2, stack)
+          }
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState43
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState20
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState71
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState11
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line => grammarState57
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail => grammarState18
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState101
+      },
+    )
+  
+  lazy val grammarState58: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 58,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState102)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState15)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState85)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState135)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState43
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head => grammarState170
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState20
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState71
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState11
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line => grammarState96
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState101
+      },
+    )
+  
+  lazy val grammarState59: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 59,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState5)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState60: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 60,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -4692,55 +4536,9 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState57: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState61: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 57,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState153)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars._2(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState58: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 58,
+      id = 61,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -4845,9 +4643,672 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState59: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState62: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 59,
+      id = 62,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState63: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 63,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState152)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState64: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 64,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState45)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState65: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 65,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState113)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState66: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 66,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState67: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 67,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState100)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState104)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState167)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+          }
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode => grammarState76
+      },
+    )
+  
+  lazy val grammarState68: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 68,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState38)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState123)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState130)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState117)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState132)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState169)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState68
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant => grammarState90
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState16
+      },
+    )
+  
+  lazy val grammarState69: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 69,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState5)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState70: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 70,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState110)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState71: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 71,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState72: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 72,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState73: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 73,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -4930,11 +5391,11 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState18)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState17)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState12)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState105)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.term) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState79)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState81)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -4953,748 +5414,19 @@ object Lexer {
           }
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head => grammarState78
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw => grammarState11
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType => grammarState111
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield => grammarState104
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw => grammarState13
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType => grammarState108
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head => grammarState67
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield => grammarState112
       },
-    )
-  
-  lazy val grammarState60: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 60,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`)`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`(`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Group(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState61: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 61,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState114)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState62: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 62,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState59)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState63: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 63,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState127)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState118
-      },
-    )
-  
-  lazy val grammarState64: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 64,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._4(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState65: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 65,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._1(_1, _2), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState66: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 66,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState66
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState65
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState57
-      },
-    )
-  
-  lazy val grammarState67: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 67,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState43
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState135
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState130
-      },
-    )
-  
-  lazy val grammarState68: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 68,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState5)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState69: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 69,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState70: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 70,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._2(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState71: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 71,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`->`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._2(_1, _2), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState72: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 72,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState115)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState73: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 73,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState51)
-      },
-      onNT = PartialFunction.empty
     )
   
   lazy val grammarState74: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 74,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail._1(_1, _2), stack)
-          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState114)
       },
       onNT = PartialFunction.empty
     )
@@ -5742,91 +5474,109 @@ object Lexer {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
           }
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -5836,231 +5586,123 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 77,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState109)
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail._2, stack)
-          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState54)
       },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode => grammarState151
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail => grammarState34
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState78: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 78,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState101)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState105)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState165)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
-          }
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode), toState) ::
+                stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._1, stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail._1(_1, _2), stack)
           }
       },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode => grammarState170
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState79: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 79,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
-          }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
           }
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode._3(_1, _2), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -6070,20 +5712,10 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 80,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState8)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.mode) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState58)
       },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState108
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState81: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
@@ -6094,6 +5726,151 @@ object Lexer {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.term), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState82: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 82,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState28)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState55
+      },
+    )
+  
+  lazy val grammarState83: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 83,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
               _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
@@ -6232,131 +6009,6 @@ object Lexer {
                 stack,
             ) =>
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.SubString._2(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState82: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 82,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState83: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 83,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner(_1, _2), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -6370,122 +6022,100 @@ object Lexer {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`*`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._2(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -6494,1101 +6124,6 @@ object Lexer {
   lazy val grammarState85: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 85,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState146)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState148)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState86: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 86,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState87: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 87,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState91)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState53
-      },
-    )
-  
-  lazy val grammarState88: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 88,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState149)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState40)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState161)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState119)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState133)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState167)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState88
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant => grammarState89
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState17
-      },
-    )
-  
-  lazy val grammarState89: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 89,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState90: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 90,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState132
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState57
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head => grammarState100
-      },
-    )
-  
-  lazy val grammarState91: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 91,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState103)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState140)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState110)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState136)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState106
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState10
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState87
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState70
-      },
-    )
-  
-  lazy val grammarState92: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 92,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState114)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState93: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 93,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode(_1, _2, _3), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState94: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 94,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState72)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState95: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 95,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState31)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState96: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 96,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState97: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 97,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState98: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 98,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState84)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState39)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState99: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 99,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState91)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState83
-      },
-    )
-  
-  lazy val grammarState100: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 100,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState69)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState101: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 101,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.mode) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState76)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState102: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 102,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState67
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState130
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head => grammarState107
-      },
-    )
-  
-  lazy val grammarState103: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 103,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState104: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 104,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState28)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
-          }
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail => grammarState47
-      },
-    )
-  
-  lazy val grammarState105: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 105,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.mode) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState71)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState106: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 106,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState103)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState140)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState110)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState49)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState97)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState56)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState136)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState82)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState106
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState70
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState10
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant => grammarState41
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState124
-      },
-    )
-  
-  lazy val grammarState107: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 107,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState69)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState108: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 108,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`|`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._1(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState109: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 109,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.mode) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState32)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState110: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 110,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -7615,16 +6150,988 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`^`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState26)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState30)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^` => grammarState14
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^` => grammarState35
       },
     )
   
-  lazy val grammarState111: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState86: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 111,
+      id = 86,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState87: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 87,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState147)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState149)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState88: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 88,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._4(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState89: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 89,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState38)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState123)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState125
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState68
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState138
+      },
+    )
+  
+  lazy val grammarState90: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 90,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._3(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState91: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 91,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`^`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState30)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^` => grammarState49
+      },
+    )
+  
+  lazy val grammarState92: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 92,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState113)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState93: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 93,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState33)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState94: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 94,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._7(_1, _2, _3, _4, _5), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState95: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 95,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState144)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState106
+      },
+    )
+  
+  lazy val grammarState96: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 96,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState15)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState85)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState135)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState102)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._2, stack)
+          }
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState43
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState20
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState71
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState11
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line => grammarState57
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail => grammarState22
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState101
+      },
+    )
+  
+  lazy val grammarState97: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 97,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState74)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState98: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 98,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState99: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 99,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState88)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState36)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState100: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 100,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.mode) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState79)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState101: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 101,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState28)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState86
+      },
+    )
+  
+  lazy val grammarState102: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 102,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._3(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState103: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 103,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState80)
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail._2, stack)
+          }
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail => grammarState78
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode => grammarState103
+      },
+    )
+  
+  lazy val grammarState104: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 104,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.mode) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState72)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState105: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 105,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState75)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState120)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head => grammarState64
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char => grammarState159
+      },
+    )
+  
+  lazy val grammarState106: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 106,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`|`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._1(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState107: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 107,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState38)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState123)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState68
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState145
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
+      },
+    )
+  
+  lazy val grammarState108: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 108,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -7731,7 +7238,7 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.SubString._1, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: (_: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState27)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState31)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: (_: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -7813,7 +7320,7 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.SubString._1, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: (_: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState27)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState31)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: (_: _root_.slyce.generate.parsers.Lexer.Terminal.`@`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -7908,9 +7415,9 @@ object Lexer {
       },
     )
   
-  lazy val grammarState112: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState109: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 112,
+      id = 109,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -7952,19 +7459,191 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState113: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState110: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 113,
+      id = 110,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState134)
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState111: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 111,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState112: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 112,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -7972,23 +7651,65 @@ object Lexer {
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState140)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState110)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState136)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState103)
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
+          }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._2, stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
           }
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -7996,23 +7717,17 @@ object Lexer {
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail._2, stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._2, stack)
           }
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState62
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Tail => grammarState22
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState106
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState70
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState10
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Line => grammarState113
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState99
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail => grammarState24
       },
     )
   
-  lazy val grammarState114: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState113: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 114,
+      id = 113,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -8161,9 +7876,9 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState115: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState114: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 115,
+      id = 114,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -8325,197 +8040,9 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState116: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState115: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 116,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState147)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState54)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState131)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState119)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState133)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState167)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState116
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant => grammarState89
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState17
-      },
-    )
-  
-  lazy val grammarState117: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 117,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass._1(_1, _2, _3, _4), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState118: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 118,
+      id = 115,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -8531,9 +8058,19 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState119: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState116: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 119,
+      id = 116,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState110)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState117: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 117,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -8638,9 +8175,9 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState120: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState118: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 120,
+      id = 118,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -8802,9 +8339,9 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState121: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState119: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 121,
+      id = 119,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -8931,9 +8468,9 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState122: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState120: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 122,
+      id = 120,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.chars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -8966,19 +8503,19 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState123: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState121: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 123,
+      id = 121,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState60)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState62)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState124: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState122: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 124,
+      id = 122,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -9004,12 +8541,60 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
+  lazy val grammarState123: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 123,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`^`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState30)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^` => grammarState26
+      },
+    )
+  
+  lazy val grammarState124: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 124,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState88)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState41)
+      },
+      onNT = PartialFunction.empty
+    )
+  
   lazy val grammarState125: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 125,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState121)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState119)
       },
       onNT = PartialFunction.empty
     )
@@ -9018,20 +8603,8 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 126,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState84)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState42)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState127: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 127,
-      onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -9041,7 +8614,7 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -9051,23 +8624,23 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState147)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState89)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState54)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState155)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState116
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState141
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState160
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState142
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
       },
     )
   
-  lazy val grammarState128: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState127: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 128,
+      id = 127,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -9167,6 +8740,146 @@ object Lexer {
                 stack,
             ) =>
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState128: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 128,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -9180,153 +8893,13 @@ object Lexer {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.generate.parsers.Lexer.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.int), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._5(_1, _2, _3, _4), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState130: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 130,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
               _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar), toState) ::
                 stack,
             ) =>
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars._2(_1), stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`-`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState20)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState23)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -9358,14 +8931,32 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
+  lazy val grammarState130: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 130,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState124)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState77)
+      },
+      onNT = PartialFunction.empty
+    )
+  
   lazy val grammarState131: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 131,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState126)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState73)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._1(_1, _2), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -9373,6 +8964,113 @@ object Lexer {
   lazy val grammarState132: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 132,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState133: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 133,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -9387,120 +9085,13 @@ object Lexer {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState66
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState135
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState57
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState111
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState48
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState129
       },
-    )
-  
-  lazy val grammarState133: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 133,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`+`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant._3(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
     )
   
   lazy val grammarState134: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
@@ -9614,24 +9205,6 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 135,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Head(_1, _2), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState136: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 136,
-      onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -9735,29 +9308,27 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState137: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState136: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 137,
+      id = 136,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState144)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.term) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState81)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState17)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState105)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState108
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Raw => grammarState13
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.YieldType => grammarState108
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield => grammarState6
       },
     )
   
-  lazy val grammarState138: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState137: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 138,
+      id = 137,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -9808,75 +9379,9 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState139: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState138: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 139,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState139
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState65
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState30
-      },
-    )
-  
-  lazy val grammarState140: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 140,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState149)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState40)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState123
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState88
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState168
-      },
-    )
-  
-  lazy val grammarState141: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 141,
+      id = 138,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -9887,11 +9392,58 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState127)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState107)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState108
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState115
       },
+    )
+  
+  lazy val grammarState139: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 139,
+      onTerm = {
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@start:`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState140: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 140,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState141: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 141,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState119)
+      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState142: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
@@ -9899,9 +9451,19 @@ object Lexer {
       id = 142,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState121)
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState126)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState106
+      },
     )
   
   lazy val grammarState143: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
@@ -9953,7 +9515,7 @@ object Lexer {
       id = 144,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -9963,7 +9525,7 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
@@ -9973,17 +9535,17 @@ object Lexer {
               (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
           }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState149)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState12)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState40)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState91)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState88
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState137
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState39
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState95
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
       },
     )
   
@@ -9991,53 +9553,45 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 145,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
           }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState15)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState159)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState46)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState119)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState133)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState167)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState107)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState145
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant => grammarState89
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState17
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState106
       },
     )
   
   lazy val grammarState146: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 146,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState126)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState115
+      },
+    )
+  
+  lazy val grammarState147: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 147,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -10164,54 +9718,20 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState147: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 147,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState147)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState54)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState142
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState116
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState63
-      },
-    )
-  
   lazy val grammarState148: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 148,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState9)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState23)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Head(_1, _2), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -10220,99 +9740,48 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 149,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState64)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState21)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState15)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState159)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState16)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState1)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState27)
       },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner => grammarState166
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState145
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState58
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState128
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState155
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState150: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 150,
       onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState53)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState138)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState118)
       },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState139
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState135
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState30
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState151: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 151,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState109)
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail._2, stack)
-          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.mode) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState10)
       },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode => grammarState151
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail => grammarState169
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState152: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 152,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState50)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState120)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState109)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState161)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState153
+      },
     )
   
   lazy val grammarState153: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
@@ -10320,20 +9789,6 @@ object Lexer {
       id = 153,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState112)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState160)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState154
-      },
-    )
-  
-  lazy val grammarState154: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 154,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
@@ -10381,39 +9836,9 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState155: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState154: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 155,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState8)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState118
-      },
-    )
-  
-  lazy val grammarState156: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 156,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState35)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState157: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 157,
+      id = 154,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -10426,17 +9851,53 @@ object Lexer {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.chars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState75)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState122)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState120)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char => grammarState157
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail => grammarState74
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char => grammarState154
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail => grammarState140
       },
     )
   
-  lazy val grammarState158: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState155: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 158,
+      id = 155,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`^`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState30)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^` => grammarState9
+      },
+    )
+  
+  lazy val grammarState156: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 156,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -10611,45 +10072,132 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
+  lazy val grammarState157: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 157,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState131
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState157
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState63
+      },
+    )
+  
+  lazy val grammarState158: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 158,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState111
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState164
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState32
+      },
+    )
+  
   lazy val grammarState159: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 159,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail._2, stack)
           }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState75)
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^`._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`^`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState26)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState120)
       },
       onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.`Optional_^` => grammarState90
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Char => grammarState154
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList3Tail => grammarState148
       },
     )
   
   lazy val grammarState160: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 160,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState66)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState25)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState89)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState155)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState44)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`\\?`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState117)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`+`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState132)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState19)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`*`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState169)
+      },
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Regex => grammarState160
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CharClass => grammarState61
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Group => grammarState127
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Quant => grammarState90
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.Sequence => grammarState16
+      },
+    )
+  
+  lazy val grammarState161: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 161,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -10691,33 +10239,14 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState161: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 161,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState164)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState4)
-      },
-      onNT = PartialFunction.empty
-    )
-  
   lazy val grammarState162: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 162,
       onTerm = {
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@start:`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer(_1, _2, _3), stack)
-          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState166)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState4)
       },
       onNT = PartialFunction.empty
     )
@@ -10726,9 +10255,137 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 163,
       onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`>>`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`->`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`<-`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+          }
         case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Accept[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(root: _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer), _) :: _root_.scala.Nil => root
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.Yield), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -10738,17 +10395,55 @@ object Lexer {
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 164,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState84)
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState45)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail._2, stack)
+          }
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState143)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState37)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState137)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList4Tail => grammarState131
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChars => grammarState164
+        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.CCChar => grammarState32
+      },
     )
   
   lazy val grammarState165: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 165,
+      onTerm = {
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Accept[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
+            case _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(root: _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer), _) :: _root_.scala.Nil => root
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState166: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 166,
+      onTerm = {
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState88)
+        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState47)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState167: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
+      id = 167,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -10835,19 +10530,19 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState166: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState168: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 166,
+      id = 168,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState121)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState119)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState167: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  lazy val grammarState169: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 167,
+      id = 169,
       onTerm = {
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
@@ -10952,161 +10647,37 @@ object Lexer {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState168: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 168,
-      onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`)`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail._2, stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState144)
-      },
-      onNT = {
-        case _: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInnerTail => grammarState118
-      },
-    )
-  
-  lazy val grammarState169: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
-      id = 169,
-      onTerm = {
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList0Tail._1(_1, _2), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
   lazy val grammarState170: _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](
       id = 170,
       onTerm = {
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`;`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`(`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
-          }
         case (tok: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode(_1, _2, _3), stack)
           }
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.slyce.generate.parsers.Lexer.NonTerminal.ToMode), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.`;`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.generate.parsers.Lexer.NonTerminal.GroupInner), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.generate.parsers.Lexer.NonTerminal.AnonList1Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.generate.parsers.Lexer.Terminal.mode), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.generate.parsers.Lexer.Terminal.`@mode:`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Line(_1, _2, _3, _4), stack)
+              (toState, _root_.slyce.generate.parsers.Lexer.NonTerminal.Mode(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
     )
   
-  val grammar: _root_.slyce.parse.Grammar[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
+  override val grammar: _root_.slyce.parse.Grammar[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer] =
     _root_.slyce.parse.Grammar[_root_.slyce.generate.parsers.Lexer.Terminal, _root_.slyce.generate.parsers.Lexer.NonTerminal, _root_.slyce.generate.parsers.Lexer.NonTerminal.Lexer](grammarState0)
   
 }

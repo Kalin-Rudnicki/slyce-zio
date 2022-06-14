@@ -2,8 +2,10 @@ package slyce.generate.output.formatters.scala3
 
 import klib.utils.{given, *}
 
+import slyce.generate.grammar.ExpandedGrammar
 import slyce.generate.output.Result
 import slyce.generate.output.formatters.Formatter
+import slyce.generate.output.formatters.scala3.GenUtils.*
 
 object Scala3Formatter extends Formatter {
 
@@ -17,8 +19,10 @@ object Scala3Formatter extends Formatter {
         packageName(pkg),
         "// format: off",
         IndentedString.Break,
-        s"object $name {",
+        s"object $name extends $ParsePath.Parser {",
         IndentedString.indented(
+          IndentedString.Break,
+          s"override type NTRoot = ${utils.qualifiedIdentifierName(ExpandedGrammar.Identifier.NonTerminal.NamedNt(result.grammar.startNT.value))}",
           IndentedString.Break,
           "// =====| Terminals |=====",
           IndentedString.Break,

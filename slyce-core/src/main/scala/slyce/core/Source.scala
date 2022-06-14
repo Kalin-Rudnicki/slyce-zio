@@ -13,7 +13,9 @@ import zio.*
 
 final case class Source(input: String, name: Option[String]) { self =>
   private val uuid: UUID = UUID.randomUUID
-  val chars: List[Char] = input.toList
+
+  lazy val chars: List[Char] = input.toList
+  val arr: Array[Char] = input.toArray
 
   override def hashCode: Int = uuid.hashCode
 

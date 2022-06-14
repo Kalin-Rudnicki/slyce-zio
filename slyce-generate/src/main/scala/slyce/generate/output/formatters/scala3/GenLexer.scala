@@ -4,6 +4,7 @@ import klib.utils.{given, *}
 import klib.utils.IndentedString
 
 import slyce.core.*
+import slyce.generate.groupChars
 import slyce.generate.lexer.*
 import slyce.generate.output.*
 import slyce.generate.output.formatters.scala3.GenUtils.*
@@ -21,7 +22,7 @@ private[scala3] object GenLexer {
           IndentedString.Break,
         )
       },
-      s"val lexer: $ParsePath.Lexer[${utils.qualifiedPath}.Terminal] =",
+      s"override val lexer: $ParsePath.Lexer[${utils.qualifiedPath}.Terminal] =",
       IndentedString.indented(
         s"$ParsePath.Lexer[${utils.qualifiedPath}.Terminal](lexerState0)",
       ),
@@ -31,54 +32,143 @@ private[scala3] object GenLexer {
       utils: GenUtils,
       state: DFA.State,
   ): IndentedString =
+    if (state.transitions.isEmpty) lexerStateDefault(utils, state)
+    else {
+      val grouped: List[(Either[Char, (Char, Char)], Int, Option[Lazy[DFA.State]])] =
+        state.transitions.toList
+          .flatMap { case (chars, to) =>
+            chars.groupChars.map { either =>
+              (
+                either,
+                either match {
+                  case Left(_)             => 1
+                  case Right((start, end)) => end.toInt - start.toInt
+                },
+                to,
+              )
+            }
+          }
+          .sortBy(_._2)
+          .reverse
+
+      val sizes: List[Int] = grouped.map(_._2)
+      val first2: List[Int] = sizes.take(2)
+      val afterThat: List[Int] = sizes.drop(2)
+
+      if (sizes.size <= 3 || first2.sum >= afterThat.sum) lexerStatePF(utils, state, grouped)
+      else lexerStateMap(utils, state)
+    }
+
+  private def lexerStateDefault(
+      utils: GenUtils,
+      state: DFA.State,
+  ): IndentedString =
+    IndentedString.inline(
+      s"private lazy val lexerState${state.id}: $ParsePath.Lexer.State[${utils.qualifiedPath}.Terminal] =",
+      IndentedString.indented(
+        s"$ParsePath.Lexer.State[${utils.qualifiedPath}.Terminal](",
+        IndentedString.indented(
+          s"id = ${state.id},",
+          state.elseTransition match {
+            case Some(to) => s"on = _ => _root_.scala.Some(lexerState${to.value.id}),"
+            case None     => s"on = _ => _root_.scala.None,"
+          },
+          assignYields(utils, state),
+        ),
+        ")",
+      ),
+    )
+
+  private def lexerStatePF(
+      utils: GenUtils,
+      state: DFA.State,
+      grouped: List[(Either[Char, (Char, Char)], Int, Option[Lazy[DFA.State]])],
+  ): IndentedString =
+    IndentedString.inline(
+      s"private lazy val lexerState${state.id}: $ParsePath.Lexer.State[${utils.qualifiedPath}.Terminal] =",
+      IndentedString.indented(
+        s"$ParsePath.Lexer.State.fromPF[${utils.qualifiedPath}.Terminal](",
+        IndentedString.indented(
+          s"id = ${state.id},",
+          assignYields(utils, state),
+        ),
+        ") {",
+        IndentedString.indented(
+          grouped.map { case (either, _, to) =>
+            val (matchStr, comment) =
+              either match {
+                case Left(c) =>
+                  (c.toInt.toString, c.unesc)
+                case Right((c1, c2)) =>
+                  (s"c if c >= ${c1.toInt} && c <= ${c2.toInt}", s"${c1.unesc} - ${c2.unesc}")
+              }
+
+            val toStr =
+              to match {
+                case Some(to) => s"_root_.scala.Some(lexerState${to.value.id})"
+                case None     => "_root_.scala.None"
+              }
+
+            s"case $matchStr => $toStr // $comment"
+          },
+          state.elseTransition.map { to =>
+            s"case _ => _root_.scala.Some(lexerState${to.value.id})"
+          },
+        ),
+        "}",
+      ),
+    )
+
+  private def lexerStateMap(
+      utils: GenUtils,
+      state: DFA.State,
+  ): IndentedString =
     IndentedString.inline(
       s"private lazy val lexerState${state.id}: $ParsePath.Lexer.State[${utils.qualifiedPath}.Terminal] =",
       IndentedString.indented(
         s"$ParsePath.Lexer.State.fromMap[${utils.qualifiedPath}.Terminal](",
         IndentedString.indented(
           s"id = ${state.id},",
-          lexerOn(state),
-          state.yields match {
-            case Some((_, yields)) =>
-              IndentedString.inline(
-                "yields = Some(",
-                IndentedString.indented(
-                  lexerYields(utils, yields),
-                ),
-                "),",
-              )
-            case None => "yields = None,"
+          s"on = _root_.scala.collection.immutable.Map(",
+          IndentedString.indented(
+            state.transitions.toList
+              .flatMap { case (chars, toState) =>
+                chars.toList.map((_, toState))
+              }
+              .sortBy(_._1)
+              .map { case (char, toState) =>
+                toState match {
+                  case Some(toState) => s"${char.toInt} -> _root_.scala.Some(lexerState${toState.value.id}), // ${char.unesc}"
+                  case None          => s"${char.toInt} -> _root_.scala.None, // ${char.unesc}"
+                }
+              },
+          ),
+          "),",
+          state.elseTransition match {
+            case Some(to) => s"elseOn = _root_.scala.Some(lexerState${to.value.id}),"
+            case None     => s"elseOn = _root_.scala.None,"
           },
+          assignYields(utils, state),
         ),
         ")",
       ),
     )
 
-  private def lexerOn(
+  private def assignYields(
+      utils: GenUtils,
       state: DFA.State,
   ): IndentedString =
-    IndentedString.inline(
-      // TODO (KR) : Have more options for what this is, try to be as efficient as possible
-      s"on = _root_.scala.collection.immutable.Map(",
-      IndentedString.indented(
-        state.transitions.toList
-          .flatMap { case (chars, toState) =>
-            chars.toList.map((_, toState))
-          }
-          .sortBy(_._1)
-          .map { case (char, toState) =>
-            toState match {
-              case Some(toState) => s"${char.toInt} -> _root_.scala.Some(lexerState${toState.value.id}), // ${char.unesc}"
-              case None          => s"${char.toInt} -> _root_.scala.None, // ${char.unesc}"
-            }
-          },
-      ),
-      "),",
-      state.elseTransition match {
-        case Some(to) => s"elseOn = _root_.scala.Some(lexerState${to.value.id}),"
-        case None     => s"elseOn = _root_.scala.None,"
-      },
-    )
+    state.yields match {
+      case Some((_, yields)) =>
+        IndentedString.inline(
+          "yields = Some(",
+          IndentedString.indented(
+            lexerYields(utils, yields),
+          ),
+          "),",
+        )
+      case None => "yields = None,"
+    }
 
   private def lexerYields(
       utils: GenUtils,

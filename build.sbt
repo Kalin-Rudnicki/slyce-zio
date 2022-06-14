@@ -75,6 +75,19 @@ lazy val `slyce-generate` =
     )
     .dependsOn(`slyce-parse` % "test->test;compile->compile")
 
+// TODO (KR) : IDEA-PLUGIN
+/*
+lazy val `slyce-idea-plugin` =
+  project
+    .in(file("slyce-idea-plugin"))
+    .enablePlugins(SbtIdeaPlugin)
+    .settings(
+      name := "slyce-idea-plugin",
+      sonatypeCredentialHost := "s01.oss.sonatype.org",
+    )
+    .dependsOn(`slyce-generate` % "test->test;compile->compile")
+ */
+
 lazy val `slyce-root` =
   project
     .in(file("."))
@@ -86,4 +99,6 @@ lazy val `slyce-root` =
       `slyce-core`,
       `slyce-generate`,
       `slyce-parse`,
+      // TODO (KR) : IDEA-PLUGIN
+      // `slyce-idea-plugin`
     )

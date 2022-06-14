@@ -7,6 +7,8 @@ import zio.*
 
 import slyce.core.*
 import slyce.generate.*
+import slyce.generate.parsers.Grammar as CurrentGrammar
+import slyce.generate.parsers.Lexer as CurrentLexer
 
 object Main extends ExecutableApp {
 
@@ -21,24 +23,24 @@ object Main extends ExecutableApp {
     ): SKTask[Unit] = {
       val name = outputFile.fileName.base
 
-      val lexerEffect: SKTask[parsers.Lexer.NonTerminal.Lexer] =
+      val lexerEffect: SKTask[CurrentLexer.NonTerminal.Lexer] =
         for {
           _ <- Logger.println.info("--- slf ---")
           lexerSource <- Source.fromFile(lexerFile)
           _ <- Logger.println.info("tokenizing")
-          lexerTokens <- Validated.toKTask(parsers.Lexer.lexer.tokenize(lexerSource))
+          lexerTokens <- Validated.toKTask(CurrentLexer.lexer.tokenize(lexerSource))
           _ <- Logger.println.info("building parse tree")
-          lexerAST <- Validated.toKTask(parsers.Lexer.grammar.buildTree(lexerSource, lexerTokens))
+          lexerAST <- Validated.toKTask(CurrentLexer.grammar.buildTree(lexerSource, lexerTokens))
         } yield lexerAST
 
-      val grammarEffect: SKTask[parsers.Grammar.NonTerminal.Grammar] =
+      val grammarEffect: SKTask[CurrentGrammar.NonTerminal.Grammar] =
         for {
           _ <- Logger.println.info("--- sgf ---")
           grammarSource <- Source.fromFile(grammarFile)
           _ <- Logger.println.info("tokenizing")
-          grammarTokens <- Validated.toKTask(parsers.Grammar.lexer.tokenize(grammarSource))
+          grammarTokens <- Validated.toKTask(CurrentGrammar.lexer.tokenize(grammarSource))
           _ <- Logger.println.info("building parse tree")
-          grammarAST <- Validated.toKTask(parsers.Grammar.grammar.buildTree(grammarSource, grammarTokens))
+          grammarAST <- Validated.toKTask(CurrentGrammar.grammar.buildTree(grammarSource, grammarTokens))
         } yield grammarAST
 
       Logger.println.info(s"Generating : $name") *>

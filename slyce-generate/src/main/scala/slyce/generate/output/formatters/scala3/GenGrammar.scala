@@ -29,7 +29,7 @@ private[scala3] object GenGrammar {
           IndentedString.Break,
         )
       },
-      s"val grammar: $ParsePath.Grammar[$grammarTypeArgs] =",
+      s"override val grammar: $ParsePath.Grammar[$grammarTypeArgs] =",
       IndentedString.indented(
         s"$ParsePath.Grammar[$grammarTypeArgs](grammarState0)",
       ),
