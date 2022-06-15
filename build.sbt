@@ -2,7 +2,7 @@
 
 // =====|  |=====
 
-val Scala_3 = "3.1.2-RC3"
+val Scala_3 = "3.1.3-RC5"
 
 val MyOrg = "io.github.kalin-rudnicki"
 val githubUsername = "Kalin-Rudnicki"
@@ -72,6 +72,8 @@ lazy val `slyce-generate` =
     .settings(
       name := "slyce-generate",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
+      // version := "1.1.3",
+      assemblyJarName := s"${name.value}-${version.value}.jar",
     )
     .dependsOn(`slyce-parse` % "test->test;compile->compile")
 
