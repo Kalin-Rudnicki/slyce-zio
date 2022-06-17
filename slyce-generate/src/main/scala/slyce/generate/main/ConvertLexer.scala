@@ -1,6 +1,8 @@
 package slyce.generate.main
 
+import cats.syntax.either.*
 import cats.syntax.option.*
+import klib.utils.*
 
 import slyce.core.*
 import slyce.generate.lexer.*
@@ -71,7 +73,7 @@ object ConvertLexer {
     }
 
   private def convertEscChar(escChar: CurrentLexer.Terminal.escChar): Char =
-    escChar.text.head match {
+    escChar.text(1) match {
       case 'n'  => '\n'
       case 't'  => '\t'
       case '\\' => '\\'
@@ -79,9 +81,10 @@ object ConvertLexer {
     }
 
   private def convertEscChars(escChars: CurrentLexer.Terminal.escChars): Regex.CharClass =
-    escChars.text.head match {
-      case 'd' => Regex.CharClass.`\\d`
-      case _   => ???
+    escChars.text match {
+      case "\\d" => Regex.CharClass.`\\d`
+      case "."   => Regex.CharClass.exclusive()
+      case c     => throw RuntimeException(s"Invalid esc-chars: ${c.unesc} @ ${escChars.span}")
     }
 
   private def convertCCChars(ccChars: CurrentLexer.NonTerminal.CCChars): Regex.CharClass =

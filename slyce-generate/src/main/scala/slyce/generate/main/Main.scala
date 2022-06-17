@@ -29,6 +29,7 @@ object Main extends ExecutableApp {
           lexerSource <- Source.fromFile(lexerFile)
           _ <- Logger.println.info("tokenizing")
           lexerTokens <- Validated.toKTask(CurrentLexer.lexer.tokenize(lexerSource))
+          _ <- Logger.println.info(Source.markAll(lexerTokens.map(t => Marked(t.tokName, t.span))))
           _ <- Logger.println.info("building parse tree")
           lexerAST <- Validated.toKTask(CurrentLexer.grammar.buildTree(lexerSource, lexerTokens))
         } yield lexerAST

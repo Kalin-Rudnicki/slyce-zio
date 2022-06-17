@@ -5,14 +5,14 @@
 \@(start|mode):              ; @ -> Mode
 \/\/[^\n]*\n                 ;
 /\*([^*]|\*[^/])*\*/         ;
-\\[./@;nt\\[\](|){}?*+]      ; escChar[1]
+\\d                          ; escChars
+\.                           ; escChars
+\\.                          ; escChar
 \n                           ;
 \;                           ; @ -> LineEnd
 [(|)?*+]                     ; @
 \[                           ; @ -> CharClass
 \{                           ; @ -> Quant
-\\d                          ; escChars[1]
-\.                           ; escChars
 [^\\]                        ; char
 [ ]{2,}                      ;
 
@@ -23,7 +23,7 @@
 
 @mode: String
 "                            ; @ <-
-\\[\\nt"]                    ; escChar[1]
+\\.                          ; escChar
 [^\\"]+                      ; chars
 
 @mode: LineEnd
@@ -40,8 +40,8 @@
 @mode: CharClass
 ]                            ; @ <-
 [\^\-]                       ; @
-\\[\\\]\^nt\-]               ; escChar[1]
-\\d                          ; escChars[1]
+\\d                          ; escChars
+\\.                          ; escChar
 [^\\]                        ; char
 
 @mode: Quant
