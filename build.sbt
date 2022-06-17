@@ -72,7 +72,7 @@ lazy val `slyce-generate` =
     .settings(
       name := "slyce-generate",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
-      // version := "1.1.3",
+      // version := "1.2.0",
       assemblyJarName := s"${name.value}-${version.value}.jar",
     )
     .dependsOn(`slyce-parse` % "test->test;compile->compile")

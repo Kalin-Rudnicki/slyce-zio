@@ -1,5 +1,6 @@
 
 @start: Lexer
+@lookAhead: 2
 
 Lexer : "@start:" mode Mode+
       ;

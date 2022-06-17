@@ -1,8 +1,11 @@
 
 @start: Grammar
 
-Grammar : "@start:" mode (^NT ";")+
+Grammar : "@start:" mode LookAhead? (^NT ";")+
         ;
+
+LookAhead : "@lookAhead:" int
+          ;
 
 ElementList          * Element
                      ;

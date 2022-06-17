@@ -11,8 +11,8 @@ object ConvertGrammar {
   def convertGrammar(grammar: CurrentGrammar.NonTerminal.Grammar): GrammarInput =
     GrammarInput(
       startNT = grammar._2.markedText,
-      nonTerminals = grammar._3.toNonEmptyList.toList.map(convertNT),
-      maxLookAhead = Marked(3, Span.Unknown), // TODO (KR) : Add ability to specify in file
+      nonTerminals = grammar._4.toNonEmptyList.toList.map(convertNT),
+      maxLookAhead = grammar._3.toOption.fold(Marked(1, Span.EOF(grammar._1.span.source)))(la => Marked(la._2.text.toInt, la._1.span <> la._2.span)),
     )
 
   private def convertNT(nt: CurrentGrammar.NonTerminal.NT): GrammarInput.NamedNonTerminal =
