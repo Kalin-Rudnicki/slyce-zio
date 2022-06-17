@@ -19,5 +19,5 @@
 
 @mode: String
 "                         ; @ <-
-\\[\\nt"]                 ; escChar[1]
+\\.                       ; escChar
 [^\\"]+                   ; chars

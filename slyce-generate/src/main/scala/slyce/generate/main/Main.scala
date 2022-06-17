@@ -29,7 +29,7 @@ object Main extends ExecutableApp {
           lexerSource <- Source.fromFile(lexerFile)
           _ <- Logger.println.info("tokenizing")
           lexerTokens <- Validated.toKTask(CurrentLexer.lexer.tokenize(lexerSource))
-          _ <- Logger.println.info(Source.markAll(lexerTokens.map(t => Marked(t.tokName, t.span))))
+          // _ <- Logger.println.info(Source.markAll(lexerTokens.map(Token.mark)))
           _ <- Logger.println.info("building parse tree")
           lexerAST <- Validated.toKTask(CurrentLexer.grammar.buildTree(lexerSource, lexerTokens))
         } yield lexerAST
@@ -40,6 +40,7 @@ object Main extends ExecutableApp {
           grammarSource <- Source.fromFile(grammarFile)
           _ <- Logger.println.info("tokenizing")
           grammarTokens <- Validated.toKTask(CurrentGrammar.lexer.tokenize(grammarSource))
+          // _ <- Logger.println.info(Source.markAll(lexerTokens.map(Token.mark)))
           _ <- Logger.println.info("building parse tree")
           grammarAST <- Validated.toKTask(CurrentGrammar.grammar.buildTree(grammarSource, grammarTokens))
         } yield grammarAST
