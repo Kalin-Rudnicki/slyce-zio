@@ -5,12 +5,10 @@ import cats.syntax.either.*
 import cats.syntax.list.*
 import cats.syntax.option.*
 import harness.core.*
-import harness.zio.*
 import java.util.UUID
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.math.Ordering.Implicits.infixOrderingOps
-import zio.*
 
 final case class Source(input: String, name: Option[String]) { self =>
   private val uuid: UUID = UUID.randomUUID
@@ -416,10 +414,6 @@ final case class Source(input: String, name: Option[String]) { self =>
 
 }
 object Source {
-
-  // TODO (KR) : move this into a different project to allow for only harness-core
-  def fromFile(file: Path): HTask[Source] =
-    file.readString.map(Source(_, file.show.some))
 
   final case class Config(
       showName: Boolean,

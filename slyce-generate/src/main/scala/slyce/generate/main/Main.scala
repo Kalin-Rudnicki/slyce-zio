@@ -27,23 +27,23 @@ object Main extends ExecutableApp {
       val lexerEffect: SHTask[CurrentLexer.NonTerminal.Lexer] =
         for {
           _ <- Logger.log.info("--- slf ---")
-          lexerSource <- Source.fromFile(lexerFile)
+          lexerSource <- Helpers.sourceFromFile(lexerFile)
           _ <- Logger.log.info("tokenizing")
-          lexerTokens <- Validated.toHTask(CurrentLexer.lexer.tokenize(lexerSource))
+          lexerTokens <- Helpers.validatedToHTask(CurrentLexer.lexer.tokenize(lexerSource))
           // _ <- Logger.log.info(Source.markAll(lexerTokens.map(Token.mark)))
           _ <- Logger.log.info("building parse tree")
-          lexerAST <- Validated.toHTask(CurrentLexer.grammar.buildTree(lexerSource, lexerTokens))
+          lexerAST <- Helpers.validatedToHTask(CurrentLexer.grammar.buildTree(lexerSource, lexerTokens))
         } yield lexerAST
 
       val grammarEffect: SHTask[CurrentGrammar.NonTerminal.Grammar] =
         for {
           _ <- Logger.log.info("--- sgf ---")
-          grammarSource <- Source.fromFile(grammarFile)
+          grammarSource <- Helpers.sourceFromFile(grammarFile)
           _ <- Logger.log.info("tokenizing")
-          grammarTokens <- Validated.toHTask(CurrentGrammar.lexer.tokenize(grammarSource))
+          grammarTokens <- Helpers.validatedToHTask(CurrentGrammar.lexer.tokenize(grammarSource))
           // _ <- Logger.log.info(Source.markAll(lexerTokens.map(Token.mark)))
           _ <- Logger.log.info("building parse tree")
-          grammarAST <- Validated.toHTask(CurrentGrammar.grammar.buildTree(grammarSource, grammarTokens))
+          grammarAST <- Helpers.validatedToHTask(CurrentGrammar.grammar.buildTree(grammarSource, grammarTokens))
         } yield grammarAST
 
       // TODO (KR) : indent?
@@ -54,7 +54,7 @@ object Main extends ExecutableApp {
         lexerInput = ConvertLexer.convertLexer(lexerAST)
         grammarInput = ConvertGrammar.convertGrammar(grammarAST)
         _ <- Logger.log.info("--- result ---")
-        result <- Validated.toHTask(output.Result.build(lexerInput, grammarInput))
+        result <- Helpers.validatedToHTask(output.Result.build(lexerInput, grammarInput))
         resultString = output.formatters.Formatter.format(targetLanguage, pkg, name, result)
 
         _ <- Logger.log.info("--- output ---")

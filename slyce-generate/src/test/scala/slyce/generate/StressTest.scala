@@ -42,7 +42,7 @@ object StressTest extends ExecutableApp {
       _ <- Logger.log.info(path)
       file <- Path(path)
       size <- file.size
-      source <- Source.fromFile(file)
+      source <- Helpers.sourceFromFile(file)
       _ <- Logger.log.info(s"${BigDecimal(size) * 100 / Int.MaxValue}% : ${(source.arr.count(_ == '\n') + 2).toStringCommas} lines")
       _ <- ZIO.traverse(_case.parsers)(execParser(repeat, source, _, _))
     } yield ()

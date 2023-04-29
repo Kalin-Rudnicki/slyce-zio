@@ -17,7 +17,7 @@ ThisBuild / dynver ~= (_.replace('+', '-'))
 
 // =====|  |=====
 
-lazy val HarnessVersion = "2392a118074c529cd19727abbca50ac88a37f64b"
+lazy val HarnessVersion = "1892cd21da256fea08b1e81b7873d40ae4c6cc02"
 
 inThisBuild(
   Seq(
@@ -53,7 +53,7 @@ lazy val `slyce-core` =
     .settings(
       name := "slyce-core",
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-zio" % HarnessVersion,
+        MyOrg %% "harness-core" % HarnessVersion,
         MyOrg %% "harness-test" % HarnessVersion % Test,
         "com.lihaoyi" %% "scalatags" % "0.11.1",
       ),
@@ -77,6 +77,9 @@ lazy val `slyce-generate` =
       sonatypeCredentialHost := "s01.oss.sonatype.org",
       // version := "1.2.0",
       assemblyJarName := s"${name.value}-${version.value}.jar",
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-zio" % HarnessVersion,
+      ),
     )
     .dependsOn(`slyce-parse` % "test->test;compile->compile")
 
