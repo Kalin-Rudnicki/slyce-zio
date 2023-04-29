@@ -2,8 +2,8 @@ package slyce.generate
 
 import cats.syntax.either.*
 import cats.syntax.option.*
-import klib.utils.{given, *}
-import klib.utils.commandLine.parse.*
+import harness.core.{given, *}
+import harness.core.commandLine.parse.*
 import zio.*
 
 import slyce.core.*

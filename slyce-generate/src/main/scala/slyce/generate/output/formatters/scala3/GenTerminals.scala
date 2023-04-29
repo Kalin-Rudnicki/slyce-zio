@@ -2,7 +2,7 @@ package slyce.generate.output.formatters.scala3
 
 import cats.data.NonEmptyList
 import cats.syntax.either.*
-import klib.utils.{given, *}
+import harness.core.{given, *}
 
 import slyce.generate.grammar.*
 import slyce.generate.output.*

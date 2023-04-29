@@ -17,6 +17,8 @@ ThisBuild / dynver ~= (_.replace('+', '-'))
 
 // =====|  |=====
 
+lazy val HarnessVersion = "2392a118074c529cd19727abbca50ac88a37f64b"
+
 inThisBuild(
   Seq(
     organization := MyOrg,
@@ -51,7 +53,8 @@ lazy val `slyce-core` =
     .settings(
       name := "slyce-core",
       libraryDependencies ++= Seq(
-        MyOrg %% "klib" % "3.0.0" % "test->test;compile->compile",
+        // MyOrg %% "klib" % "3.0.0" % "test->test;compile->compile",
+        MyOrg %% "harness-zio" % HarnessVersion % "test->test;compile->compile", // TODO (KR) : make this `core` and only include ZIO in generate?
         "com.lihaoyi" %% "scalatags" % "0.11.1",
       ),
       sonatypeCredentialHost := "s01.oss.sonatype.org",

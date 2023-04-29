@@ -4,7 +4,7 @@ import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
-import klib.utils.*
+import harness.core.*
 import scala.annotation.tailrec
 
 import slyce.core.*

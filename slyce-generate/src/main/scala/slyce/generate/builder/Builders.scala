@@ -2,7 +2,7 @@ package slyce.generate.builder
 
 import cats.data.NonEmptyList
 import cats.syntax.option.*
-import zio.ZTraceElement
+import zio.Trace
 import zio.internal.stacktracer.Tracer
 
 import slyce.core.*
@@ -47,20 +47,15 @@ object Builders {
           toMode: Yields.ToMode[String] = Yields.ToMode.Same,
       )(
           yields: Yields.Yield*,
-      )(using
-          trace: ZTraceElement,
-      ): LexerInput.Mode.Line = {
-        val lineNo = Tracer.instance.unapply(trace).get._3
-
+      )(using trace: Trace): LexerInput.Mode.Line =
         LexerInput.Mode.Line(
-          lineNo,
+          Tracer.instance.unapply(trace).get._3,
           reg.markedUnknown,
           Yields(
             yields.toList.map(_.markedUnknown),
             toMode.markedUnknown,
           ),
         )
-      }
 
     }
 

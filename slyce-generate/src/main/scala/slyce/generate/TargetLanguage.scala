@@ -1,11 +1,10 @@
 package slyce.generate
 
 import cats.syntax.option.*
+import harness.core.Enum
 
-enum TargetLanguage {
-  case Scala3
-}
-object TargetLanguage {
+enum TargetLanguage extends Enum[TargetLanguage] { case Scala3 }
+object TargetLanguage extends Enum.Companion[TargetLanguage] {
 
   def parse(targetLanguage: Option[TargetLanguage], extName: Option[String]): Option[TargetLanguage] =
     targetLanguage.orElse {

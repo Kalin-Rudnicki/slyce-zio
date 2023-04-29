@@ -1,7 +1,7 @@
 package slyce.generate.output.formatters.scala3
 
 import cats.syntax.list.*
-import klib.utils.{given, *}
+import harness.core.{given, *}
 
 import slyce.generate.grammar.*
 import slyce.generate.output.formatters.scala3.GenUtils.*

@@ -2,7 +2,7 @@ package slyce.generate.main
 
 import cats.syntax.either.*
 import cats.syntax.option.*
-import klib.utils.*
+import harness.core.*
 
 import slyce.core.*
 import slyce.generate.lexer.*

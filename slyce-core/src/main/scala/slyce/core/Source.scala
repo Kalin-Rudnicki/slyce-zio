@@ -4,8 +4,9 @@ import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.list.*
 import cats.syntax.option.*
+import harness.core.*
+import harness.zio.*
 import java.util.UUID
-import klib.utils.{given, *}
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.math.Ordering.Implicits.infixOrderingOps
@@ -416,8 +417,9 @@ final case class Source(input: String, name: Option[String]) { self =>
 }
 object Source {
 
-  def fromFile(file: File): KTask[Source] =
-    file.readString.map(Source(_, file.toPath.toUri.toString.some))
+  // TODO (KR) : move this into a different project to allow for only harness-core
+  def fromFile(file: Path): HTask[Source] =
+    file.readString.map(Source(_, file.show.some))
 
   final case class Config(
       showName: Boolean,

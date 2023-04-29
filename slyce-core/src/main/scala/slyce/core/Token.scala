@@ -1,6 +1,6 @@
 package slyce.core
 
-import klib.utils.*
+import harness.core.*
 
 trait Token extends Product {
   val tokName: String

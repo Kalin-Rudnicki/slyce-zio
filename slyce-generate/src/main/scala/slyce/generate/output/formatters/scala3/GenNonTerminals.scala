@@ -3,8 +3,7 @@ package slyce.generate.output.formatters.scala3
 import cats.data.NonEmptyList
 import cats.syntax.list.*
 import cats.syntax.option.*
-import klib.utils.{given, *}
-import klib.utils.IndentedString
+import harness.core.{given, *}
 
 import slyce.generate.grammar.*
 import slyce.generate.output.*

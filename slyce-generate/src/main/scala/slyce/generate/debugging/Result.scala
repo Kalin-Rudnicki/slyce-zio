@@ -4,7 +4,7 @@ import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.list.*
 import java.util.UUID
-import klib.utils.*
+import harness.core.*
 import scalatags.Text.all.{id as htmlId, *}
 
 import slyce.core.*

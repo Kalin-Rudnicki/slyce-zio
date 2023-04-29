@@ -3,7 +3,8 @@ package slyce.core
 import cats.data.EitherNel
 import cats.syntax.either.*
 import cats.syntax.parallel.*
-import klib.utils.*
+import harness.core.*
+import harness.zio.*
 import zio.*
 
 import slyce.core.*
@@ -14,9 +15,10 @@ object Validated {
   def withValidations[T](validations: Validated[Any]*)(ifValid: => Validated[T]): Validated[T] =
     validations.toList.parTraverse(identity).flatMap { _ => ifValid }
 
-  def toKTask[A](validated: Validated[A]): KTask[A] =
+  // TODO (KR) : move this into a different project to allow for only harness-core
+  def toHTask[A](validated: Validated[A]): HTask[A] =
     validated match {
-      case Left(errors) => ZIO.failNEL(KError.UserError(Source.markAll(errors.toList)))
+      case Left(errors) => ZIO.fail(HError.UserError(Source.markAll(errors.toList)))
       case Right(value) => ZIO.succeed(value)
     }
 

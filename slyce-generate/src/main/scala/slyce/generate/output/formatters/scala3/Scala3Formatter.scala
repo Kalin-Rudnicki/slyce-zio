@@ -1,6 +1,6 @@
 package slyce.generate.output.formatters.scala3
 
-import klib.utils.{given, *}
+import harness.core.{given, *}
 
 import slyce.generate.grammar.ExpandedGrammar
 import slyce.generate.output.Result

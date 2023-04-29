@@ -5,7 +5,7 @@ import cats.syntax.either.*
 import cats.syntax.list.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
-import klib.utils.{given, *}
+import harness.core.{given, *}
 import scala.annotation.tailrec
 
 import slyce.core.*

@@ -5,7 +5,7 @@ import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
 import java.util.UUID
-import klib.utils.InfiniteSet
+import harness.core.InfiniteSet
 import scala.util.hashing.MurmurHash3
 
 import slyce.core.*

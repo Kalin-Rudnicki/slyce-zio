@@ -1,7 +1,7 @@
 package slyce.generate.output.formatters.scala3
 
+import harness.core.{given, *}
 import java.util.UUID
-import klib.utils.{given, *}
 
 import slyce.generate.grammar.*
 import slyce.generate.output.*

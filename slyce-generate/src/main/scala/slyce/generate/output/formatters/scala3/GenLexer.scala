@@ -1,7 +1,6 @@
 package slyce.generate.output.formatters.scala3
 
-import klib.utils.{given, *}
-import klib.utils.IndentedString
+import harness.core.{given, *}
 
 import slyce.core.*
 import slyce.generate.groupChars

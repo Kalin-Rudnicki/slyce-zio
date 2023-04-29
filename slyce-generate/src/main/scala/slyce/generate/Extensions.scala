@@ -1,7 +1,7 @@
 package slyce.generate
 
 import cats.syntax.either.*
-import klib.utils.*
+import harness.core.*
 import scala.annotation.tailrec
 
 extension (chars: Set[Char]) {

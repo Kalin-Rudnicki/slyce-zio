@@ -7,11 +7,11 @@ Grammar : "@start:" mode LookAhead? (^NT ";")+
 LookAhead : "@lookAhead:" int
           ;
 
-ElementList          * Element
-                     ;
+ElementList     * Element
+                ;
 LiftElementList : Element
-                     | ElementList "^" Element ElementList
-                     ;
+                | ElementList "^" Element ElementList
+                ;
 
 NT          : nonTerminal NTBody
             ;
