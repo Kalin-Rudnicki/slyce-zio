@@ -2,8 +2,9 @@ package slyce.generate
 
 import cats.syntax.either.*
 import cats.syntax.option.*
+import harness.cli.*
 import harness.core.{given, *}
-import harness.core.commandLine.parse.*
+import harness.zio.*
 import zio.*
 
 import slyce.core.*
@@ -25,31 +26,33 @@ object TestMain extends ExecutableApp {
     (
       name,
       Executable
-        .fromParser(Parser.unit.disallowExtras)
-        .withLayer { _ => ZIO.unit.toLayer }
-        .withExecute { _ =>
+        .withParser(Parser.unit)
+        .withEffect { _ =>
           for {
-            _ <- Logger.println.info(s"=====| TestMain : $name |=====")
+            _ <- Logger.log.info(s"=====| TestMain : $name |=====")
 
             debugResult = DebugResult.build(lexerInput, grammarInput)
             debugResultFrag = DebugResult.resultToHTML(debugResult)
             debugResultString = debugResultFrag.render
 
-            debugOutputFile <- File.fromPath("target/test-output.html")
+            debugOutputFile <- Path("target/test-output.html")
             _ <- debugOutputFile.writeString(debugResultString)
 
             refName = name.split("-").map(_.capitalize).mkString
-            result <- ZIO.fromEither(Result.build(lexerInput, grammarInput).leftMap(_.map(e => KError.UserError(e.toString))))
+            result <- Result.build(lexerInput, grammarInput) match {
+              case Right(value) => ZIO.succeed(value)
+              case Left(errors) => ZIO.fail(HError(errors.map(e => HError.UserError(e.toString))))
+            }
             resultString = formatters.scala3.Scala3Formatter.format(pkg, refName, result)
-            // _ <- Logger.println.info(resultString)
-            _ <- Logger.println.info(s"Generated ${resultString.count(_ == '\n')} line(s)")
+            // _ <- Logger.log.info(resultString)
+            _ <- Logger.log.info(s"Generated ${resultString.count(_ == '\n')} line(s)")
 
-            _ <- Logger.break()
+            _ <- Logger.log("")
             dirPath = (baseDir ::: pkg).mkString("/")
-            dirFile <- File.fromPath(dirPath)
-            _ <- dirFile.createDirectories()
+            dirFile <- Path(dirPath)
+            _ <- dirFile.mkdirs
             outFile <- dirFile.child(s"$refName.scala")
-            _ <- Logger.println.info(s"writing to: ${outFile.toJavaFile.getCanonicalPath}")
+            _ <- Logger.log.info(s"writing to: ${outFile.canonicalPath.show}")
             _ <- outFile.writeString(resultString)
           } yield ()
         },

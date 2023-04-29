@@ -4,13 +4,14 @@ import cats.syntax.either.*
 import cats.syntax.option.*
 import zio.test.*
 import zio.test.Assertion.*
+import harness.test.*
 
 import slyce.core.*
 import slyce.generate.builder.Builders.*
 
-object DFATests extends DefaultRunnableSpec {
+object DFATests extends DefaultHarnessSpec {
 
-  override def spec: ZSpec[TestEnvironment, Any] =
+  override def spec: TestSpec =
     suite("DFATests")(
       suite("basic successes")(
       ),

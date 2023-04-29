@@ -2,13 +2,14 @@ package slyce.generate.lexer
 
 import cats.syntax.either.*
 import cats.syntax.option.*
+import harness.test.*
 import zio.test.*
 import zio.test.Assertion.*
 
 import slyce.core.*
 import slyce.generate.builder.Builders.*
 
-object NFATests extends DefaultRunnableSpec {
+object NFATests extends DefaultHarnessSpec {
 
   private def lexerInputFromRegex(reg: Regex): LexerInput =
     lexer("test")(
@@ -17,8 +18,8 @@ object NFATests extends DefaultRunnableSpec {
       ),
     )
 
-  override def spec: ZSpec[TestEnvironment, Any] = {
-    def testRegex(name: String)(reg: Regex, expNumErrors: Option[Int]): ZSpec[TestEnvironment, Any] =
+  override def spec: TestSpec = {
+    def testRegex(name: String)(reg: Regex, expNumErrors: Option[Int]): TestSpec =
       testNFA(name)(lexerInputFromRegex(reg), expNumErrors)
 
     suite("NFATests")(

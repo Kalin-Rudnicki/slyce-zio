@@ -2,13 +2,14 @@ package slyce.generate.lexer
 
 import cats.syntax.either.*
 import cats.syntax.option.*
+import harness.test.*
 import zio.test.*
 import zio.test.Assertion.*
 
 import slyce.core.*
 import slyce.generate.builder.Builders.*
 
-def testNFA(name: String)(lexer: LexerInput, expNumErrors: Option[Int]): ZSpec[Any, Any] =
+def testNFA(name: String)(lexer: LexerInput, expNumErrors: Option[Int]): DefaultHarnessSpec#TestSpec =
   test(name) {
     val res = NFA.fromLexer(lexer)
 
@@ -18,7 +19,7 @@ def testNFA(name: String)(lexer: LexerInput, expNumErrors: Option[Int]): ZSpec[A
     }
   }
 
-def testDFA(name: String)(lexer: LexerInput, expNumErrors: Option[Int]): ZSpec[Any, Any] =
+def testDFA(name: String)(lexer: LexerInput, expNumErrors: Option[Int]): DefaultHarnessSpec#TestSpec =
   test(name) {
     val res = NFA.fromLexer(lexer).flatMap(DFA.fromNFA(_))
 
