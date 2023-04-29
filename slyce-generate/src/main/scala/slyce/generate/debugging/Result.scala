@@ -3,8 +3,8 @@ package slyce.generate.debugging
 import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.list.*
-import java.util.UUID
 import harness.core.*
+import java.util.UUID
 import scalatags.Text.all.{id as htmlId, *}
 
 import slyce.core.*
@@ -264,7 +264,7 @@ object Result {
             Helpers
               .findAll(nfa.modes.map(_._2.value.value).toSet) {
                 case NFA.State.TransitionOnChars(_, to) => Set(to.value)
-                case NFA.State.TransitionOnEpsilon(to)  => to.map(_.value)
+                case NFA.State.TransitionOnEpsilon(to)  => to.map(_.value).toSet
                 case NFA.State.End(_)                   => Set.empty
               }
               .toList
@@ -339,7 +339,7 @@ object Result {
               ),
             )
           case NFA.State.TransitionOnEpsilon(to) =>
-            showNFAStates(nfaStateMap, to.map(_.value))
+            showNFAStates(nfaStateMap, to.map(_.value).toSet)
         }
 
       private def dfaModeTable(dfa: DFA): Frag =

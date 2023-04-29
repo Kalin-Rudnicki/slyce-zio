@@ -92,7 +92,7 @@ object DFA {
       Helpers
         .findAll(states) {
           case nonTrivial: NFA.State.NonTrivial  => Set(nonTrivial)
-          case NFA.State.TransitionOnEpsilon(to) => to.map(_.value)
+          case NFA.State.TransitionOnEpsilon(to) => to.map(_.value).toSet
         }
         .collect { case nonTrivial: NFA.State.NonTrivial => nonTrivial }
 
@@ -101,7 +101,7 @@ object DFA {
         Helpers.findAll(nfa.modes.values.map(_.value.value).toSet) {
           case NFA.State.TransitionOnChars(_, to) => Set(to.value)
           case NFA.State.End(_)                   => Set.empty
-          case NFA.State.TransitionOnEpsilon(to)  => to.map(_.value)
+          case NFA.State.TransitionOnEpsilon(to)  => to.map(_.value).toSet
         }
 
       val toModeNames =

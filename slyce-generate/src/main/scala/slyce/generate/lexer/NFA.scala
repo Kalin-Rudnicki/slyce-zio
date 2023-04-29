@@ -4,8 +4,8 @@ import cats.data.{EitherNel, NonEmptyList}
 import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
-import java.util.UUID
 import harness.core.InfiniteSet
+import java.util.UUID
 import scala.util.hashing.MurmurHash3
 
 import slyce.core.*
@@ -23,7 +23,7 @@ object NFA {
     sealed trait NonTrivial extends State
 
     final case class TransitionOnChars(charClass: CharClass, to: Pointer[State]) extends State.NonTrivial
-    final case class TransitionOnEpsilon(to: Set[Pointer[State]]) extends State with Helpers.ExactEquality
+    final case class TransitionOnEpsilon(to: List[Pointer[State]]) extends State with Helpers.ExactEquality
     final case class End(line: LexerInput.Mode.Line) extends State.NonTrivial
   }
 
@@ -55,7 +55,7 @@ object NFA {
       mode.lines.parTraverse { line => regexToState(line.regex.span, line.regex.value, Pointer(State.End(line))) }.map(stateWithEpsilonsTo(_*))
 
     private def stateWithEpsilonsTo(states: Pointer[State]*): Pointer[State] =
-      Pointer(State.TransitionOnEpsilon(states.toSet))
+      Pointer(State.TransitionOnEpsilon(states.toList))
 
     private def regexToState(lineSpan: Span, reg: Regex, next: Pointer[State]): Validated[Pointer[State]] =
       reg match {
@@ -117,7 +117,7 @@ object NFA {
               lineSpan,
               reg,
               times - 1,
-              Pointer(State.TransitionOnEpsilon(Set(next, _next))),
+              Pointer(State.TransitionOnEpsilon(next :: _next :: Nil)),
             )
           }
         else

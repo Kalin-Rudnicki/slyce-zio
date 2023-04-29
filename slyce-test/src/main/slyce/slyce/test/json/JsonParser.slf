@@ -1,0 +1,16 @@
+
+@start: General
+
+@mode: General
+[{}[\],:]                             ; @
+"                                     ; @ -> Str
+true|false|null                       ; @
+\/\/[^\n]*\n                          ;
+-?\d+                                 ; int
+-?\d+\.\d+                            ; double
+[ \n\t]                               ;
+
+@mode: Str
+"                                     ; @ <-
+\\.                                   ; escChar
+.                                     ; char

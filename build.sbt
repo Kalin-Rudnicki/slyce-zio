@@ -17,7 +17,7 @@ ThisBuild / dynver ~= (_.replace('+', '-'))
 
 // =====|  |=====
 
-lazy val HarnessVersion = "1892cd21da256fea08b1e81b7873d40ae4c6cc02"
+lazy val HarnessVersion = "bad9f4a7bb92e62d9be5e1ba31731b129aa1cd8f"
 
 inThisBuild(
   Seq(
@@ -83,6 +83,20 @@ lazy val `slyce-generate` =
     )
     .dependsOn(`slyce-parse` % "test->test;compile->compile")
 
+lazy val `slyce-test` =
+  project
+    .in(file("slyce-test"))
+    .settings(
+      name := "slyce-test",
+      publish / skip := true,
+      Test / fork := true,
+      sonatypeCredentialHost := "s01.oss.sonatype.org",
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-zio" % HarnessVersion,
+      ),
+    )
+    .dependsOn(`slyce-parse` % "test->test;compile->compile")
+
 // TODO (KR) : IDEA-PLUGIN
 /*
 lazy val `slyce-idea-plugin` =
@@ -107,6 +121,7 @@ lazy val `slyce-root` =
       `slyce-core`,
       `slyce-generate`,
       `slyce-parse`,
+      `slyce-test`,
       // TODO (KR) : IDEA-PLUGIN
       // `slyce-idea-plugin`
     )
