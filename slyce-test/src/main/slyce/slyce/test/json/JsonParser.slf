@@ -13,4 +13,4 @@ true|false|null                       ; @
 @mode: Str
 "                                     ; @ <-
 \\.                                   ; escChar
-.                                     ; char
+[^\n\\"]+                             ; chars

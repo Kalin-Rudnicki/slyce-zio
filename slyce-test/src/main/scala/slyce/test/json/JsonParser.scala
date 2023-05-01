@@ -13,8 +13,8 @@ object JsonParser extends _root_.slyce.parse.Parser {
   
   sealed abstract class Terminal(final val tokName: _root_.scala.Predef.String) extends _root_.slyce.core.Token
   object Terminal {
-    final case class char(text: _root_.scala.Predef.String, span: _root_.slyce.core.Span.Highlight) extends _root_.slyce.test.json.JsonParser.Terminal("char")
-                                                                                                    with _root_.slyce.test.json.JsonParser.NonTerminal.StrElem.Lift
+    final case class chars(text: _root_.scala.Predef.String, span: _root_.slyce.core.Span.Highlight) extends _root_.slyce.test.json.JsonParser.Terminal("chars")
+                                                                                                     with _root_.slyce.test.json.JsonParser.NonTerminal.StrElem.Lift
     final case class double(text: _root_.scala.Predef.String, span: _root_.slyce.core.Span.Highlight) extends _root_.slyce.test.json.JsonParser.Terminal("double")
     final case class escChar(text: _root_.scala.Predef.String, span: _root_.slyce.core.Span.Highlight) extends _root_.slyce.test.json.JsonParser.Terminal("escChar")
                                                                                                        with _root_.slyce.test.json.JsonParser.NonTerminal.StrElem.Lift
@@ -327,7 +327,7 @@ object JsonParser extends _root_.slyce.parse.Parser {
       sealed trait Lift extends _root_.slyce.core.Token
       
       final case class _1(
-        _1: _root_.slyce.test.json.JsonParser.Terminal.char,
+        _1: _root_.slyce.test.json.JsonParser.Terminal.chars,
       ) extends _root_.slyce.test.json.JsonParser.NonTerminal.StrElem
       
       final case class _2(
@@ -363,31 +363,31 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Lexer.State.fromMap[_root_.slyce.test.json.JsonParser.Terminal](
       id = 0,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState16), // '\t'
-        10 -> _root_.scala.Some(lexerState16), // '\n'
-        32 -> _root_.scala.Some(lexerState16), // ' '
-        34 -> _root_.scala.Some(lexerState1), // '\"'
-        44 -> _root_.scala.Some(lexerState17), // ','
-        45 -> _root_.scala.Some(lexerState5), // '-'
-        47 -> _root_.scala.Some(lexerState18), // '/'
-        48 -> _root_.scala.Some(lexerState4), // '0'
-        49 -> _root_.scala.Some(lexerState4), // '1'
-        50 -> _root_.scala.Some(lexerState4), // '2'
-        51 -> _root_.scala.Some(lexerState4), // '3'
-        52 -> _root_.scala.Some(lexerState4), // '4'
-        53 -> _root_.scala.Some(lexerState4), // '5'
-        54 -> _root_.scala.Some(lexerState4), // '6'
-        55 -> _root_.scala.Some(lexerState4), // '7'
-        56 -> _root_.scala.Some(lexerState4), // '8'
-        57 -> _root_.scala.Some(lexerState4), // '9'
-        58 -> _root_.scala.Some(lexerState17), // ':'
-        91 -> _root_.scala.Some(lexerState17), // '['
-        93 -> _root_.scala.Some(lexerState17), // ']'
-        102 -> _root_.scala.Some(lexerState22), // 'f'
-        110 -> _root_.scala.Some(lexerState19), // 'n'
-        116 -> _root_.scala.Some(lexerState13), // 't'
-        123 -> _root_.scala.Some(lexerState17), // '{'
-        125 -> _root_.scala.Some(lexerState17), // '}'
+        9 -> _root_.scala.Some(lexerState9), // '\t'
+        10 -> _root_.scala.Some(lexerState9), // '\n'
+        32 -> _root_.scala.Some(lexerState9), // ' '
+        34 -> _root_.scala.Some(lexerState20), // '\"'
+        44 -> _root_.scala.Some(lexerState2), // ','
+        45 -> _root_.scala.Some(lexerState23), // '-'
+        47 -> _root_.scala.Some(lexerState21), // '/'
+        48 -> _root_.scala.Some(lexerState14), // '0'
+        49 -> _root_.scala.Some(lexerState14), // '1'
+        50 -> _root_.scala.Some(lexerState14), // '2'
+        51 -> _root_.scala.Some(lexerState14), // '3'
+        52 -> _root_.scala.Some(lexerState14), // '4'
+        53 -> _root_.scala.Some(lexerState14), // '5'
+        54 -> _root_.scala.Some(lexerState14), // '6'
+        55 -> _root_.scala.Some(lexerState14), // '7'
+        56 -> _root_.scala.Some(lexerState14), // '8'
+        57 -> _root_.scala.Some(lexerState14), // '9'
+        58 -> _root_.scala.Some(lexerState2), // ':'
+        91 -> _root_.scala.Some(lexerState2), // '['
+        93 -> _root_.scala.Some(lexerState2), // ']'
+        102 -> _root_.scala.Some(lexerState10), // 'f'
+        110 -> _root_.scala.Some(lexerState11), // 'n'
+        116 -> _root_.scala.Some(lexerState22), // 't'
+        123 -> _root_.scala.Some(lexerState2), // '{'
+        125 -> _root_.scala.Some(lexerState2), // '}'
       ),
       elseOn = _root_.scala.None,
       yields = None,
@@ -405,7 +405,7 @@ object JsonParser extends _root_.slyce.parse.Parser {
               build = _root_.slyce.test.json.JsonParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState8)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
         ),
       ),
     )
@@ -413,6 +413,60 @@ object JsonParser extends _root_.slyce.parse.Parser {
   private lazy val lexerState2: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
       id = 2,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.test.json.JsonParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState3: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 3,
+      yields = None,
+    ) {
+      case 115 => _root_.scala.Some(lexerState13) // 's'
+    }
+  
+  private lazy val lexerState4: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 4,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.slyce.test.json.JsonParser.Terminal.chars(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 92 => _root_.scala.None // '\\'
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case _ => _root_.scala.Some(lexerState4)
+    }
+  
+  private lazy val lexerState5: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 5,
+      yields = None,
+    ) {
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState18) // '0' - '9'
+    }
+  
+  private lazy val lexerState6: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 6,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -427,26 +481,75 @@ object JsonParser extends _root_.slyce.parse.Parser {
       ),
     )
   
-  private lazy val lexerState3: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+  private lazy val lexerState7: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 3,
+      id = 7,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.slyce.test.json.JsonParser.Terminal.char(text, span),
-            ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
     )
   
-  private lazy val lexerState4: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+  private lazy val lexerState8: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 4,
+      id = 8,
+      yields = None,
+    ) {
+      case 108 => _root_.scala.Some(lexerState12) // 'l'
+    }
+  
+  private lazy val lexerState9: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 9,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState10: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 10,
+      yields = None,
+    ) {
+      case 97 => _root_.scala.Some(lexerState17) // 'a'
+    }
+  
+  private lazy val lexerState11: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 11,
+      yields = None,
+    ) {
+      case 117 => _root_.scala.Some(lexerState8) // 'u'
+    }
+  
+  private lazy val lexerState12: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 12,
+      yields = None,
+    ) {
+      case 108 => _root_.scala.Some(lexerState25) // 'l'
+    }
+  
+  private lazy val lexerState13: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 13,
+      yields = None,
+    ) {
+      case 101 => _root_.scala.Some(lexerState25) // 'e'
+    }
+  
+  private lazy val lexerState14: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 14,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -459,172 +562,39 @@ object JsonParser extends _root_.slyce.parse.Parser {
         ),
       ),
     ) {
-      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState4) // '0' - '9'
-      case 46 => _root_.scala.Some(lexerState6) // '.'
-    }
-  
-  private lazy val lexerState5: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 5,
-      yields = None,
-    ) {
-      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState4) // '0' - '9'
-    }
-  
-  private lazy val lexerState6: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 6,
-      yields = None,
-    ) {
-      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState20) // '0' - '9'
-    }
-  
-  private lazy val lexerState7: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 7,
-      on = _ => _root_.scala.Some(lexerState2),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.slyce.test.json.JsonParser.Terminal.char(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState8: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 8,
-      yields = None,
-    ) {
-      case 92 => _root_.scala.Some(lexerState7) // '\\'
-      case 34 => _root_.scala.Some(lexerState15) // '\"'
-      case _ => _root_.scala.Some(lexerState3)
-    }
-  
-  private lazy val lexerState9: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 9,
-      yields = None,
-    ) {
-      case 117 => _root_.scala.Some(lexerState23) // 'u'
-    }
-  
-  private lazy val lexerState10: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 10,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState11: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 11,
-      yields = None,
-    ) {
-      case 108 => _root_.scala.Some(lexerState24) // 'l'
-    }
-  
-  private lazy val lexerState12: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 12,
-      yields = None,
-    ) {
-      case 108 => _root_.scala.Some(lexerState14) // 'l'
-    }
-  
-  private lazy val lexerState13: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 13,
-      yields = None,
-    ) {
-      case 114 => _root_.scala.Some(lexerState9) // 'r'
-    }
-  
-  private lazy val lexerState14: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 14,
-      yields = None,
-    ) {
-      case 108 => _root_.scala.Some(lexerState21) // 'l'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState14) // '0' - '9'
+      case 46 => _root_.scala.Some(lexerState5) // '.'
     }
   
   private lazy val lexerState15: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
       id = 15,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.test.json.JsonParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
-        ),
-      ),
-    )
+      yields = None,
+    ) {
+      case 10 => _root_.scala.None // '\n'
+      case 92 => _root_.scala.Some(lexerState16) // '\\'
+      case 34 => _root_.scala.Some(lexerState1) // '\"'
+      case _ => _root_.scala.Some(lexerState4)
+    }
   
   private lazy val lexerState16: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
       id = 16,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
+      on = _ => _root_.scala.Some(lexerState6),
+      yields = None,
     )
   
   private lazy val lexerState17: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
       id = 17,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.slyce.test.json.JsonParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
+      yields = None,
+    ) {
+      case 108 => _root_.scala.Some(lexerState3) // 'l'
+    }
   
   private lazy val lexerState18: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
       id = 18,
-      yields = None,
-    ) {
-      case 47 => _root_.scala.Some(lexerState25) // '/'
-    }
-  
-  private lazy val lexerState19: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 19,
-      yields = None,
-    ) {
-      case 117 => _root_.scala.Some(lexerState12) // 'u'
-    }
-  
-  private lazy val lexerState20: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 20,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -637,12 +607,70 @@ object JsonParser extends _root_.slyce.parse.Parser {
         ),
       ),
     ) {
-      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState20) // '0' - '9'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState18) // '0' - '9'
     }
   
-  private lazy val lexerState21: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+  private lazy val lexerState19: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 19,
+      yields = None,
+    ) {
+      case 10 => _root_.scala.Some(lexerState7) // '\n'
+      case _ => _root_.scala.Some(lexerState19)
+    }
+  
+  private lazy val lexerState20: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 20,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.slyce.test.json.JsonParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState15)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState21: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
       id = 21,
+      yields = None,
+    ) {
+      case 47 => _root_.scala.Some(lexerState19) // '/'
+    }
+  
+  private lazy val lexerState22: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 22,
+      yields = None,
+    ) {
+      case 114 => _root_.scala.Some(lexerState24) // 'r'
+    }
+  
+  private lazy val lexerState23: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 23,
+      yields = None,
+    ) {
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState14) // '0' - '9'
+    }
+  
+  private lazy val lexerState24: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 24,
+      yields = None,
+    ) {
+      case 117 => _root_.scala.Some(lexerState13) // 'u'
+    }
+  
+  private lazy val lexerState25: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal](
+      id = 25,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -657,39 +685,6 @@ object JsonParser extends _root_.slyce.parse.Parser {
       ),
     )
   
-  private lazy val lexerState22: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 22,
-      yields = None,
-    ) {
-      case 97 => _root_.scala.Some(lexerState11) // 'a'
-    }
-  
-  private lazy val lexerState23: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 23,
-      yields = None,
-    ) {
-      case 101 => _root_.scala.Some(lexerState21) // 'e'
-    }
-  
-  private lazy val lexerState24: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 24,
-      yields = None,
-    ) {
-      case 115 => _root_.scala.Some(lexerState23) // 's'
-    }
-  
-  private lazy val lexerState25: _root_.slyce.parse.Lexer.State[_root_.slyce.test.json.JsonParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.slyce.test.json.JsonParser.Terminal](
-      id = 25,
-      yields = None,
-    ) {
-      case 10 => _root_.scala.Some(lexerState10) // '\n'
-      case _ => _root_.scala.Some(lexerState25)
-    }
-  
   override val lexer: _root_.slyce.parse.Lexer[_root_.slyce.test.json.JsonParser.Terminal] =
     _root_.slyce.parse.Lexer[_root_.slyce.test.json.JsonParser.Terminal](lexerState0)
   
@@ -700,31 +695,31 @@ object JsonParser extends _root_.slyce.parse.Parser {
       id = 0,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState59)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState16)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState118)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState135)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState56)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState27)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState58)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState13)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState128)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState69)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState38)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState24)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState22)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState54
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState91
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState61
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState127
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState67
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState64
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState143
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState92
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState84
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState54
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState63
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState61
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState144
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState86
       },
     )
   
@@ -732,17 +727,25 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 1,
       onTerm = {
-        case _root_.scala.Nil =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._2(_1, _2, _3, _4), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head(_1, _2), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -755,77 +758,51 @@ object JsonParser extends _root_.slyce.parse.Parser {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.double), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.double), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState3)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
           }
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState53
+      },
     )
   
   lazy val grammarState3: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 3,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState149)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState17)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState101)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState145)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState82)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState85)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState2)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState120)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState19
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState9
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState132
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState133
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState10
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState36
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState43
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState123
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState2
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState145
       },
     )
   
   lazy val grammarState4: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 4,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState147)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState21
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState28
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState81
-      },
-    )
-  
-  lazy val grammarState5: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 5,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -835,30 +812,30 @@ object JsonParser extends _root_.slyce.parse.Parser {
             ) =>
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState14
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState55
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState52
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState141
       },
+    )
+  
+  lazy val grammarState5: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 5,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState100)
+      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState6: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 6,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState32)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState7: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 7,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -873,45 +850,9 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState8: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState7: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 8,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState98)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState112)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState39)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState146
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState115
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
-      },
-    )
-  
-  lazy val grammarState9: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 9,
+      id = 7,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -935,9 +876,19 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState10: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState8: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 10,
+      id = 8,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState107)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState9: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 9,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -956,6 +907,41 @@ object JsonParser extends _root_.slyce.parse.Parser {
                 stack,
             ) =>
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState10: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 10,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.chars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._1(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.chars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._1(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.chars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._1(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -969,21 +955,21 @@ object JsonParser extends _root_.slyce.parse.Parser {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.Json), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head(_1, _2), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._1(_1, _2), stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.Json), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head(_1, _2), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._1(_1, _2), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -993,92 +979,38 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 12,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._1(_1, _2), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._1(_1, _2), stack)
-          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState149)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState15)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState96)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState147)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState112)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState17)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState48)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState76)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState16
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState7
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState126
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState127
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState9
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState30
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState37
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState120
+      },
     )
   
   lazy val grammarState13: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 13,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState77
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState94
-      },
-    )
-  
-  lazy val grammarState14: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 14,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState105)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState15: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 15,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState29)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState144)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState119)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState70)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState99
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState34
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
-      },
-    )
-  
-  lazy val grammarState16: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 16,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -1093,9 +1025,53 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState17: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState14: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 17,
+      id = 14,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState53
+      },
+    )
+  
+  lazy val grammarState15: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 15,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -1119,32 +1095,74 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState18: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState16: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 18,
+      id = 16,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._3(_1), stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._3(_1), stack)
           }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState17: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 17,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState33)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState40)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState67)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState64)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState97
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState102
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
+      },
+    )
+  
+  lazy val grammarState18: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 18,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState45)
       },
       onNT = PartialFunction.empty
     )
@@ -1153,23 +1171,29 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 19,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._3(_1), stack)
-          }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._3(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -1179,146 +1203,57 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 20,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState98)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState112)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.int), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt(_1), stack)
+          }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState39)
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.int), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt(_1), stack)
+          }
       },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState42
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState115
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState21: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 21,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState7)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState106)
       },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState104
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState22: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 22,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState45)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState91)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState77
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState43
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState145
+      },
     )
   
   lazy val grammarState23: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 23,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState24: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 24,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState45)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState25: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 25,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState98)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState112)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState128
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
-      },
-    )
-  
-  lazy val grammarState26: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 26,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -1329,16 +1264,16 @@ object JsonParser extends _root_.slyce.parse.Parser {
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState7)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState6)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState109
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState83
       },
     )
   
-  lazy val grammarState27: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState24: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 27,
+      id = 24,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -1353,45 +1288,9 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState28: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState25: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 28,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState140
-      },
-    )
-  
-  lazy val grammarState29: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 29,
+      id = 25,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -1401,88 +1300,53 @@ object JsonParser extends _root_.slyce.parse.Parser {
             ) =>
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState134
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState55
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState70
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState25
       },
     )
   
-  lazy val grammarState30: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState26: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 30,
+      id = 26,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState49)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState31: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 31,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.int), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
           }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState5
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState88
+      },
+    )
+  
+  lazy val grammarState27: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 27,
+      onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.int), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt(_1), stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState45)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState32: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState28: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 32,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._2(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._2(_1, _2, _3, _4), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState33: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 33,
+      id = 28,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -1498,77 +1362,29 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState34: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState29: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 34,
+      id = 29,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState6)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState11
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState87
       },
     )
   
-  lazy val grammarState35: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState30: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 35,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState74)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState36: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 36,
+      id = 30,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -1592,36 +1408,167 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
+  lazy val grammarState31: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 31,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState142)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState92
+      },
+    )
+  
+  lazy val grammarState32: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 32,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._1(_1, _2), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState33: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 33,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState8
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState141
+      },
+    )
+  
+  lazy val grammarState34: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 34,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState49
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState141
+      },
+    )
+  
+  lazy val grammarState35: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 35,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState148)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState135
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState29
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState57
+      },
+    )
+  
+  lazy val grammarState36: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 36,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`null`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`null`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
   lazy val grammarState37: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 37,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.escChar), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.Json), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`:`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._2(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair(_1, _2, _3), stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.escChar), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.Json), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`:`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._2(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._2(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -1631,43 +1578,35 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 38,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState63)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState4)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState130)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState131)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState28)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState140
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState47
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState133
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
       },
     )
   
@@ -1679,21 +1618,19 @@ object JsonParser extends _root_.slyce.parse.Parser {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._1(_1, _2), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._3(_1), stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._1(_1, _2), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._3(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -1703,22 +1640,35 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 40,
       onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState34)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState115)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState32)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState48
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState40
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState55
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState143
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
       },
     )
   
@@ -1730,19 +1680,19 @@ object JsonParser extends _root_.slyce.parse.Parser {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`null`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._6(_1), stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`null`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._6(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -1751,6 +1701,52 @@ object JsonParser extends _root_.slyce.parse.Parser {
   lazy val grammarState42: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 42,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._2(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState43: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 43,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState6)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState98
+      },
+    )
+  
+  lazy val grammarState44: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 44,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -1761,73 +1757,10 @@ object JsonParser extends _root_.slyce.parse.Parser {
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState141)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState142)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState50
-      },
-    )
-  
-  lazy val grammarState43: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 43,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.Json), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`:`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.Json), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`:`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState44: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 44,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState5)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState8)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState108)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState88
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState103
       },
     )
   
@@ -1867,16 +1800,7 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 46,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._3(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+        case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
@@ -1893,22 +1817,19 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 47,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState142)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState48
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState47
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState71
       },
     )
   
@@ -1916,15 +1837,23 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 48,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.double), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._1(_1, _2), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.double), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -1934,18 +1863,8 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 49,
       onTerm = {
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
-          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState107)
       },
       onNT = PartialFunction.empty
     )
@@ -1954,8 +1873,26 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 50,
       onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.Json), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head(_1, _2), stack)
+          }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState32)
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.Json), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head(_1, _2), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -1964,8 +1901,8 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 51,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState45)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState82)
       },
       onNT = PartialFunction.empty
     )
@@ -1974,24 +1911,8 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 52,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._2(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._2(_1), stack)
-          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState107)
       },
       onNT = PartialFunction.empty
     )
@@ -2003,41 +1924,27 @@ object JsonParser extends _root_.slyce.parse.Parser {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`,`), toState) ::
+                stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`,`), toState) ::
+                stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState63)
       },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState130
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState54: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
@@ -2048,10 +1955,10 @@ object JsonParser extends _root_.slyce.parse.Parser {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._3(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -2061,22 +1968,19 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 55,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState142)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState48
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState55
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState78
       },
     )
   
@@ -2084,35 +1988,19 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 56,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState5)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState8)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState108)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState33)
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState142)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState65
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState62
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState27
       },
     )
   
@@ -2120,24 +2008,8 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 57,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._6(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._6(_1), stack)
-          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState89)
       },
       onNT = PartialFunction.empty
     )
@@ -2145,22 +2017,6 @@ object JsonParser extends _root_.slyce.parse.Parser {
   lazy val grammarState58: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 58,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState97)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState69
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState86
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState94
-      },
-    )
-  
-  lazy val grammarState59: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 59,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -2170,6 +2026,36 @@ object JsonParser extends _root_.slyce.parse.Parser {
                 stack,
             ) =>
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState59: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 59,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.Json), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.Json), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._1(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -2209,86 +2095,6 @@ object JsonParser extends _root_.slyce.parse.Parser {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState62: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 62,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState11
-      },
-    )
-  
-  lazy val grammarState63: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 63,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState53
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState35
-      },
-    )
-  
-  lazy val grammarState64: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 64,
-      onTerm = {
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
               _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble), toState) ::
                 stack,
             ) =>
@@ -2298,42 +2104,53 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState65: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState62: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 65,
+      id = 62,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState141)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState148
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState1
       },
     )
   
-  lazy val grammarState66: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState63: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 66,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState139
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState81
-      },
-    )
-  
-  lazy val grammarState67: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 67,
+      id = 63,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -2348,49 +2165,9 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState68: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState64: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 68,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState7)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState96
-      },
-    )
-  
-  lazy val grammarState69: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 69,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState7)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState30
-      },
-    )
-  
-  lazy val grammarState70: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 70,
+      id = 64,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -2416,108 +2193,45 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState71: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState65: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 71,
+      id = 65,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState7)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState122
-      },
-    )
-  
-  lazy val grammarState72: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 72,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState89
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState47
-      },
-    )
-  
-  lazy val grammarState73: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 73,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState102
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState40
-      },
-    )
-  
-  lazy val grammarState74: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 74,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState149)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState17)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState101)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState145)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState106)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState33)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState142)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState40)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState2)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState78)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState67)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState64)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState19
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState9
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState132
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState133
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState10
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState36
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState43
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState123
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState56
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState102
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
       },
     )
   
-  lazy val grammarState75: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState66: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 75,
+      id = 66,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -2541,9 +2255,35 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState76: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState67: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 76,
+      id = 67,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState11)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState62
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState73
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState137
+      },
+    )
+  
+  lazy val grammarState68: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 68,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState45)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState69: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 69,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -2553,14 +2293,146 @@ object JsonParser extends _root_.slyce.parse.Parser {
             ) =>
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState48
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState76
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState51
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState25
+      },
+    )
+  
+  lazy val grammarState70: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 70,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState71: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 71,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState125)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState72: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 72,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._2(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._2(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState73: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 73,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState6)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState132
+      },
+    )
+  
+  lazy val grammarState74: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 74,
+      onTerm = {
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState75: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 75,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState14
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState137
+      },
+    )
+  
+  lazy val grammarState76: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 76,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState148)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState135
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState109
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState57
       },
     )
   
@@ -2585,7 +2457,7 @@ object JsonParser extends _root_.slyce.parse.Parser {
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState13)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState3)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
@@ -2596,7 +2468,7 @@ object JsonParser extends _root_.slyce.parse.Parser {
           }
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState130
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState1
       },
     )
   
@@ -2604,16 +2476,10 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 78,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState147)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState80)
       },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState26
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState28
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState81
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState79: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
@@ -2621,9 +2487,15 @@ object JsonParser extends _root_.slyce.parse.Parser {
       id = 79,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState105)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState148)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState135
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState99
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState57
+      },
     )
   
   lazy val grammarState80: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
@@ -2634,23 +2506,25 @@ object JsonParser extends _root_.slyce.parse.Parser {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.Json), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`,`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._1(_1, _2, _3), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._2(_1, _2, _3, _4), stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.Json), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`,`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._1(_1, _2, _3), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._2(_1, _2, _3, _4), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -2660,278 +2534,47 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 81,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState3)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState90
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState57
+      },
     )
   
   lazy val grammarState82: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 82,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+        case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
+                stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
       },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState126
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState76
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState83: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 83,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState136)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState19)
       },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState80
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState84: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 84,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState141)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState22
-      },
-    )
-  
-  lazy val grammarState85: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 85,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState29)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState144)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState119)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState70)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState113
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState34
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
-      },
-    )
-  
-  lazy val grammarState86: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 86,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState13)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState140
-      },
-    )
-  
-  lazy val grammarState87: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 87,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState117)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState88: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 88,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState44)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState80
-      },
-    )
-  
-  lazy val grammarState89: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 89,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState90: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 90,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState141)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState6
-      },
-    )
-  
-  lazy val grammarState91: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 91,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -2946,9 +2589,19 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState92: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState85: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 92,
+      id = 85,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState119)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState86: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 86,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -2963,9 +2616,75 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState93: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState87: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 93,
+      id = 87,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState119)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState88: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 88,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState70
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState88
+      },
+    )
+  
+  lazy val grammarState89: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 89,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState149)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState15)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState96)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState147)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState104)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState65)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState48)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState35)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState16
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState7
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState126
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState127
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState9
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState30
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState37
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState120
+      },
+    )
+  
+  lazy val grammarState90: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 90,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -2973,72 +2692,35 @@ object JsonParser extends _root_.slyce.parse.Parser {
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState7)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState81)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState125
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState53
       },
     )
   
-  lazy val grammarState94: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState91: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 94,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState95)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState95: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 95,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState149)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState17)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState101)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState145)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState116)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState15)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState2)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState4)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState19
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState9
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState132
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState133
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState10
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState36
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState43
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState123
-      },
-    )
-  
-  lazy val grammarState96: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 96,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState23)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState97: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 97,
+      id = 91,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -3054,32 +2736,114 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState98: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState92: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 98,
+      id = 92,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState80)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState93: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 93,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
+                stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState94: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 94,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState4)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState130)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState131)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState79
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState55
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState116
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
       },
     )
   
-  lazy val grammarState99: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState95: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 99,
+      id = 95,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState119)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState96: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 96,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`true`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean._1(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`true`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState97: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 97,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -3090,10 +2854,40 @@ object JsonParser extends _root_.slyce.parse.Parser {
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState141)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState142)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState24
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState68
+      },
+    )
+  
+  lazy val grammarState98: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 98,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState74)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState99: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 99,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState6)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState95
       },
     )
   
@@ -3101,23 +2895,27 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 100,
       onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
+          }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -3127,212 +2925,6 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 101,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`true`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean._1(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`true`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean._1(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState102: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 102,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState103)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState103: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 103,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState104: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 104,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState117)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState105: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 105,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState106: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 106,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState111
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState76
-      },
-    )
-  
-  lazy val grammarState107: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 107,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState18)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState108: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 108,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState12)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState71
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState38
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState35
-      },
-    )
-  
-  lazy val grammarState109: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 109,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState117)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState110: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 110,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._1(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._1(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState111: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 111,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState18)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState112: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 112,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState12)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState68
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState38
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState35
-      },
-    )
-  
-  lazy val grammarState113: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 113,
-      onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
@@ -3342,60 +2934,33 @@ object JsonParser extends _root_.slyce.parse.Parser {
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState141)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState142)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState51
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState18
       },
     )
   
-  lazy val grammarState114: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState102: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 114,
+      id = 102,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.char), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._1(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._1(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.char), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.StrElem._1(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState115: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 115,
-      onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
@@ -3405,13 +2970,13 @@ object JsonParser extends _root_.slyce.parse.Parser {
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
@@ -3430,13 +2995,23 @@ object JsonParser extends _root_.slyce.parse.Parser {
           }
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState11
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState50
       },
     )
   
-  lazy val grammarState116: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState103: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 116,
+      id = 103,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState80)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState104: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 104,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -3446,52 +3021,201 @@ object JsonParser extends _root_.slyce.parse.Parser {
             ) =>
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.char) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState114)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState37)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState107
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState76
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState118
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState88
       },
     )
   
-  lazy val grammarState117: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState105: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 117,
+      id = 105,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState100)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState106: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 106,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`:`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState118: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState107: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 118,
+      id = 107,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState108: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 108,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState19)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState109: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 109,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState6)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState85
+      },
+    )
+  
+  lazy val grammarState110: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 110,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState6)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState108
+      },
+    )
+  
+  lazy val grammarState111: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 111,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._1(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState112: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 112,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState105
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState88
+      },
+    )
+  
+  lazy val grammarState113: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 113,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState21
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState139
+      },
+    )
+  
+  lazy val grammarState114: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 114,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -3506,41 +3230,95 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState119: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState115: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 119,
+      id = 115,
       onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState12)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState34)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState115)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState32)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState93
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState38
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState35
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState44
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState143
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
       },
     )
   
-  lazy val grammarState120: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState116: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 120,
+      id = 116,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState73)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState147)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState138
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState28
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState81
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState59
       },
     )
   
-  lazy val grammarState121: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState117: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 121,
+      id = 117,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -3552,6 +3330,91 @@ object JsonParser extends _root_.slyce.parse.Parser {
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._4(_1), stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._4(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState118: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 118,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState100)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState119: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 119,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._2(_1, _2, _3, _4), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState120: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 120,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._6(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._6(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState121: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 121,
+      onTerm = {
+        case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
@@ -3568,33 +3431,56 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 122,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState23)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState33)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState40)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState67)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState146
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
+      },
     )
   
   lazy val grammarState123: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 123,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._6(_1), stack)
-          }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.double), toState) ::
                 stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._6(_1), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.double), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -3604,27 +3490,51 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 124,
       onTerm = {
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.slyce.test.json.JsonParser.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonString(_1, _2, _3), stack)
-          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState34)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState115)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState140
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
+      },
     )
   
   lazy val grammarState125: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 125,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState23)
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.slyce.test.json.JsonParser.Terminal.`]`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`[`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray._2(_1, _2, _3, _4), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -3633,8 +3543,24 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 126,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState18)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -3643,7 +3569,16 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 127,
       onTerm = {
-        case _root_.scala.Nil =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._4(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
@@ -3660,184 +3595,6 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 128,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState25)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
-          }
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState80
-      },
-    )
-  
-  lazy val grammarState129: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 129,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.double), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.double), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState130: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 130,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`,`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState131: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 131,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState32)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState132: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 132,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._7(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState133: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 133,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._4(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._4(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState134: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 134,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState105)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState135: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 135,
-      onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
@@ -3851,88 +3608,170 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState136: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState129: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 136,
+      id = 129,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState29)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState144)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState119)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState11)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState83
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState62
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState23
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState137
       },
     )
   
-  lazy val grammarState137: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState130: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 137,
+      id = 130,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._5(_1), stack)
-          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState34)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState115)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._5(_1), stack)
-          }
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState32)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState31
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState143
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
+      },
+    )
+  
+  lazy val grammarState131: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 131,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState113)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState11)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair => grammarState62
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head => grammarState110
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState137
+      },
+    )
+  
+  lazy val grammarState132: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 132,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState19)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState138: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState133: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 138,
+      id = 133,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState94)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState7)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState87
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState50
       },
     )
   
-  lazy val grammarState139: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+  lazy val grammarState134: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 139,
+      id = 134,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState149)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState15)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState96)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState147)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState26)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState138)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState48)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState79)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState16
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState7
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState126
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState127
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState9
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState30
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState37
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState120
+      },
+    )
+  
+  lazy val grammarState135: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 135,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -3959,10 +3798,105 @@ object JsonParser extends _root_.slyce.parse.Parser {
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail._2, stack)
           }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState81)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState130
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail => grammarState1
+      },
+    )
+  
+  lazy val grammarState136: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 136,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._5(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.Json._5(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState137: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 137,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState12)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState138: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 138,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState66)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState33)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState40)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState123)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState67)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState36)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState64)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState39
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState111
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState93
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState117
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState42
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState101
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState136
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState102
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState41
+      },
+    )
+  
+  lazy val grammarState139: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 139,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState70
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState139
       },
     )
   
@@ -3970,33 +3904,78 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 140,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head(_1, _2), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.slyce.test.json.JsonParser.NonTerminal.KeyPair), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList2Head(_1, _2), stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
           }
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState59
+      },
     )
   
   lazy val grammarState141: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 141,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState10)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState72)
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList0 => grammarState70
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.StrElem => grammarState141
+      },
+    )
+  
+  lazy val grammarState142: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 142,
       onTerm = {
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -4011,45 +3990,59 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState142: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 142,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState29)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState144)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState119)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState70)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState84
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState34
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
-      },
-    )
-  
   lazy val grammarState143: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 143,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState124)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
+      },
+      onNT = {
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState50
+      },
+    )
+  
+  lazy val grammarState144: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 144,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Accept[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
@@ -4059,64 +4052,12 @@ object JsonParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState144: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 144,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState75)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState60)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState31)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState98)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState20)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState129)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState112)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState41)
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState39)
-      },
-      onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonString => grammarState46
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonNull => grammarState110
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject => grammarState100
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Head => grammarState90
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt => grammarState121
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonBoolean => grammarState52
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonDouble => grammarState137
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.Json => grammarState115
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.JsonArray => grammarState57
-      },
-    )
-  
   lazy val grammarState145: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 145,
       onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.int), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt(_1), stack)
-          }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.int), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt(_1), stack)
-          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState134)
       },
       onNT = PartialFunction.empty
     )
@@ -4125,19 +4066,57 @@ object JsonParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
       id = 146,
       onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`false`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`true`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.int) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`[`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.double) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`{`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState122)
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: (_: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
+          }
         case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,`._2, stack)
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail._2, stack)
           }
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState141)
       },
       onNT = {
-        case _: _root_.slyce.test.json.JsonParser.NonTerminal.`Optional_,` => grammarState131
+        case _: _root_.slyce.test.json.JsonParser.NonTerminal.AnonList1Tail => grammarState59
       },
     )
   
@@ -4149,6 +4128,32 @@ object JsonParser extends _root_.slyce.parse.Parser {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
             case (
               _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.int), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt(_1), stack)
+          }
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.int), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonInt(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState148: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
+    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
+      id = 148,
+      onTerm = {
+        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] {
+            case (
+              _,
               _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.slyce.test.json.JsonParser.Terminal.`}`), _) ::
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.slyce.test.json.JsonParser.Terminal.`{`), toState) ::
                 stack,
@@ -4165,16 +4170,6 @@ object JsonParser extends _root_.slyce.parse.Parser {
             ) =>
               (toState, _root_.slyce.test.json.JsonParser.NonTerminal.JsonObject._1(_1, _2), stack)
           }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState148: _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json] =
-    _root_.slyce.parse.Grammar.State[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](
-      id = 148,
-      onTerm = {
-        case (tok: _root_.slyce.test.json.JsonParser.Terminal.`]`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.slyce.test.json.JsonParser.Terminal, _root_.slyce.test.json.JsonParser.NonTerminal, _root_.slyce.test.json.JsonParser.NonTerminal.Json](grammarState1)
       },
       onNT = PartialFunction.empty
     )

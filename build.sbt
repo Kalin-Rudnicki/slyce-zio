@@ -69,6 +69,18 @@ lazy val `slyce-parse` =
     )
     .dependsOn(`slyce-core` % "test->test;compile->compile")
 
+lazy val `slyce-parse-exe` =
+  project
+    .in(file("slyce-parse-exe"))
+    .settings(
+      name := "slyce-parse-exe",
+      sonatypeCredentialHost := "s01.oss.sonatype.org",
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-zio" % HarnessVersion,
+      ),
+    )
+    .dependsOn(`slyce-parse` % "test->test;compile->compile")
+
 lazy val `slyce-generate` =
   project
     .in(file("slyce-generate"))
@@ -91,11 +103,8 @@ lazy val `slyce-test` =
       publish / skip := true,
       Test / fork := true,
       sonatypeCredentialHost := "s01.oss.sonatype.org",
-      libraryDependencies ++= Seq(
-        MyOrg %% "harness-zio" % HarnessVersion,
-      ),
     )
-    .dependsOn(`slyce-parse` % "test->test;compile->compile")
+    .dependsOn(`slyce-parse-exe` % "test->test;compile->compile")
 
 // TODO (KR) : IDEA-PLUGIN
 /*
@@ -121,6 +130,7 @@ lazy val `slyce-root` =
       `slyce-core`,
       `slyce-generate`,
       `slyce-parse`,
+      `slyce-parse-exe`,
       `slyce-test`,
       // TODO (KR) : IDEA-PLUGIN
       // `slyce-idea-plugin`

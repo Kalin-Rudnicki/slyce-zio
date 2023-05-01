@@ -4,7 +4,7 @@ object Conversion {
 
   private def convertChar(char: JsonParser.NonTerminal.StrElem): String =
     char.lift match {
-      case JsonParser.Terminal.char(text, _) => text
+      case JsonParser.Terminal.chars(text, _) => text
       case JsonParser.Terminal.escChar(text, _) =>
         text(1) match {
           case 'n'  => "\n"

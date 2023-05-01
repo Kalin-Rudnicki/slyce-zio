@@ -23,5 +23,5 @@ JsonObject : "{" "}"
            | "{" (KeyPair . "," ^KeyPair)+ ","? "}"
            ;
 
-StrElem ^ char | escChar ;
+StrElem ^ chars | escChar ;
 KeyPair : JsonString ":" Json ;
