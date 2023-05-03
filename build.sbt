@@ -17,7 +17,7 @@ ThisBuild / dynver ~= (_.replace('+', '-'))
 
 // =====|  |=====
 
-lazy val HarnessVersion = "bad9f4a7bb92e62d9be5e1ba31731b129aa1cd8f"
+lazy val HarnessVersion = "1.0.4"
 
 inThisBuild(
   Seq(
