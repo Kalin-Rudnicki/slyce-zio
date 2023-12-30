@@ -2,7 +2,7 @@
 
 // =====|  |=====
 
-val Scala_3 = "3.1.3-RC5"
+val Scala_3 = "3.3.0"
 
 val MyOrg = "io.github.kalin-rudnicki"
 val githubUsername = "Kalin-Rudnicki"
@@ -17,7 +17,7 @@ ThisBuild / dynver ~= (_.replace('+', '-'))
 
 // =====|  |=====
 
-lazy val HarnessVersion = "1.0.4"
+lazy val HarnessVersion = "3.1.6"
 
 inThisBuild(
   Seq(
@@ -54,7 +54,7 @@ lazy val `slyce-core` =
       name := "slyce-core",
       libraryDependencies ++= Seq(
         MyOrg %% "harness-core" % HarnessVersion,
-        MyOrg %% "harness-test" % HarnessVersion % Test,
+        MyOrg %% "harness-zio-test" % HarnessVersion % Test,
         "com.lihaoyi" %% "scalatags" % "0.11.1",
       ),
       sonatypeCredentialHost := "s01.oss.sonatype.org",

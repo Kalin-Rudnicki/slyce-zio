@@ -2,9 +2,9 @@ package slyce.generate.lexer
 
 import cats.syntax.either.*
 import cats.syntax.option.*
+import harness.zio.test.*
 import zio.test.*
 import zio.test.Assertion.*
-import harness.test.*
 
 import slyce.core.*
 import slyce.generate.builder.Builders.*

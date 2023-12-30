@@ -1,6 +1,6 @@
 package slyce.test.json
 
-import harness.test.*
+import harness.zio.test.*
 import zio.test.*
 import zio.test.Assertion.*
 

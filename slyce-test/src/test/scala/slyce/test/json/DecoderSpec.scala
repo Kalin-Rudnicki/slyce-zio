@@ -1,7 +1,7 @@
 package slyce.test.json
 
 import cats.syntax.option.*
-import harness.test.*
+import harness.zio.test.*
 import zio.test.*
 import zio.test.Assertion.*
 
@@ -20,7 +20,7 @@ object DecoderSpec extends DefaultHarnessSpec {
         passingTest[Person]("""{ "firstName": "F", "lastName": "L", "age": 3, "friends": [] }""")(Person("F", "L", 3.some, Nil)),
         passingTest[Person]("""{ "firstName": "F", "lastName": "L", "age": null, "friends": [] }""")(Person("F", "L", None, Nil)),
         passingTest[Person]("""{ "firstName": "F", "lastName": "L", "friends": [] }""")(Person("F", "L", None, Nil)),
-        passingTest[Person]("""{ "firstName": "F", "lastName": "L", "friends": [ { "name": "N" }, {}, null ] }""")(Person("F", "L", None, Nil)),
+        passingTest[Person]("""{ "firstName": "F", "lastName": "L", "friends": [ { "name": "N", "friendsSinceYear": 1000 } ] }""")(Person("F", "L", None, List(Friend("N", 1000)))),
       ),
     )
 
