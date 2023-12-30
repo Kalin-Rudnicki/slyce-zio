@@ -268,7 +268,7 @@ private[scala3] object GenNonTerminals {
             IndentedString.indented(
               base match {
                 case Left(_) =>
-                  "$ParsePath.Expression(expr)"
+                  s"$ParsePath.Expression(expr)"
                 case Right(lift) =>
                   IndentedString.inline(
                     "expr match {",
