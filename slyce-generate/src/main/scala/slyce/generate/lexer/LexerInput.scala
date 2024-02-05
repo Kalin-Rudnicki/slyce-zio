@@ -19,6 +19,7 @@ object LexerInput {
     final case class Line(
         lineNo: Int,
         regex: Marked[Regex],
+        semicolonSpan: Span,
         yields: Yields[String],
     )
 

@@ -51,6 +51,7 @@ object Builders {
         LexerInput.Mode.Line(
           Tracer.instance.unapply(trace).get._3,
           reg.markedUnknown,
+          Span.Unknown,
           Yields(
             yields.toList.map(_.markedUnknown),
             toMode.markedUnknown,

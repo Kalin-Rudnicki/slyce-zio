@@ -224,7 +224,7 @@ object DFA {
     private def validateModeStartStateCanNotYield(stateModeStarts: Map[String, State]): Validated[Any] =
       stateModeStarts.toList.parTraverse { case (name, state) =>
         state.yields match {
-          case Some((line, _)) => Marked(s"Mode '$name' can yield on no input (at least 1 char is required before yielding) - line #$line", Span.Unknown).leftNel
+          case Some((line, _)) => Marked(s"Mode '$name' can yield on no input (at least 1 char is required before yielding)", line.semicolonSpan).leftNel
           case None            => ().rightNel
         }
       }

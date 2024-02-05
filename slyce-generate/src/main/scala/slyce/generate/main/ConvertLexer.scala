@@ -31,6 +31,7 @@ object ConvertLexer {
         ),
         line._2.span, // TODO (KR) : Use the correct span
       ),
+      semicolonSpan = line._2.span,
       yields = Yields(
         yields = line._3.toList.map(convertYield),
         toMode = convertToMode(line._2.span.source, line._4),
