@@ -57,7 +57,7 @@ object ParseExe {
               res = parser.lexer.tokenize(source)
               _ <- res match {
                 case Right(toks)  => Logger.log.info(source.mark(toks.map(tok => Marked(tok.tokName, tok.span))))
-                case Left(errors) => Logger.log.error(errors.toList)
+                case Left(errors) => Logger.log.error(source.mark(errors.toList))
               }
             } yield ()
           }
