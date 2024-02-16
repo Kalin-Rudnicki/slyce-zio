@@ -9,14 +9,14 @@ sealed trait Span {
   val optionalSource: Option[Source]
   val hasSource: Option[Span.HasSource]
 
-  def toString(showAbsolute: Boolean): String =
+  final def toString(showAbsolute: Boolean): String =
     this match {
       case Span.Highlight(start, end, _) => s"Highlight(${start.toString(showAbsolute)} -> ${end.toString(showAbsolute)})"
       case Span.EOF(_)                   => "EOF"
       case Span.Unknown                  => "Unknown"
     }
 
-  override def toString: String =
+  override final def toString: String =
     toString(false)
 
 }
@@ -40,6 +40,20 @@ object Span {
         case Some(other) => this <> other
         case None        => this
       }
+
+  }
+  object Highlight {
+
+    def make(source: Source, offset: Int, length: Int): Span.Highlight = {
+      val start = Span.Pos.Start.onStr(source.input.substring(0, offset))
+      val end = start.onStr(source.input.substring(offset, offset + length - 1))
+      Span.Highlight(start, end, source)
+    }
+
+    implicit val ordering: Ordering[Highlight] =
+      Ordering
+        .by[Highlight, Int](_.start.absolutePos)
+        .orElseBy(_.end.absolutePos)
 
   }
 
@@ -98,6 +112,8 @@ object Span {
       posInLine: Int,
   ) {
 
+    inline def inputIndex: Int = absolutePos - Pos.AbsolutePosStart
+
     def onChar(c: Char): Pos =
       c match {
         case '\n' => Pos(absolutePos + 1, lineNo + 1, Pos.PosInLineStart)
@@ -115,6 +131,8 @@ object Span {
       loop(this, str.toList)
     }
 
+    def atStartOfLine: Pos = Pos(absolutePos - posInLine + Pos.PosInLineStart, lineNo, Pos.PosInLineStart)
+
     def toString(showAbsolute: Boolean): String =
       s"${if (showAbsolute) s"$absolutePos @ " else ""}$lineNo:$posInLine"
 
@@ -122,14 +140,21 @@ object Span {
       toString(false)
 
   }
-
   object Pos {
 
-    private val AbsolutePosStart = 1
-    private val LineNoStart = 1
-    private val PosInLineStart = 1
+    val AbsolutePosStart = 1
+    val LineNoStart = 1
+    val PosInLineStart = 1
 
     val Start: Pos = Pos(AbsolutePosStart, LineNoStart, PosInLineStart)
+
+    @tailrec
+    def eolAndSonl(pos: Pos, source: Source): (Pos, Pos) = {
+      val idx = pos.inputIndex
+      val newPos = pos.onChar(source.input(idx))
+      if (newPos.lineNo != pos.lineNo || idx == source.input.length) (pos, newPos)
+      else eolAndSonl(newPos, source)
+    }
 
     implicit val posOrdering: Ordering[Pos] = Ordering.by(_.absolutePos)
 

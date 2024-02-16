@@ -17,7 +17,7 @@ ThisBuild / dynver ~= (_.replace('+', '-'))
 
 // =====|  |=====
 
-lazy val HarnessVersion = "3.1.6"
+lazy val HarnessVersion = "3.2.1"
 
 inThisBuild(
   Seq(
@@ -56,8 +56,10 @@ lazy val `slyce-core` =
         MyOrg %% "harness-core" % HarnessVersion,
         MyOrg %% "harness-zio-test" % HarnessVersion % Test,
         "com.lihaoyi" %% "scalatags" % "0.11.1",
+        "com.github.julien-truffaut" %% "monocle-macro" % "3.0.0-M6",
       ),
       sonatypeCredentialHost := "s01.oss.sonatype.org",
+      Test / fork := true,
     )
 
 lazy val `slyce-parse` =
@@ -87,7 +89,7 @@ lazy val `slyce-generate` =
     .settings(
       name := "slyce-generate",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
-      version := "2.0.7",
+      version := "2.0.8",
       assemblyJarName := s"${name.value}-${version.value}.jar",
       libraryDependencies ++= Seq(
         MyOrg %% "harness-zio" % HarnessVersion,

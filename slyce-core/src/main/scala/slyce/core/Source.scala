@@ -6,15 +6,18 @@ import cats.syntax.list.*
 import cats.syntax.option.*
 import harness.core.*
 import java.util.UUID
+import monocle.Monocle.*
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.math.Ordering.Implicits.infixOrderingOps
+import scala.util.matching.Regex
 
-final case class Source(input: String, name: Option[String]) { self =>
+final case class Source(rawInput: String, name: Option[String]) { self =>
+  val input: String = rawInput + "\n"
   private val uuid: UUID = UUID.randomUUID
 
   lazy val chars: List[Char] = input.toList
-  val arr: Array[Char] = input.toArray
+  val arr: IArray[Char] = IArray.unsafeFromArray(input.toArray)
 
   override def hashCode: Int = uuid.hashCode
 
@@ -24,393 +27,11 @@ final case class Source(input: String, name: Option[String]) { self =>
       case _              => false
     }
 
-  // TODO (KR) : I really want to clean this up, but it was working before.
   def mark(
       messages: List[Marked[String]],
       config: Source.Config = Source.Config.Default,
-  ): String = {
-    // TODO (KR) : Possibly do something separate with EOF/Unknown (?)
-    val (eofs, _marked) =
-      messages.partitionMap { case Marked(msg, span) =>
-        span match {
-          case highlight: Span.Highlight => scala.Right((msg, highlight))
-          case _                         => scala.Left(msg)
-        }
-      }
-    val marked =
-      _marked
-        .sortBy(_._2.start)
-        .groupMap(_._2)(_._1)
-        .toList
-        .sortBy(_._1.start)
-
-    val (goodMarked, badMarked) = {
-      @tailrec
-      def filter(
-          min: Span.Pos,
-          unseen: List[(Span.Highlight, List[String])],
-          good: List[(Span.Highlight, List[String])],
-          bad: List[List[String]],
-      ): (List[(Span.Highlight, List[String])], List[List[String]]) =
-        unseen match {
-          case (head @ (span, msgs)) :: tail =>
-            if (span.start <= min)
-              filter(
-                min,
-                tail,
-                good,
-                msgs.map(m => s"[$span]: $m") :: bad,
-              )
-            else
-              filter(
-                span.end,
-                tail,
-                head :: good,
-                bad,
-              )
-          case Nil =>
-            (good.reverse, bad.reverse)
-        }
-
-      filter(
-        Span.Pos(0, 0, 1),
-        marked,
-        Nil,
-        Nil,
-      )
-    }
-
-    def getColorAndNext(colors: NonEmptyList[ColorString.Color]): (ColorString.Color, NonEmptyList[ColorString.Color]) =
-      (
-        colors.head,
-        colors.tail.toNel.getOrElse(config.colors),
-      )
-
-    def diffColor(color: ColorString.Color): Option[(String, String)] =
-      color.toColorState(ColorString.ColorState.Default).colorizeAndDeColorize(ColorString.ColorState.Default, ColorMode.Extended)
-
-    // ---  ---
-
-    val maxLineNoStrLength =
-      goodMarked
-        .map(_._1.start.lineNo.toString)
-        .maxOption
-        .fold(0)(_.length)
-
-    def lineNoLabel(lineNo: Int): String = {
-      val lineNoStr = lineNo.toString
-      s"${" " * (maxLineNoStrLength - lineNoStr.length)}$lineNoStr : "
-    }
-
-    val stringBuilder = mutable.StringBuilder()
-
-    final case class Show(
-        span: Span.Highlight,
-        messages: List[String],
-        colorizeAndDeColorize: Option[(String, String)],
-    )
-
-    sealed trait State
-    object State {
-      final case class Unsure(first: Boolean) extends State
-      final case class SkippingLine(first: Boolean) extends State
-      final case class ShowingLine(
-          doneForLine: List[Show],
-      ) extends State
-      final case class Displaying(
-          current: Show,
-          doneForLine: List[Show],
-      ) extends State
-    }
-
-    def writeMessages(
-        messages: List[String],
-        colorizeAndDeColorize: Option[(String, String)],
-        markerString: String,
-        indentString: String,
-        isFirst: Boolean,
-    ): Unit = {
-      val adjustedIdtString =
-        colorizeAndDeColorize match {
-          case Some((colorize, deColorize)) =>
-            s"\n$colorize$indentString$deColorize"
-          case None =>
-            s"\n$indentString"
-        }
-      val msgs = messages.map(_.replaceAll("\n", adjustedIdtString))
-      msgs match {
-        case mHead :: mTail =>
-          if (!isFirst)
-            stringBuilder.append('\n')
-          colorizeAndDeColorize match {
-            case Some((colorize, deColorize)) =>
-              stringBuilder
-                .append(colorize)
-                .append(markerString)
-                .append(deColorize)
-                .append(mHead)
-              mTail.foreach { msg =>
-                stringBuilder
-                  .append('\n')
-                  .append(colorize)
-                  .append(markerString)
-                  .append(deColorize)
-                  .append(msg)
-              }
-            case None =>
-              stringBuilder
-                .append(markerString)
-                .append(mHead)
-              mTail.foreach { msg =>
-                stringBuilder
-                  .append('\n')
-                  .append(markerString)
-                  .append(msg)
-              }
-          }
-        case Nil =>
-      }
-    }
-    def writeMessageList(
-        messages: List[(List[String], Option[(String, String)])],
-        markerString: String,
-        indentString: String,
-    ): Unit = {
-      @tailrec
-      def loop(messages: List[(List[String], Option[(String, String)])], first: Boolean): Unit =
-        messages match {
-          case (msgs, cdc) :: tail =>
-            writeMessages(msgs, cdc, markerString, indentString, first)
-            loop(tail, false)
-          case Nil =>
-        }
-
-      loop(messages, true)
-    }
-
-    // NOTE : By the time this is called, `waiting` is assumed to be in a good state,
-    //      : where it does not need to be checked anymore
-    @tailrec
-    def printSpanMessages(
-        pos: Span.Pos,
-        state: State,
-        chars: List[Char],
-        waiting: List[(Span.Highlight, List[String])],
-        colors: NonEmptyList[ColorString.Color],
-    ): NonEmptyList[ColorString.Color] =
-      chars match {
-        case cHead :: cTail =>
-          val nextPos = pos.onChar(cHead)
-          cHead match {
-            case '\n' =>
-              state match {
-                case unsure @ State.Unsure(_) =>
-                  printSpanMessages(
-                    nextPos,
-                    unsure,
-                    cTail,
-                    waiting,
-                    colors,
-                  )
-                case State.SkippingLine(first) =>
-                  printSpanMessages(
-                    nextPos,
-                    State.Unsure(first),
-                    cTail,
-                    waiting,
-                    colors,
-                  )
-                case State.ShowingLine(doneForLine) =>
-                  // TODO (KR) : Might need to start something here
-                  stringBuilder.append('\n')
-                  writeMessageList(
-                    doneForLine.reverseMap(dfl => (dfl.messages, dfl.colorizeAndDeColorize)),
-                    config.marker.start,
-                    config.marker.cont,
-                  )
-                  printSpanMessages(
-                    nextPos,
-                    State.Unsure(false),
-                    cTail,
-                    waiting,
-                    colors,
-                  )
-                case State.Displaying(current, doneForLine) =>
-                  // TODO (KR) : Might need to stop something here
-                  stringBuilder.append('\n')
-                  current.colorizeAndDeColorize.foreach(cdc => stringBuilder.append(cdc._2))
-                  writeMessageList(
-                    doneForLine.reverseMap(dfl => (dfl.messages, dfl.colorizeAndDeColorize)),
-                    config.marker.start,
-                    config.marker.cont,
-                  )
-                  stringBuilder
-                    .append('\n')
-                    .append(lineNoLabel(nextPos.lineNo))
-                  current.colorizeAndDeColorize.foreach(cdc => stringBuilder.append(cdc._1))
-                  printSpanMessages(
-                    nextPos,
-                    State.Unsure(false),
-                    cTail,
-                    waiting,
-                    colors,
-                  )
-              }
-            case cHead =>
-              state match {
-                case State.Unsure(first) =>
-                  waiting match {
-                    case wHead :: _ if wHead._1.start.lineNo == pos.lineNo =>
-                      if (!first)
-                        stringBuilder.append('\n')
-                      stringBuilder.append(lineNoLabel(wHead._1.start.lineNo))
-                      printSpanMessages(
-                        pos,
-                        State.ShowingLine(Nil),
-                        chars,
-                        waiting,
-                        colors,
-                      )
-                    case _ =>
-                      printSpanMessages(
-                        nextPos,
-                        State.SkippingLine(first),
-                        cTail,
-                        waiting,
-                        colors,
-                      )
-                  }
-                case skip @ State.SkippingLine(_) =>
-                  printSpanMessages(
-                    nextPos,
-                    skip,
-                    cTail,
-                    waiting,
-                    colors,
-                  )
-                case State.ShowingLine(doneForLine) =>
-                  waiting match {
-                    case wHead :: wTail if wHead._1.start == pos =>
-                      val (color, nextColors) = getColorAndNext(colors)
-                      val show = Show(wHead._1, wHead._2, diffColor(color))
-
-                      show.colorizeAndDeColorize.foreach(cdc => stringBuilder.append(cdc._1))
-                      printSpanMessages(
-                        pos,
-                        State.Displaying(show, doneForLine),
-                        chars,
-                        wTail,
-                        nextColors,
-                      )
-                    case _ =>
-                      stringBuilder.append(cHead)
-                      printSpanMessages(
-                        nextPos,
-                        state,
-                        cTail,
-                        waiting,
-                        colors,
-                      )
-                  }
-                case State.Displaying(current, doneForLine) =>
-                  stringBuilder.append(cHead)
-                  if (current.span.end == pos) {
-                    current.colorizeAndDeColorize.foreach(cdc => stringBuilder.append(cdc._2))
-                    printSpanMessages(
-                      nextPos,
-                      State.ShowingLine(current :: doneForLine),
-                      cTail,
-                      waiting,
-                      colors,
-                    )
-                  } else {
-                    printSpanMessages(
-                      nextPos,
-                      state,
-                      cTail,
-                      waiting,
-                      colors,
-                    )
-                  }
-              }
-          }
-        case Nil =>
-          state match {
-            case State.Unsure(_) =>
-              colors
-            case State.SkippingLine(_) =>
-              colors
-            case State.ShowingLine(doneForLine) =>
-              stringBuilder.append('\n')
-              writeMessageList(
-                doneForLine.reverseMap(dfl => (dfl.messages, dfl.colorizeAndDeColorize)),
-                config.marker.start,
-                config.marker.cont,
-              )
-              colors
-            case State.Displaying(current, doneForLine) =>
-              ??? // TODO (KR) : Should be an error? Just close it off?
-          }
-      }
-
-    def printEofMessages(
-        waiting: List[List[String]],
-        colors: NonEmptyList[ColorString.Color],
-    ): Unit = {
-      @tailrec
-      def loop(
-          waiting: List[List[String]],
-          colors: NonEmptyList[ColorString.Color],
-          stack: List[(List[String], Option[(String, String)])],
-      ): List[(List[String], Option[(String, String)])] =
-        waiting match {
-          case head :: tail =>
-            val (color, nextColors) = getColorAndNext(colors)
-            loop(
-              tail,
-              nextColors,
-              (head, diffColor(color)) :: stack,
-            )
-          case Nil =>
-            stack.reverse
-        }
-
-      writeMessageList(
-        loop(waiting, colors, Nil),
-        config.eofMarker.start,
-        config.eofMarker.cont,
-      )
-    }
-
-    // ---  ---
-
-    if (config.showName)
-      name match {
-        case Some(name) => stringBuilder.append(s"source: $name\n")
-        case None       => stringBuilder.append("source: [UNKNOWN]\n")
-      }
-
-    val colorsAfterSpanMessages =
-      printSpanMessages(
-        Span.Pos.Start,
-        State.Unsure(true),
-        chars,
-        goodMarked,
-        config.colors,
-      )
-
-    val allEof = eofs.map(_ :: Nil) ::: badMarked
-
-    if (goodMarked.nonEmpty && allEof.nonEmpty)
-      stringBuilder.append('\n')
-
-    printEofMessages(
-      allEof,
-      colorsAfterSpanMessages,
-    )
-
-    stringBuilder.toString
-  }
+  ): String =
+    Source.mark(self, messages, config)
 
 }
 object Source {
@@ -419,7 +40,7 @@ object Source {
       showName: Boolean,
       marker: Config.Marker,
       eofMarker: Config.Marker,
-      colors: NonEmptyList[ColorString.Color],
+      colors: NonEmptyList[Color],
   )
   object Config {
 
@@ -439,17 +60,311 @@ object Source {
           "      * ",
           "     >  ",
         ),
-        colors = NonEmptyList
-          .of(
-            Color.Named.Red,
-            Color.Named.Green,
-            Color.Named.Yellow,
-            Color.Named.Blue,
-            Color.Named.Magenta,
-            Color.Named.Cyan,
-          )
-          .map(c => ColorString.Color(c.some, None)),
+        colors = NonEmptyList.of(
+          Color.Named.Red,
+          Color.Named.Green,
+          Color.Named.Yellow,
+          Color.Named.Blue,
+          Color.Named.Magenta,
+          Color.Named.Cyan,
+        ),
       )
+
+  }
+
+  object mark {
+
+    def apply(
+        source: Source,
+        msgs: List[Marked[String]],
+        config: Config = Config.Default,
+    ): String = {
+      // NOTE : I don't think this being used incorrectly is worth forcing this function to return an error type.
+      msgs.foreach { msg =>
+        if (msg.span.optionalSource.exists(_ != source))
+          throw new RuntimeException("`Source.mark` received marked messages not associated with source, consider using `Source.markAll`")
+      }
+
+      val cq1 = config.colors
+      val (highlight, eof, unknown) = util.splitMessages(msgs)
+      val (splitHighlights1, cq2) = util.splitHighlights(highlight, cq1)
+      val splitHighlights2 = splitHighlights1.map(util.compileLines(source, _))
+
+      val maxLineNoSize = highlight.map(_.span.end.lineNo).maxOption.getOrElse(0).toString.length
+
+      val highlightStrings = splitHighlights2.map(util.markHighlights(source, maxLineNoSize, _, config))
+      val eofStrings = pairEofColors(eof ::: unknown, config.colors, cq2).map { case (color, str) =>
+        val a = s"${color.fgANSI}${config.eofMarker.start}${Color.Default.fgANSI}"
+        val b = s"\n${color.fgANSI}${config.eofMarker.cont}${Color.Default.fgANSI}"
+        str.split("\n").mkString(a, b, "")
+      }
+
+      List(
+        source.name.map(s => s"[$s]:").toList,
+        highlightStrings,
+        Option.when(eofStrings.nonEmpty)("--- EOF ---").toList,
+        eofStrings,
+      ).flatten.mkString("\n")
+    }
+
+    private object util {
+
+      // =====| Types |=====
+
+      final case class Message(
+          messages: NonEmptyList[String],
+          span: Span.Highlight,
+      ) {
+        def spansMultipleLines: Boolean = span.start.lineNo != span.end.lineNo
+      }
+      object Message {
+        def apply(message: String, span: Span.Highlight): Message = Message(NonEmptyList.one(message), span)
+      }
+
+      final case class ColoredMessage(
+          messages: List[String],
+          span: Span.Highlight,
+          color: Color,
+      ) { self =>
+        def withMessage(other: Message): ColoredMessage = ColoredMessage(self.messages ::: other.messages.toList, span, color)
+      }
+
+      extension (self: List[ColoredMessage]) {
+        def toLines: String =
+          self.map { m => s"\n  - ${m.span.toString(true)}${m.messages.map(m2 => s"\n    * $m2").mkString}" }.mkString
+      }
+
+      // TODO (KR) : rename?
+      final case class Line1(
+          entering: Option[ColoredMessage],
+          inLine: List[ColoredMessage],
+          leaving: Option[ColoredMessage],
+      ) {
+
+        // TODO (KR) : REMOVE
+        override def toString: String = {
+
+          s"""entering:${entering.toList.toLines}
+             |inLine:${inLine.toLines}
+             |leaving:${leaving.toList.toLines}""".stripMargin
+        }
+
+      }
+
+      final case class Line2(
+          lineStart: Span.Pos,
+          messages: NonEmptyList[ColoredMessage],
+          lineEnd: Span.Pos,
+      ) {
+
+        override def toString: String =
+          s"""sol: ${lineStart.toString(true)}
+             |messages:${messages.toList.toLines}
+             |eol: ${lineEnd.toString(true)}""".stripMargin
+
+      }
+
+      // =====| Functions |=====
+
+      def splitMessages(messages: List[Marked[String]]): (
+          List[Message],
+          List[String],
+          List[String],
+      ) = {
+        @tailrec
+        def loop(
+            queue: List[Marked[String]],
+            rStack1: List[Message],
+            rStack2: List[String],
+            rStack3: List[String],
+        ): (
+            List[Message],
+            List[String],
+            List[String],
+        ) =
+          queue match {
+            case head :: tail =>
+              head.span match {
+                case highlight: Span.Highlight => loop(tail, Message(head.value, highlight) :: rStack1, rStack2, rStack3)
+                case _: Span.EOF               => loop(tail, rStack1, head.value :: rStack2, rStack3)
+                case Span.Unknown              => loop(tail, rStack1, rStack2, head.value :: rStack3)
+              }
+            case Nil => (rStack1.reverse, rStack2.reverse, rStack3.reverse)
+          }
+
+        loop(messages, Nil, Nil, Nil)
+      }
+
+      def splitHighlights(messages: List[Message], allColors: NonEmptyList[Color]): (List[List[Line1]], NonEmptyList[Color]) = {
+        @tailrec
+        def loop(
+            queue: List[Message],
+            colorQueue: NonEmptyList[Color],
+            entering: Option[ColoredMessage],
+            rInLine: List[ColoredMessage],
+            rCurrentStack: List[Line1],
+            rLaterStack: List[Message],
+            rFinishedStacks: List[List[Line1]],
+        ): (List[List[Line1]], NonEmptyList[Color]) =
+          queue match {
+            case queueH :: queueT =>
+              val cm = ColoredMessage(queueH.messages.toList, queueH.span, colorQueue.head)
+              val nextColorQueue = colorQueue.tail.toNel.getOrElse(allColors)
+
+              rInLine.headOption.orElse(entering) match {
+                case Some(lastInLine) =>
+                  if (queueH.span == lastInLine.span) {
+                    val (newEntering, newRInLine) = (entering, rInLine) match {
+                      case (_, rInLineH :: rInLineT) => (entering, rInLineH.withMessage(queueH) :: rInLineT)
+                      case (Some(entering), _)       => (entering.withMessage(queueH).some, rInLine)
+                      case _                         => throw new RuntimeException("Not possible...")
+                    }
+                    loop(queueT, colorQueue, newEntering, newRInLine, rCurrentStack, rLaterStack, rFinishedStacks)
+                  } else if (queueH.span.start.absolutePos > lastInLine.span.end.absolutePos)
+                    if (queueH.span.start.lineNo != lastInLine.span.end.lineNo)
+                      loop(queue, colorQueue, None, Nil, Line1(entering, rInLine.reverse, None) :: rCurrentStack, rLaterStack, rFinishedStacks)
+                    else if (queueH.spansMultipleLines)
+                      loop(queueT, nextColorQueue, cm.some, Nil, Line1(entering, rInLine.reverse, cm.some) :: rCurrentStack, rLaterStack, rFinishedStacks)
+                    else loop(queueT, nextColorQueue, entering, cm :: rInLine, rCurrentStack, rLaterStack, rFinishedStacks)
+                  else
+                    loop(queueT, colorQueue, entering, rInLine, rCurrentStack, queueH :: rLaterStack, rFinishedStacks)
+                case None =>
+                  if (queueH.spansMultipleLines) {
+                    loop(queueT, nextColorQueue, cm.some, Nil, Line1(entering, rInLine.reverse, cm.some) :: rCurrentStack, rLaterStack, rFinishedStacks)
+                  } else loop(queueT, nextColorQueue, entering, cm :: rInLine, rCurrentStack, rLaterStack, rFinishedStacks)
+              }
+            case Nil =>
+              val newRCurrentStack =
+                if (entering.nonEmpty || rInLine.nonEmpty) Line1(entering, rInLine.reverse, None) :: rCurrentStack
+                else rCurrentStack
+              val newRFinishedStacks =
+                if (newRCurrentStack.nonEmpty) newRCurrentStack.reverse :: rFinishedStacks
+                else rFinishedStacks
+              if (rLaterStack.nonEmpty) loop(rLaterStack.reverse, colorQueue, None, Nil, Nil, Nil, newRFinishedStacks)
+              else (newRFinishedStacks.reverse, colorQueue)
+          }
+
+        loop(messages.sortBy(_.span), allColors, None, Nil, Nil, Nil, Nil)
+      }
+
+      def compileLines(
+          source: Source,
+          lines: List[Line1],
+      ): List[Line2] = {
+        @tailrec
+        def loop(
+            queue: List[Line1],
+            enteringPos: Option[(Span.Pos, Color, Span.Pos)],
+            rStack: List[Line2],
+        ): List[Line2] =
+          enteringPos match {
+            case Some((sol, color, eos)) if sol.lineNo != eos.lineNo =>
+              val (eol, sonl) = Span.Pos.eolAndSonl(sol, source)
+              val line2 = Line2(sol, NonEmptyList.one(ColoredMessage(Nil, Span.Highlight(sol, eol, source), color)), eol)
+              loop(queue, (sonl, color, eos).some, line2 :: rStack)
+            case _ =>
+              queue match {
+                case head :: tail =>
+                  val firstPos = List(head.entering.map(_.span.end), head.inLine.map(_.span.start), head.leaving.map(_.span.start)).flatten.head
+                  val sol = firstPos.atStartOfLine
+                  val (eol, sonl) = Span.Pos.eolAndSonl(firstPos, source)
+
+                  val spansInLine: List[ColoredMessage] =
+                    List(
+                      head.entering.map(_.focus(_.span.start).replace(sol)),
+                      head.inLine,
+                      head.leaving.map(_.focus(_.span.end).replace(eol).focus(_.messages).replace(Nil)), // messages will be displayed at the end
+                    ).flatten
+
+                  val line2 = Line2(sol, NonEmptyList.fromListUnsafe(spansInLine), eol)
+
+                  loop(tail, head.leaving.map(cm => (sonl, cm.color, cm.span.end)), line2 :: rStack)
+                case Nil =>
+                  rStack.reverse
+              }
+          }
+
+        loop(lines, None, Nil)
+      }
+
+      val colorRegex: Regex = "^([ \t]*)([^ \t\n]*(?:[ \t]+[^ \t\n]+)*)([ \t]*\n?)$".r
+      def markHighlights(
+          source: Source,
+          maxLineNoSize: Int,
+          lines: List[Line2],
+          config: Config,
+      ): String = {
+        def rStackFromLine(line: Line2): List[String] = {
+          @tailrec
+          def loop2(
+              start: Span.Pos,
+              messages: List[ColoredMessage],
+              rStack: List[String],
+          ): List[String] =
+            messages match {
+              case head :: tail =>
+                val plainSubStr = source.input.substring(start.inputIndex, head.span.start.inputIndex)
+                val basicColorizedSubStr = source.input.substring(head.span.start.inputIndex, head.span.end.inputIndex + 1)
+                val rColorizedSubStrs: List[String] =
+                  basicColorizedSubStr match {
+                    case colorRegex(a, b, c) =>
+                      List(
+                        if (c.nonEmpty) List(Color.Default.bgANSI, c.flatMap { case '\n' => "\\n"; case c => c.toString }, head.color.bgANSI)
+                        else Nil,
+                        List(Color.Default.fgANSI, b, head.color.fgANSI),
+                        if (a.nonEmpty) List(Color.Default.bgANSI, a, head.color.bgANSI) else Nil,
+                      ).flatten
+                    case str => throw new RuntimeException(s"should not be possible...\n${str.unesc}")
+                  }
+
+                val newRStack = Color.Default.fgANSI :: rColorizedSubStrs ::: plainSubStr :: rStack
+
+                if (head.span.end == line.lineEnd) newRStack
+                else loop2(head.span.end.onChar(source.input(head.span.end.inputIndex)), tail, newRStack)
+              case Nil =>
+                source.input.substring(start.inputIndex, line.lineEnd.inputIndex + 1).stripSuffix("\n") :: rStack
+            }
+
+          val annotatedLine = loop2(line.lineStart, line.messages.toList, s"${line.lineStart.lineNo.toString.alignRight(maxLineNoSize)} : " :: Nil)
+
+          annotatedLine.reverse ::: line.messages.toList.flatMap { cm =>
+            val a = s"\n${cm.color.fgANSI}${config.marker.start}${Color.Default.fgANSI}"
+            val b = s"\n${cm.color.fgANSI}${config.marker.cont}${Color.Default.fgANSI}"
+            cm.messages.map { str => str.split("\n").mkString(a, b, "") }
+          }
+        }
+
+        @tailrec
+        def loop(
+            queue: List[Line2],
+            rStack: List[List[String]],
+        ): String =
+          queue match {
+            case queueH :: queueT =>
+              loop(queueT, rStackFromLine(queueH) :: rStack)
+            case Nil =>
+              rStack.reverse.map(_.mkString).mkString("\n")
+          }
+
+        loop(lines, Nil)
+      }
+
+    }
+
+    def pairEofColors(messages: List[String], allColors: NonEmptyList[Color], colorQueue: NonEmptyList[Color]): List[(Color, String)] = {
+      @tailrec
+      def loop(
+          messages: List[String],
+          colorQueue: NonEmptyList[Color],
+          rStack: List[(Color, String)],
+      ): List[(Color, String)] =
+        messages match {
+          case head :: tail => loop(tail, colorQueue.tail.toNel.getOrElse(allColors), (colorQueue.head, head) :: rStack)
+          case Nil          => rStack.reverse
+        }
+
+      loop(messages, colorQueue, Nil)
+    }
 
   }
 
