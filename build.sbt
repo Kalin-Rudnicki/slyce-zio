@@ -89,7 +89,7 @@ lazy val `slyce-generate` =
     .settings(
       name := "slyce-generate",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
-      // version := "2.1.3",
+      // version := "2.1.4",
       assemblyJarName := s"../../../../jars/${name.value}-${version.value}.jar",
       libraryDependencies ++= Seq(
         MyOrg %% "harness-zio" % Versions.harness,
