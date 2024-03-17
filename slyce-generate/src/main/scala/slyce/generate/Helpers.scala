@@ -8,6 +8,7 @@ import scala.annotation.tailrec
 import zio.*
 
 import slyce.core.*
+import slyce.generate.error.GenerateError
 
 object Helpers {
 
@@ -37,13 +38,13 @@ object Helpers {
       }
   }
 
-  def validatedToHTask[A](validated: Validated[A]): HTask[A] =
+  def validatedToHTask[A](validated: Validated[A]): IO[GenerateError.FailedValidation, A] =
     validated match {
-      case Left(errors) => ZIO.fail(HError.UserError(Source.markAll(errors.toList)))
+      case Left(errors) => ZIO.fail(GenerateError.FailedValidation(errors))
       case Right(value) => ZIO.succeed(value)
     }
 
-  def sourceFromFile(file: Path): HTask[Source] =
+  def sourceFromFile(file: Path): Task[Source] =
     file.readString.map(Source(_, file.show.some))
 
 }
