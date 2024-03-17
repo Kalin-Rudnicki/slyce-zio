@@ -1,0 +1,24 @@
+
+@start: General
+
+@mode: General
+\/\/[^\n]*\n              ;
+/\*([^*]|\*[^/])*\*/      ;
+[ \t\n]+                  ;
+\@(start|lookAhead):      ; @ -> Mode
+[A-Z][A-Za-z_\d]*         ; nonTerminal
+[a-z][A-Za-z_\d]*         ; terminal
+"                         ; @ -> String
+[*+~<>]                   ; @
+[:\^;()|.?]               ; @
+
+@mode: Mode
+[ \t]+                    ;
+[A-Z][A-Za-z_\d]*         ; mode
+[1-9]                     ; int
+\n                        ; <-
+
+@mode: String
+"                         ; @ <-
+\\.                       ; escChar
+[^\\"]+                   ; chars

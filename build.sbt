@@ -17,8 +17,6 @@ ThisBuild / dynver ~= (_.replace('+', '-'))
 
 // =====|  |=====
 
-lazy val HarnessVersion = "4.0.2"
-
 inThisBuild(
   Seq(
     organization := MyOrg,
@@ -45,18 +43,20 @@ inThisBuild(
   ),
 )
 
+lazy val testAndCompile = "test->test;compile->compile"
+
 // =====|  |=====
 
 lazy val `slyce-core` =
   project
-    .in(file("slyce-core"))
+    .in(file("modules/slyce-core"))
     .settings(
       name := "slyce-core",
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-core" % HarnessVersion,
-        MyOrg %% "harness-zio-test" % HarnessVersion % Test,
-        "com.lihaoyi" %% "scalatags" % "0.11.1",
-        "com.github.julien-truffaut" %% "monocle-macro" % "3.0.0-M6",
+        MyOrg %% "harness-core" % Versions.harness,
+        MyOrg %% "harness-zio-test" % Versions.harness % Test,
+        "com.lihaoyi" %% "scalatags" % Versions.scalaTags,
+        "com.github.julien-truffaut" %% "monocle-macro" % Versions.monocle,
       ),
       sonatypeCredentialHost := "s01.oss.sonatype.org",
       Test / fork := true,
@@ -64,61 +64,61 @@ lazy val `slyce-core` =
 
 lazy val `slyce-parse` =
   project
-    .in(file("slyce-parse"))
+    .in(file("modules/slyce-parse"))
     .settings(
       name := "slyce-parse",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
     )
-    .dependsOn(`slyce-core` % "test->test;compile->compile")
+    .dependsOn(`slyce-core` % testAndCompile)
 
 lazy val `slyce-parse-exe` =
   project
-    .in(file("slyce-parse-exe"))
+    .in(file("modules/slyce-parse-exe"))
     .settings(
       name := "slyce-parse-exe",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-zio" % HarnessVersion,
+        MyOrg %% "harness-zio" % Versions.harness,
       ),
     )
-    .dependsOn(`slyce-parse` % "test->test;compile->compile")
+    .dependsOn(`slyce-parse` % testAndCompile)
 
 lazy val `slyce-generate` =
   project
-    .in(file("slyce-generate"))
+    .in(file("modules/slyce-generate"))
     .settings(
       name := "slyce-generate",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
-      version := "2.1.1",
-      assemblyJarName := s"${name.value}-${version.value}.jar",
+      // version := "2.1.2",
+      assemblyJarName := s"../../../../jars/${name.value}-${version.value}.jar",
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-zio" % HarnessVersion,
+        MyOrg %% "harness-zio" % Versions.harness,
       ),
     )
-    .dependsOn(`slyce-parse` % "test->test;compile->compile")
+    .dependsOn(`slyce-parse` % testAndCompile)
 
 lazy val `slyce-test` =
   project
-    .in(file("slyce-test"))
+    .in(file("modules/slyce-test"))
     .settings(
       name := "slyce-test",
       publish / skip := true,
       Test / fork := true,
       sonatypeCredentialHost := "s01.oss.sonatype.org",
     )
-    .dependsOn(`slyce-parse-exe` % "test->test;compile->compile")
+    .dependsOn(`slyce-parse-exe` % testAndCompile)
 
 // TODO (KR) : IDEA-PLUGIN
 /*
 lazy val `slyce-idea-plugin` =
   project
-    .in(file("slyce-idea-plugin"))
+    .in(file("modules/slyce-idea-plugin"))
     .enablePlugins(SbtIdeaPlugin)
     .settings(
       name := "slyce-idea-plugin",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
     )
-    .dependsOn(`slyce-generate` % "test->test;compile->compile")
+    .dependsOn(`slyce-generate` % testAndCompile)
  */
 
 lazy val `slyce-root` =
