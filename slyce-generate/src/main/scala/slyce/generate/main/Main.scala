@@ -8,10 +8,14 @@ import zio.*
 
 import slyce.core.*
 import slyce.generate.*
+import slyce.generate.error.GenerateError
 import slyce.generate.parsers.Grammar as CurrentGrammar
 import slyce.generate.parsers.Lexer as CurrentLexer
 
 object Main extends ExecutableApp {
+
+  private implicit val errorLogger: ErrorLogger[GenerateError] =
+    ErrorLogger.withGetMessage[GenerateError].atLevel.fatal
 
   private object generate {
 
@@ -21,13 +25,13 @@ object Main extends ExecutableApp {
         outputFile: Path,
         targetLanguage: TargetLanguage,
         pkg: List[String],
-    ): SHTask[Unit] = {
+    ): ZIO[HarnessEnv, GenerateError, Unit] = {
       val name = outputFile.pathName.base
 
-      val lexerEffect: SHTask[CurrentLexer.NonTerminal.Lexer] =
+      val lexerEffect: ZIO[HarnessEnv, GenerateError, CurrentLexer.NonTerminal.Lexer] =
         for {
           _ <- Logger.log.info("--- slf ---")
-          lexerSource <- Helpers.sourceFromFile(lexerFile)
+          lexerSource <- Helpers.sourceFromFile(lexerFile).mapError(GenerateError.Unexpected(_))
           _ <- Logger.log.info("tokenizing")
           lexerTokens <- Helpers.validatedToHTask(CurrentLexer.lexer.tokenize(lexerSource))
           // _ <- Logger.log.info(Source.markAll(lexerTokens.map(Token.mark)))
@@ -35,10 +39,10 @@ object Main extends ExecutableApp {
           lexerAST <- Helpers.validatedToHTask(CurrentLexer.grammar.buildTree(lexerSource, lexerTokens))
         } yield lexerAST
 
-      val grammarEffect: SHTask[CurrentGrammar.NonTerminal.Grammar] =
+      val grammarEffect: ZIO[HarnessEnv, GenerateError, CurrentGrammar.NonTerminal.Grammar] =
         for {
           _ <- Logger.log.info("--- sgf ---")
-          grammarSource <- Helpers.sourceFromFile(grammarFile)
+          grammarSource <- Helpers.sourceFromFile(grammarFile).mapError(GenerateError.Unexpected(_))
           _ <- Logger.log.info("tokenizing")
           grammarTokens <- Helpers.validatedToHTask(CurrentGrammar.lexer.tokenize(grammarSource))
           // _ <- Logger.log.info(Source.markAll(lexerTokens.map(Token.mark)))
@@ -46,10 +50,11 @@ object Main extends ExecutableApp {
           grammarAST <- Helpers.validatedToHTask(CurrentGrammar.grammar.buildTree(grammarSource, grammarTokens))
         } yield grammarAST
 
-      // TODO (KR) : indent?
+      // TODO (KR) : indent? (TY self, fkin useless comment)
       for {
         _ <- Logger.log.info(s"Generating : $name")
-        (lexerAST, grammarAST) <- lexerEffect <**> grammarEffect
+        lexerAST <- lexerEffect
+        grammarAST <- grammarEffect
 
         lexerInput = ConvertLexer.convertLexer(lexerAST)
         grammarInput = ConvertGrammar.convertGrammar(grammarAST)
@@ -58,10 +63,10 @@ object Main extends ExecutableApp {
         resultString = output.formatters.Formatter.format(targetLanguage, pkg, name, result)
 
         _ <- Logger.log.info("--- output ---")
-        outputParent <- outputFile.parent
-        _ <- outputParent.mkdirs
+        outputParent <- outputFile.parent.mapError(GenerateError.Unexpected(_))
+        _ <- outputParent.mkdirs.mapError(GenerateError.Unexpected(_))
 
-        _ <- outputFile.writeString(resultString)
+        _ <- outputFile.writeString(resultString).mapError(GenerateError.Unexpected(_))
       } yield ()
     }
 
@@ -88,24 +93,18 @@ object Main extends ExecutableApp {
       Executable
         .withParser(SingleConfig.parser)
         .withEffect { config =>
-          def fileFromPath(path: String): SHTask[Path] =
-            Path(path).flatMap { file =>
-              file.ensureExists *>
-                file.isFile.flatMap {
-                  case true  => ZIO.succeed(file)
-                  case false => ZIO.fail(HError.UserError(s"Not a file: $path"))
-                }
-            }
+          def fileFromPath(path: String): ZIO[HarnessEnv, GenerateError, Path] =
+            Path(path).tap { _.ensureIsFile }.mapError(GenerateError.Unexpected(_))
 
           for {
             _ <- Logger.log.info("Running generate/single")
 
             lexerFile <- fileFromPath(config.lexerFile)
             grammarFile <- fileFromPath(config.grammarFile)
-            outputFile <- Path(config.outputFile)
+            outputFile <- Path(config.outputFile).mapError(GenerateError.Unexpected(_))
             targetLanguage <- TargetLanguage.parse(config.targetLanguage, outputFile.pathName.ext) match {
               case Some(value) => ZIO.succeed(value)
-              case None        => ZIO.fail(HError.UserError("Unable to assume target language"))
+              case None        => ZIO.fail(GenerateError.InvalidInput("Unable to assume target language"))
             }
 
             _ <- generate(lexerFile, grammarFile, outputFile, targetLanguage, config.pkg)
@@ -138,25 +137,18 @@ object Main extends ExecutableApp {
       Executable
         .withParser(ForSrcDirConfig.parser)
         .withEffect { config =>
-          def dirFromPath(path: String): SHTask[Path] =
-            Path(path).flatMap(ensureDir)
-
-          def ensureDir(file: Path): SHTask[Path] =
-            file.ensureExists *>
-              file.isDirectory.flatMap {
-                case true  => ZIO.succeed(file)
-                case false => ZIO.fail(HError.UserError(s"Not a directory: $file"))
-              }
+          def dirFromPath(path: String): ZIO[HarnessEnv, GenerateError, Path] =
+            Path(path).tap { _.ensureIsDirectory }.mapError(GenerateError.Unexpected(_))
 
           def findEntries(
               dir: Path,
               pkg: List[String],
-          ): SHTask[List[Entry]] =
+          ): ZIO[HarnessEnv, GenerateError, List[Entry]] =
             for {
               _ <- Logger.log.debug(s"Searching in: $dir")
-              children <- dir.children.map(_.toList)
-              fileChildren <- ZIO.filter(children)(_.isFile)
-              dirChildren <- ZIO.filter(children)(_.isDirectory)
+              children <- dir.children.mapBoth(GenerateError.Unexpected(_), _.toList)
+              fileChildren <- ZIO.filter(children)(_.isFile).mapError(GenerateError.Unexpected(_))
+              dirChildren <- ZIO.filter(children)(_.isDirectory).mapError(GenerateError.Unexpected(_))
 
               fileEntries = fileChildren.groupBy(_.pathName.base).toList.flatMap { case (baseName, files) =>
                 files.map(f => (f, f.pathName.ext)).sortBy(_._2) match {
@@ -181,14 +173,14 @@ object Main extends ExecutableApp {
 
             srcDir <- dirFromPath(config.srcFile)
             extName = TargetLanguage.extName(config.targetLanguage)
-            slyceRoot <- srcDir.child("main/slyce").flatMap(ensureDir)
-            srcRoot <- srcDir.child(s"main/$extName")
+            slyceRoot <- srcDir.child("main/slyce").tap(_.ensureIsDirectory).mapError(GenerateError.Unexpected(_))
+            srcRoot <- srcDir.child(s"main/$extName").mapError(GenerateError.Unexpected(_))
             tail = if (config.snapshot) "Snapshot" else ""
 
             entries <- findEntries(slyceRoot, Nil)
             _ <- ZIO.traverse(entries) { entry =>
               for {
-                outputFile <- srcRoot.child((entry.pkg :+ s"${entry.baseName}$tail.$extName").mkString("/"))
+                outputFile <- srcRoot.child((entry.pkg :+ s"${entry.baseName}$tail.$extName").mkString("/")).mapError(GenerateError.Unexpected(_))
                 _ <- generate(entry.lexerFile, entry.grammarFile, outputFile, config.targetLanguage, entry.pkg)
               } yield ()
             }

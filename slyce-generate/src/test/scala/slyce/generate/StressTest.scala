@@ -10,6 +10,9 @@ import slyce.parse.Parser as SlyceParser
 
 object StressTest extends ExecutableApp {
 
+  private implicit val errorLogger: ErrorLogger[Throwable] =
+    ErrorLogger.withGetMessage[Throwable].atLevel.fatal
+
   private final case class Case(
       name: String,
       parsers: List[(String, SlyceParser)],
@@ -33,11 +36,11 @@ object StressTest extends ExecutableApp {
       ),
     )
 
-  private def execCase(repeat: Int, _case: Case): SHTask[Unit] =
+  private def execCase(repeat: Int, _case: Case): RIO[HarnessEnv, Unit] =
     Logger.log.info(_case.name) *>
       ZIO.traverse(_case.paths)(execPath(repeat, _case, _)).unit
 
-  private def execPath(repeat: Int, _case: Case, path: String): SHTask[Unit] =
+  private def execPath(repeat: Int, _case: Case, path: String): RIO[HarnessEnv, Unit] =
     for {
       _ <- Logger.log.info(path)
       file <- Path(path)
@@ -47,7 +50,7 @@ object StressTest extends ExecutableApp {
       _ <- ZIO.traverse(_case.parsers)(execParser(repeat, source, _, _))
     } yield ()
 
-  private def execParser(repeat: Int, source: Source, name: String, parser: SlyceParser): SHTask[Unit] =
+  private def execParser(repeat: Int, source: Source, name: String, parser: SlyceParser): RIO[HarnessEnv, Unit] =
     for {
       _ <- Logger.log.info(name)
       results: List[(Long, Long)] <- exec(source, parser).replicateZIO(repeat).map(_.toList)
@@ -56,7 +59,7 @@ object StressTest extends ExecutableApp {
       _ <- Logger.log.info(s"avg: (${avgTokenize.toStringCommas}, ${avgBuildTree.toStringCommas}) = ${(avgTokenize + avgBuildTree).toStringCommas}")
     } yield ()
 
-  private def exec(source: Source, parser: SlyceParser): SHTask[(Long, Long)] =
+  private def exec(source: Source, parser: SlyceParser): RIO[HarnessEnv, (Long, Long)] =
     for {
       (t, tokens) <- ZIO.succeed(parser.lexer.tokenize(source)).timed
       (bt, _) <- ZIO.succeed(parser.grammar.buildTree(source, tokens.toOption.get)).timed

@@ -12,6 +12,9 @@ import slyce.parse.Parser as SlyceParser
 
 object ParseExe {
 
+  private implicit val errorLogger: ErrorLogger[Throwable] =
+    ErrorLogger.withGetMessage[Throwable].atLevel.fatal
+
   private final case class Config(files: NonEmptyList[String])
   private object Config {
 
@@ -22,7 +25,7 @@ object ParseExe {
 
   }
 
-  private def fileRec(file: Path, supportedFileTypes: Set[String]): SHTask[List[Path]] =
+  private def fileRec(file: Path, supportedFileTypes: Set[String]): RIO[HarnessEnv, List[Path]] =
     file.exists.flatMap {
       case true =>
         file.isFile.flatMap {
@@ -40,7 +43,7 @@ object ParseExe {
       case false => Logger.log.warning(s"File does not exist: $file").as(Nil)
     }
 
-  private def getFiles(config: Config, supportedFileTypes: Set[String]): SHTask[List[Path]] =
+  private def getFiles(config: Config, supportedFileTypes: Set[String]): RIO[HarnessEnv, List[Path]] =
     ZIO.foreach(config.files.toList)(Path(_).flatMap(fileRec(_, supportedFileTypes))).map(_.flatten)
 
   private def lexExe(parser: SlyceParser, supportedFileTypes: Set[String]): Executable =
