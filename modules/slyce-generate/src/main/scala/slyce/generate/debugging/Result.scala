@@ -3,7 +3,7 @@ package slyce.generate.debugging
 import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.list.*
-import harness.core.*
+import harness.core.{Lazy as _, *}
 import java.util.UUID
 import scalatags.Text.all.{id as htmlId, *}
 

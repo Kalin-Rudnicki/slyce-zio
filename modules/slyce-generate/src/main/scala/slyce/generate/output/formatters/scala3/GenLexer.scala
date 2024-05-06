@@ -1,6 +1,7 @@
 package slyce.generate.output.formatters.scala3
 
-import harness.core.{given, *}
+import harness.core.{Lazy as _, *}
+import harness.core.given
 
 import slyce.core.*
 import slyce.generate.groupChars
