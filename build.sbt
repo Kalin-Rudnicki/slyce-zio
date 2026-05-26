@@ -91,7 +91,7 @@ lazy val `slyce-generate` =
     .settings(
       name := "slyce-generate",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
-      // version := "3.0.0",
+      // version := "3.0.1",
       assemblyJarName := s"../../../../jars/${name.value}-${version.value}.jar",
       libraryDependencies ++= Seq(
         MyOrg %% "oxygen-executable" % Versions.oxygen,

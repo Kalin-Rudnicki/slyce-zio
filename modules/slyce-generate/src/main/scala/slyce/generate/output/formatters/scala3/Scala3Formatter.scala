@@ -9,7 +9,7 @@ import slyce.generate.output.formatters.scala3.GenUtils.*
 
 object Scala3Formatter extends Formatter {
 
-  override def format(pkg: List[String], name: String, result: Result): String = {
+  override def format(pkg: List[String], name: String, result: Result, noWarn: Boolean): String = {
     val utils = GenUtils(pkg, name, result)
 
     IndentedString
@@ -19,7 +19,8 @@ object Scala3Formatter extends Formatter {
         packageName(pkg),
         "// format: off",
         IndentedString.Break,
-        s"object $name extends $ParsePath.Parser {",
+        if noWarn then s"@scala.annotation.nowarn\nobject $name extends $ParsePath.Parser {"
+        else s"object $name extends $ParsePath.Parser {",
         IndentedString.indented(
           IndentedString.Break,
           s"override type NTRoot = ${utils.qualifiedIdentifierName(ExpandedGrammar.Identifier.NonTerminal.NamedNt(result.grammar.startNT.value))}",

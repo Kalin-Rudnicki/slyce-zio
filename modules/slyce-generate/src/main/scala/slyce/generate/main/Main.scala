@@ -24,6 +24,7 @@ object Main extends ExecutableApp {
         outputFile: Path,
         targetLanguage: TargetLanguage,
         pkg: List[String],
+        noWarn: Boolean,
     ): IO[GenerateError, Unit] = {
       val name = outputFile.fileName.baseName
 
@@ -59,7 +60,7 @@ object Main extends ExecutableApp {
         grammarInput = ConvertGrammar.convertGrammar(grammarAST)
         _ <- ZIO.logInfo("--- result ---")
         result <- Helpers.validatedToHTask(output.Result.build(lexerInput, grammarInput))
-        resultString = output.formatters.Formatter.format(targetLanguage, pkg, name, result)
+        resultString = output.formatters.Formatter.format(targetLanguage, pkg, name, result, noWarn)
 
         _ <- ZIO.logInfo("--- output ---")
         outputParent <- ZIO.attempt { outputFile.parentOption.get }.mapError(GenerateError.Unexpected(_))
@@ -75,6 +76,7 @@ object Main extends ExecutableApp {
         outputFile: String,
         targetLanguage: Option[TargetLanguage],
         pkg: List[String],
+        noWarn: Boolean,
     )
     object SingleConfig {
 
@@ -83,7 +85,8 @@ object Main extends ExecutableApp {
         Params.value[String]("grammar-file") &&
         Params.value[String]("output-file") &&
         Params.`enum`[TargetLanguage]("target-language").optional &&
-        Params.value[String]("pkg").repeated
+        Params.value[String]("pkg").repeated &&
+        Params.flag("no-warn")
       }.map(SingleConfig.apply)
 
     }
@@ -106,7 +109,7 @@ object Main extends ExecutableApp {
               case None        => ZIO.fail(GenerateError.InvalidInput("Unable to assume target language"))
             }
 
-            _ <- generate(lexerFile, grammarFile, outputFile, targetLanguage, config.pkg)
+            _ <- generate(lexerFile, grammarFile, outputFile, targetLanguage, config.pkg, config.noWarn)
           } yield ()
         }
 
@@ -114,13 +117,15 @@ object Main extends ExecutableApp {
         srcFile: String,
         targetLanguage: TargetLanguage,
         snapshot: Boolean,
+        noWarn: Boolean,
     )
     object ForSrcDirConfig {
 
       val parser: Params[ForSrcDirConfig] = {
         Params.value[String]("src-file", hints = List("your project: 'a/b/c/src/main/scala/com/xyz' -> '--source-file=a/b/c/src'")) &&
         Params.`enum`[TargetLanguage]("target-language").withDefault(TargetLanguage.Scala3) &&
-        Params.flag("snapshot")
+        Params.flag("snapshot") &&
+        Params.flag("no-warn")
       }.map(ForSrcDirConfig.apply)
 
     }
@@ -180,7 +185,7 @@ object Main extends ExecutableApp {
             entries <- findEntries(slyceRoot, Nil)
             _ <- ZIO.foreachDiscard(entries) { entry =>
               val outputFile = srcRoot.resolve((entry.pkg :+ s"${entry.baseName}$tail.$extName").mkString("/"))
-              generate(entry.lexerFile, entry.grammarFile, outputFile, config.targetLanguage, entry.pkg)
+              generate(entry.lexerFile, entry.grammarFile, outputFile, config.targetLanguage, entry.pkg, config.noWarn)
             }
           } yield ()
         }

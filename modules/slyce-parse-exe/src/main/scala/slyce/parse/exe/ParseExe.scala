@@ -50,7 +50,7 @@ object ParseExe {
           _ <- ZIO.foreachDiscard(files) { file =>
             for {
               str <- file.read
-              source = Source(str, file.pathName.name.some)
+              source = Source(str, file.fileName.baseName.some)
               res = parser.lexer.tokenize(source)
               _ <- res match {
                 case Right(toks)  => ZIO.logInfo(source.mark(toks.map(tok => Marked(tok.tokName, tok.span))))
@@ -71,7 +71,7 @@ object ParseExe {
           _ <- ZIO.foreachDiscard(files) { file =>
             for {
               str <- file.read
-              source = Source(str, file.pathName.name.some)
+              source = Source(str, file.fileName.baseName.some)
               _ <- ZIO.succeed(parser.lexer.tokenize(source)).timed.flatMap {
                 case (duration1, Right(toks)) =>
                   ZIO.succeed(parser.grammar.buildTree(source, toks)).timed.flatMap {

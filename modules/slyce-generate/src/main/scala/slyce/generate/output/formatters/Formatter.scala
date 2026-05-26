@@ -4,13 +4,13 @@ import slyce.generate.TargetLanguage
 import slyce.generate.output.Result
 
 trait Formatter {
-  def format(pkg: List[String], name: String, result: Result): String
+  def format(pkg: List[String], name: String, result: Result, noWarn: Boolean): String
 }
 object Formatter {
 
-  def format(targetLanguage: TargetLanguage, pkg: List[String], name: String, result: Result): String =
+  def format(targetLanguage: TargetLanguage, pkg: List[String], name: String, result: Result, noWarn: Boolean): String =
     targetLanguage match {
-      case TargetLanguage.Scala3 => scala3.Scala3Formatter.format(pkg, name, result)
+      case TargetLanguage.Scala3 => scala3.Scala3Formatter.format(pkg, name, result, noWarn)
     }
 
 }
