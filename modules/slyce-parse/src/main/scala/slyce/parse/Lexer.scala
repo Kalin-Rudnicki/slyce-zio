@@ -4,7 +4,7 @@ import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
-import harness.core.{Lazy as _, *}
+import oxygen.predef.core.unesc
 import scala.annotation.tailrec
 
 import slyce.core.*
@@ -212,7 +212,7 @@ object Lexer {
         case Yields.ToMode.Same        => (mode, modeStack).asRight
         case Yields.ToMode.To(state)   => (state.value.asInstanceOf[State[Tok]], modeStack).asRight // TODO (KR) : compiler being a dumbass
         case Yields.ToMode.Push(state) => (state.value.asInstanceOf[State[Tok]], mode :: modeStack).asRight // TODO (KR) : compiler being a dumbass
-        case Yields.ToMode.Pop =>
+        case Yields.ToMode.Pop         =>
           modeStack match {
             case head :: tail => (head, tail).asRight
             case Nil          => badLexer("Attempted to pop modes with an empty mode-stack", span).leftNel

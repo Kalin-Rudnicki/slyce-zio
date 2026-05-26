@@ -1,9 +1,9 @@
 package slyce.generate.main
 
-import cats.syntax.option.*
-import harness.cli.*
-import harness.core.{given, *}
-import harness.zio.*
+import oxygen.executable.OxygenLoggerDefaults
+import oxygen.predef.core.*
+import oxygen.predef.executable.{*, given}
+import oxygen.predef.zio.*
 import zio.*
 
 import slyce.core.*
@@ -14,8 +14,7 @@ import slyce.generate.parsers.Lexer as CurrentLexer
 
 object Main extends ExecutableApp {
 
-  private given errorLogger: ErrorLogger[GenerateError] =
-    ErrorLogger.withGetMessage[GenerateError].atLevel.fatal
+  override def oxygenLoggerDefaults: OxygenLoggerDefaults = OxygenLoggerDefaults.lean()
 
   private object generate {
 
@@ -25,48 +24,48 @@ object Main extends ExecutableApp {
         outputFile: Path,
         targetLanguage: TargetLanguage,
         pkg: List[String],
-    ): ZIO[HarnessEnv, GenerateError, Unit] = {
-      val name = outputFile.pathName.base
+    ): IO[GenerateError, Unit] = {
+      val name = outputFile.fileName.baseName
 
-      val lexerEffect: ZIO[HarnessEnv, GenerateError, CurrentLexer.NonTerminal.Lexer] =
+      val lexerEffect: IO[GenerateError, CurrentLexer.NonTerminal.Lexer] =
         for {
-          _ <- Logger.log.info("--- slf ---")
+          _ <- ZIO.logInfo("--- slf ---")
           lexerSource <- Helpers.sourceFromFile(lexerFile).mapError(GenerateError.Unexpected(_))
-          _ <- Logger.log.info("tokenizing")
+          _ <- ZIO.logInfo("tokenizing")
           lexerTokens <- Helpers.validatedToHTask(CurrentLexer.lexer.tokenize(lexerSource))
-          // _ <- Logger.log.info(Source.markAll(lexerTokens.map(Token.mark)))
-          _ <- Logger.log.info("building parse tree")
+          // _ <- ZIO.logInfo(Source.markAll(lexerTokens.map(Token.mark)))
+          _ <- ZIO.logInfo("building parse tree")
           lexerAST <- Helpers.validatedToHTask(CurrentLexer.grammar.buildTree(lexerSource, lexerTokens))
         } yield lexerAST
 
-      val grammarEffect: ZIO[HarnessEnv, GenerateError, CurrentGrammar.NonTerminal.Grammar] =
+      val grammarEffect: IO[GenerateError, CurrentGrammar.NonTerminal.Grammar] =
         for {
-          _ <- Logger.log.info("--- sgf ---")
+          _ <- ZIO.logInfo("--- sgf ---")
           grammarSource <- Helpers.sourceFromFile(grammarFile).mapError(GenerateError.Unexpected(_))
-          _ <- Logger.log.info("tokenizing")
+          _ <- ZIO.logInfo("tokenizing")
           grammarTokens <- Helpers.validatedToHTask(CurrentGrammar.lexer.tokenize(grammarSource))
-          // _ <- Logger.log.info(Source.markAll(lexerTokens.map(Token.mark)))
-          _ <- Logger.log.info("building parse tree")
+          // _ <- ZIO.logInfo(Source.markAll(lexerTokens.map(Token.mark)))
+          _ <- ZIO.logInfo("building parse tree")
           grammarAST <- Helpers.validatedToHTask(CurrentGrammar.grammar.buildTree(grammarSource, grammarTokens))
         } yield grammarAST
 
       // TODO (KR) : indent? (TY self, fkin useless comment)
       for {
-        _ <- Logger.log.info(s"Generating : $name")
+        _ <- ZIO.logInfo(s"Generating : $name")
         lexerAST <- lexerEffect
         grammarAST <- grammarEffect
 
         lexerInput = ConvertLexer.convertLexer(lexerAST)
         grammarInput = ConvertGrammar.convertGrammar(grammarAST)
-        _ <- Logger.log.info("--- result ---")
+        _ <- ZIO.logInfo("--- result ---")
         result <- Helpers.validatedToHTask(output.Result.build(lexerInput, grammarInput))
         resultString = output.formatters.Formatter.format(targetLanguage, pkg, name, result)
 
-        _ <- Logger.log.info("--- output ---")
-        outputParent <- outputFile.parent.mapError(GenerateError.Unexpected(_))
-        _ <- outputParent.mkdirs.mapError(GenerateError.Unexpected(_))
+        _ <- ZIO.logInfo("--- output ---")
+        outputParent <- ZIO.attempt { outputFile.parentOption.get }.mapError(GenerateError.Unexpected(_))
+        _ <- outputParent.createDirectories.mapError(GenerateError.Unexpected(_))
 
-        _ <- outputFile.writeString(resultString).mapError(GenerateError.Unexpected(_))
+        _ <- outputFile.write(resultString).mapError(GenerateError.Unexpected(_))
       } yield ()
     }
 
@@ -80,29 +79,29 @@ object Main extends ExecutableApp {
     object SingleConfig {
 
       val parser: Parser[SingleConfig] = {
-        Parser.value[String](LongName.unsafe("lexer-file")) &&
-        Parser.value[String](LongName.unsafe("grammar-file")) &&
-        Parser.value[String](LongName.unsafe("output-file")) &&
-        Parser.value.`enum`[TargetLanguage, String](LongName.unsafe("target-language")).optional &&
-        Parser.values.list[String](LongName.unsafe("pkg"))
+        Params.value[String]("lexer-file") &&
+        Params.value[String]("grammar-file") &&
+        Params.value[String]("output-file") &&
+        Params.`enum`[TargetLanguage]("target-language").optional &&
+        Params.value[String]("pkg").repeated
       }.map(SingleConfig.apply)
 
     }
 
     private val single: Executable =
       Executable
-        .withParser(SingleConfig.parser)
-        .withEffect { config =>
-          def fileFromPath(path: String): ZIO[HarnessEnv, GenerateError, Path] =
-            Path(path).tap { _.ensureIsFile }.mapError(GenerateError.Unexpected(_))
+        .withCLIParser(SingleConfig.parser)
+        .withExecute { config =>
+          def fileFromPath(path: String): IO[GenerateError, Path] =
+            Path.of(path).tap { _.assertExists(Path.Type.File) }.mapError(GenerateError.Unexpected(_))
 
           for {
-            _ <- Logger.log.info("Running generate/single")
+            _ <- ZIO.logInfo("Running generate/single")
 
             lexerFile <- fileFromPath(config.lexerFile)
             grammarFile <- fileFromPath(config.grammarFile)
-            outputFile <- Path(config.outputFile).mapError(GenerateError.Unexpected(_))
-            targetLanguage <- TargetLanguage.parse(config.targetLanguage, outputFile.pathName.ext) match {
+            outputFile <- Path.of(config.outputFile).mapError(GenerateError.Unexpected(_))
+            targetLanguage <- TargetLanguage.parse(config.targetLanguage, outputFile.fileName.`extension`) match {
               case Some(value) => ZIO.succeed(value)
               case None        => ZIO.fail(GenerateError.InvalidInput("Unable to assume target language"))
             }
@@ -118,10 +117,10 @@ object Main extends ExecutableApp {
     )
     object ForSrcDirConfig {
 
-      val parser: Parser[ForSrcDirConfig] = {
-        Parser.value[String](LongName.unsafe("src-file")) &&
-        Parser.value.`enum`[TargetLanguage, String](LongName.unsafe("target-language")).default(TargetLanguage.Scala3) &&
-        Parser.flag(LongName.unsafe("snapshot"), shortParam = Defaultable.Some(ShortName.unsafe('S')))
+      val parser: Params[ForSrcDirConfig] = {
+        Params.value[String]("src-file", hints = List("your project: 'a/b/c/src/main/scala/com/xyz' -> '--source-file=a/b/c/src'")) &&
+        Params.`enum`[TargetLanguage]("target-language").withDefault(TargetLanguage.Scala3) &&
+        Params.flag("snapshot")
       }.map(ForSrcDirConfig.apply)
 
     }
@@ -135,23 +134,23 @@ object Main extends ExecutableApp {
 
     private val forSrcDir: Executable =
       Executable
-        .withParser(ForSrcDirConfig.parser)
-        .withEffect { config =>
-          def dirFromPath(path: String): ZIO[HarnessEnv, GenerateError, Path] =
-            Path(path).tap { _.ensureIsDirectory }.mapError(GenerateError.Unexpected(_))
+        .withCLIParser(ForSrcDirConfig.parser)
+        .withExecute { config =>
+          def dirFromPath(path: String): IO[GenerateError, Path] =
+            Path.of(path).tap { _.assertExists(Path.Type.Directory) }.mapError(GenerateError.Unexpected(_))
 
           def findEntries(
               dir: Path,
               pkg: List[String],
-          ): ZIO[HarnessEnv, GenerateError, List[Entry]] =
+          ): IO[GenerateError, List[Entry]] =
             for {
-              _ <- Logger.log.debug(s"Searching in: $dir")
+              _ <- ZIO.logDebug(s"Searching in: $dir")
               children <- dir.children.mapBoth(GenerateError.Unexpected(_), _.toList)
-              fileChildren <- ZIO.filter(children)(_.isFile).mapError(GenerateError.Unexpected(_))
-              dirChildren <- ZIO.filter(children)(_.isDirectory).mapError(GenerateError.Unexpected(_))
+              fileChildren <- ZIO.filter(children)(_.`type`.map(_ == Path.Type.File)).mapError(GenerateError.Unexpected(_))
+              dirChildren <- ZIO.filter(children)(_.`type`.map(_ == Path.Type.Directory)).mapError(GenerateError.Unexpected(_))
 
-              fileEntries = fileChildren.groupBy(_.pathName.base).toList.flatMap { case (baseName, files) =>
-                files.map(f => (f, f.pathName.ext)).sortBy(_._2) match {
+              fileEntries = fileChildren.groupBy(_.fileName.baseName).toList.flatMap { case (baseName, files) =>
+                files.map(f => (f, f.fileName.`extension`)).sortBy(_._2) match {
                   case List((grammarFile, Some("sgf")), (lexerFile, Some("slf"))) =>
                     Entry(
                       baseName = baseName,
@@ -163,32 +162,31 @@ object Main extends ExecutableApp {
                     None
                 }
               }
-              dirEntries <- ZIO.traverse(dirChildren) { d =>
-                findEntries(d, pkg :+ d.pathName.name)
+              dirEntries <- ZIO.foreach(dirChildren) { d =>
+                findEntries(d, pkg :+ d.fileName.baseName)
               }
             } yield (fileEntries :: dirEntries).flatten
 
           for {
-            _ <- Logger.log.info("Running generate/src-dir")
+            _ <- ZIO.logInfo("Running generate/src-dir")
 
             srcDir <- dirFromPath(config.srcFile)
             extName = TargetLanguage.extName(config.targetLanguage)
-            slyceRoot <- srcDir.child("main/slyce").tap(_.ensureIsDirectory).mapError(GenerateError.Unexpected(_))
-            srcRoot <- srcDir.child(s"main/$extName").mapError(GenerateError.Unexpected(_))
+            slyceRoot = srcDir.resolve("main/slyce")
+            _ <- slyceRoot.assertExists(Path.Type.Directory).mapError(GenerateError.Unexpected(_))
+            srcRoot = srcDir.resolve(s"main/$extName")
             tail = if config.snapshot then "Snapshot" else ""
 
             entries <- findEntries(slyceRoot, Nil)
-            _ <- ZIO.traverse(entries) { entry =>
-              for {
-                outputFile <- srcRoot.child((entry.pkg :+ s"${entry.baseName}$tail.$extName").mkString("/")).mapError(GenerateError.Unexpected(_))
-                _ <- generate(entry.lexerFile, entry.grammarFile, outputFile, config.targetLanguage, entry.pkg)
-              } yield ()
+            _ <- ZIO.foreachDiscard(entries) { entry =>
+              val outputFile = srcRoot.resolve((entry.pkg :+ s"${entry.baseName}$tail.$extName").mkString("/"))
+              generate(entry.lexerFile, entry.grammarFile, outputFile, config.targetLanguage, entry.pkg)
             }
           } yield ()
         }
 
     val executable: Executable =
-      Executable.fromSubCommands(
+      Executable.oneOf(
         "single" -> single,
         "src-dir" -> forSrcDir,
       )
@@ -196,7 +194,7 @@ object Main extends ExecutableApp {
   }
 
   override val executable: Executable =
-    Executable.fromSubCommands(
+    Executable.oneOf(
       "generate" -> generate.executable,
     )
 

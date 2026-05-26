@@ -42,7 +42,7 @@ object GrammarInput {
       @tailrec
       def identify(chars: List[Char]): Identifier =
         chars match {
-          case Nil => Raw(str)
+          case Nil       => Raw(str)
           case c :: rest =>
             if c == '_' then identify(rest)
             else if c.isUpper then NonTerminal(str)

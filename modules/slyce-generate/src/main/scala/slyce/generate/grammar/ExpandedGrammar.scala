@@ -3,8 +3,8 @@ package slyce.generate.grammar
 import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.option.*
-import harness.core.*
 import java.util.UUID
+import oxygen.predef.core.{unesc, IndentedString}
 import scala.annotation.tailrec
 
 import slyce.core.*

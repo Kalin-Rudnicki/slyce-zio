@@ -4,8 +4,8 @@ import cats.data.{EitherNel, NonEmptyList}
 import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
-import harness.core.InfiniteSet
 import java.util.UUID
+import oxygen.core.InfiniteSet
 import scala.util.hashing.MurmurHash3
 
 import slyce.core.*
@@ -120,8 +120,7 @@ object NFA {
               Pointer(State.TransitionOnEpsilon(next :: _next :: Nil)),
             )
           }
-        else
-          next.asRight
+        else next.asRight
 
     }
 

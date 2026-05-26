@@ -2,7 +2,8 @@ package slyce.generate.lexer
 
 import cats.data.NonEmptyList
 import cats.syntax.option.*
-import harness.core.*
+import oxygen.core.InfiniteSet
+import oxygen.predef.core.{unesc, IndentedString}
 
 import slyce.generate.*
 
@@ -78,7 +79,7 @@ object Regex {
     // builders
 
     def union(charClasses: CharClass*): CharClass =
-      CharClass(InfiniteSet.union(charClasses.map(_.chars)*))
+      CharClass(InfiniteSet.unionAll(charClasses.map(_.chars)*))
 
     def inclusive(chars: Char*): CharClass =
       CharClass(InfiniteSet.Inclusive(chars.toSet))
@@ -94,12 +95,12 @@ object Regex {
 
     // constants
 
-    val `[A-Z]` : CharClass = inclusiveRange('A', 'Z')
-    val `[a-z]` : CharClass = inclusiveRange('a', 'z')
+    val `[A-Z]`: CharClass = inclusiveRange('A', 'Z')
+    val `[a-z]`: CharClass = inclusiveRange('a', 'z')
     val `\\d`: CharClass = inclusiveRange('0', '9')
-    val `.` : CharClass = exclusive()
+    val `.`: CharClass = exclusive()
 
-    val `[A-Za-z_\\d]` : CharClass = union(`[A-Z]`, `[a-z]`, inclusive('_'), `\\d`)
+    val `[A-Za-z_\\d]`: CharClass = union(`[A-Z]`, `[a-z]`, inclusive('_'), `\\d`)
 
   }
 

@@ -1,7 +1,7 @@
 package slyce.generate.output.formatters.scala3
 
-import harness.core.{given, *}
 import java.util.UUID
+import oxygen.predef.core.{unesc, IndentedString}
 
 import slyce.generate.grammar.*
 import slyce.generate.output.*
@@ -16,8 +16,8 @@ private[scala3] final class GenUtils(pkg: List[String], name: String, result: Re
     id match {
       case terminal: ExpandedGrammar.Identifier.NonTerminal =>
         terminal match {
-          case ExpandedGrammar.Identifier.NonTerminal.NamedNt(name)         => name
-          case ExpandedGrammar.Identifier.NonTerminal.NamedListNtTail(name) => s"${name}Tail"
+          case ExpandedGrammar.Identifier.NonTerminal.NamedNt(name)          => name
+          case ExpandedGrammar.Identifier.NonTerminal.NamedListNtTail(name)  => s"${name}Tail"
           case ExpandedGrammar.Identifier.NonTerminal.AnonListNt(key, _type) =>
             val suffix =
               _type match {
@@ -26,7 +26,7 @@ private[scala3] final class GenUtils(pkg: List[String], name: String, result: Re
                 case ExpandedGrammar.Identifier.NonTerminal.ListType.Tail   => "Tail"
               }
             s"AnonList${anonUUIDMap(key)}$suffix"
-          case ExpandedGrammar.Identifier.NonTerminal.AssocNt(name, idx) => s"$name$idx"
+          case ExpandedGrammar.Identifier.NonTerminal.AssocNt(name, idx)    => s"$name$idx"
           case ExpandedGrammar.Identifier.NonTerminal.AnonOptNt(identifier) =>
             identifier match {
               case ExpandedGrammar.Identifier.Term.Raw(name) => s"Optional_$name".unesc("`")

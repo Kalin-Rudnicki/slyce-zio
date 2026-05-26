@@ -1,7 +1,7 @@
 package slyce.generate.output.formatters.scala3
 
 import cats.syntax.list.*
-import harness.core.{given, *}
+import oxygen.predef.core.{unesc, IndentedString}
 
 import slyce.generate.grammar.*
 import slyce.generate.output.formatters.scala3.GenUtils.*
@@ -196,8 +196,7 @@ private[scala3] object GenGrammar {
       utils: GenUtils,
       state: ParsingTable.ParseState,
   ): IndentedString =
-    if state.actionsOnNonTerminals.isEmpty then
-      "onNT = PartialFunction.empty"
+    if state.actionsOnNonTerminals.isEmpty then "onNT = PartialFunction.empty"
     else
       IndentedString.inline(
         "onNT = {",

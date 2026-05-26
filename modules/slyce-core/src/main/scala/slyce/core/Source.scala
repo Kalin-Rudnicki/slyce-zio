@@ -1,12 +1,11 @@
 package slyce.core
 
 import cats.data.NonEmptyList
-import cats.syntax.either.*
 import cats.syntax.list.*
-import cats.syntax.option.*
-import harness.core.*
 import java.util.UUID
 import monocle.Monocle.*
+import oxygen.predef.color.*
+import oxygen.predef.core.*
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.math.Ordering.Implicits.infixOrderingOps
@@ -40,7 +39,7 @@ object Source {
       showName: Boolean,
       marker: Config.Marker,
       eofMarker: Config.Marker,
-      colors: NonEmptyList[Color],
+      colors: NonEmptyList[Color.Concrete],
   )
   object Config {
 
@@ -81,8 +80,7 @@ object Source {
     ): String = {
       // NOTE : I don't think this being used incorrectly is worth forcing this function to return an error type.
       msgs.foreach { msg =>
-        if msg.span.optionalSource.exists(_ != source) then
-          throw new RuntimeException("`Source.mark` received marked messages not associated with source, consider using `Source.markAll`")
+        if msg.span.optionalSource.exists(_ != source) then throw new RuntimeException("`Source.mark` received marked messages not associated with source, consider using `Source.markAll`")
       }
 
       val cq1 = config.colors
@@ -124,7 +122,7 @@ object Source {
       final case class ColoredMessage(
           messages: List[String],
           span: Span.Highlight,
-          color: Color,
+          color: Color.Concrete,
       ) { self =>
         def withMessage(other: Message): ColoredMessage = ColoredMessage(self.messages ::: other.messages.toList, span, color)
       }
@@ -195,17 +193,17 @@ object Source {
         loop(messages, Nil, Nil, Nil)
       }
 
-      def splitHighlights(messages: List[Message], allColors: NonEmptyList[Color]): (List[List[Line1]], NonEmptyList[Color]) = {
+      def splitHighlights(messages: List[Message], allColors: NonEmptyList[Color.Concrete]): (List[List[Line1]], NonEmptyList[Color.Concrete]) = {
         @tailrec
         def loop(
             queue: List[Message],
-            colorQueue: NonEmptyList[Color],
+            colorQueue: NonEmptyList[Color.Concrete],
             entering: Option[ColoredMessage],
             rInLine: List[ColoredMessage],
             rCurrentStack: List[Line1],
             rLaterStack: List[Message],
             rFinishedStacks: List[List[Line1]],
-        ): (List[List[Line1]], NonEmptyList[Color]) =
+        ): (List[List[Line1]], NonEmptyList[Color.Concrete]) =
           queue match {
             case queueH :: queueT =>
               val cm = ColoredMessage(queueH.messages.toList, queueH.span, colorQueue.head)
@@ -223,11 +221,9 @@ object Source {
                   } else if queueH.span.start.absolutePos > lastInLine.span.end.absolutePos then
                     if queueH.span.start.lineNo != lastInLine.span.end.lineNo then
                       loop(queue, colorQueue, None, Nil, Line1(entering, rInLine.reverse, None) :: rCurrentStack, rLaterStack, rFinishedStacks)
-                    else if queueH.spansMultipleLines then
-                      loop(queueT, nextColorQueue, cm.some, Nil, Line1(entering, rInLine.reverse, cm.some) :: rCurrentStack, rLaterStack, rFinishedStacks)
+                    else if queueH.spansMultipleLines then loop(queueT, nextColorQueue, cm.some, Nil, Line1(entering, rInLine.reverse, cm.some) :: rCurrentStack, rLaterStack, rFinishedStacks)
                     else loop(queueT, nextColorQueue, entering, cm :: rInLine, rCurrentStack, rLaterStack, rFinishedStacks)
-                  else
-                    loop(queueT, colorQueue, entering, rInLine, rCurrentStack, queueH :: rLaterStack, rFinishedStacks)
+                  else loop(queueT, colorQueue, entering, rInLine, rCurrentStack, queueH :: rLaterStack, rFinishedStacks)
                 case None =>
                   if queueH.spansMultipleLines then {
                     loop(queueT, nextColorQueue, cm.some, Nil, Line1(entering, rInLine.reverse, cm.some) :: rCurrentStack, rLaterStack, rFinishedStacks)
@@ -254,7 +250,7 @@ object Source {
         @tailrec
         def loop(
             queue: List[Line1],
-            enteringPos: Option[(Span.Pos, Color, Span.Pos)],
+            enteringPos: Option[(Span.Pos, Color.Concrete, Span.Pos)],
             rStack: List[Line2],
         ): List[Line2] =
           enteringPos match {
@@ -351,13 +347,13 @@ object Source {
 
     }
 
-    def pairEofColors(messages: List[String], allColors: NonEmptyList[Color], colorQueue: NonEmptyList[Color]): List[(Color, String)] = {
+    def pairEofColors(messages: List[String], allColors: NonEmptyList[Color.Concrete], colorQueue: NonEmptyList[Color.Concrete]): List[(Color.Concrete, String)] = {
       @tailrec
       def loop(
           messages: List[String],
-          colorQueue: NonEmptyList[Color],
-          rStack: List[(Color, String)],
-      ): List[(Color, String)] =
+          colorQueue: NonEmptyList[Color.Concrete],
+          rStack: List[(Color.Concrete, String)],
+      ): List[(Color.Concrete, String)] =
         messages match {
           case head :: tail => loop(tail, colorQueue.tail.toNel.getOrElse(allColors), (colorQueue.head, head) :: rStack)
           case Nil          => rStack.reverse

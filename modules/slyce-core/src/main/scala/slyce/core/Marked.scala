@@ -1,6 +1,6 @@
 package slyce.core
 
-import harness.core.*
+import oxygen.predef.core.*
 
 final case class Marked[+T](
     value: T,

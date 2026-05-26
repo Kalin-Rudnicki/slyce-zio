@@ -1,7 +1,6 @@
 package slyce.test.json
 
 import cats.syntax.option.*
-import harness.zio.test.*
 import zio.test.*
 import zio.test.Assertion.*
 

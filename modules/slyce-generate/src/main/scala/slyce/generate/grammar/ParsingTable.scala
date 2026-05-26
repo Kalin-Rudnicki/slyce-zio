@@ -5,7 +5,8 @@ import cats.syntax.either.*
 import cats.syntax.list.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
-import harness.core.{given, *}
+import oxygen.predef.color.*
+import oxygen.predef.core.{toText, unesc, IndentedString}
 import scala.annotation.tailrec
 
 import slyce.core.*
@@ -148,8 +149,9 @@ object ParsingTable {
         eofIsValid: Boolean,
     ) {
       override def toString: String =
-        (validTerminals.map(_.toString).toList.sorted ::: Option.when(eofIsValid)("$".cyan.toString).toList)
+        (validTerminals.map(_.toString).toList.sorted ::: Option.when(eofIsValid)("$".toText.cyanFg.toString).toList)
           .mkString("Follow< ", ", ", " >")
+          .toText
           .magentaBg
           .toString
     }

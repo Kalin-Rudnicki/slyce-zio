@@ -5,7 +5,7 @@ import cats.syntax.either.*
 import cats.syntax.list.*
 import cats.syntax.option.*
 import cats.syntax.parallel.*
-import harness.core.InfiniteSet
+import oxygen.core.InfiniteSet
 import scala.annotation.tailrec
 
 import slyce.core.*
@@ -127,7 +127,7 @@ object DFA {
         expandedStates.toList.collect { case NFA.State.TransitionOnChars(charClass, to) => (charClass.chars, to.value) }
 
       val explicitChars: Set[Char] =
-        InfiniteSet.explicit(transitionPairs.map(_._1)*)
+        transitionPairs.flatMap(_._1.explicit).toSet
 
       val transitions: Map[Set[Char], Option[NFAStates]] =
         explicitChars.toList

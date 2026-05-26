@@ -1,6 +1,6 @@
 package slyce.core
 
-import harness.core.*
+import oxygen.predef.core.*
 
 trait Token extends Product {
   val tokName: String

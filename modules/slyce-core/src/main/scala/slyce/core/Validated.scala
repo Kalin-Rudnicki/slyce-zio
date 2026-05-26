@@ -3,7 +3,6 @@ package slyce.core
 import cats.data.EitherNel
 import cats.syntax.either.*
 import cats.syntax.parallel.*
-import harness.core.*
 
 import slyce.core.*
 

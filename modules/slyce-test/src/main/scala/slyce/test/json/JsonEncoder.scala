@@ -1,6 +1,6 @@
 package slyce.test.json
 
-import harness.core.StringEncoder
+import oxygen.predef.core.*
 
 trait JsonEncoder[-T] { self =>
 
@@ -30,7 +30,7 @@ object JsonEncoder {
     case Some(value) => JsonEncoder[T].encode(value)
     case None        => Json.JsonNull
   }
-  
+
   given fromStringEncoder: [T: StringEncoder] => JsonEncoder[T] = JsonEncoder.string.cmap(StringEncoder[T].encode)
-  
+
 }

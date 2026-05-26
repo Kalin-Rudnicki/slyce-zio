@@ -2,7 +2,7 @@ package slyce.generate.main
 
 import cats.syntax.either.*
 import cats.syntax.option.*
-import harness.core.*
+import oxygen.predef.core.{unesc, IndentedString}
 
 import slyce.core.*
 import slyce.generate.lexer.*
@@ -60,7 +60,7 @@ object ConvertLexer {
       case CurrentLexer.NonTerminal.CharClass._1(_, isFlipped, ccChars, _) =>
         val base =
           Regex.CharClass.union(
-            ccChars.toNonEmptyList.toList.map(convertCCChars) *,
+            ccChars.toNonEmptyList.toList.map(convertCCChars)*,
           )
 
         if isFlipped.toOption.nonEmpty then base.~

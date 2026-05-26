@@ -1,6 +1,6 @@
 package slyce.test.json
 
-import harness.zio.*
+import oxygen.predef.executable.*
 
 import slyce.parse.exe.*
 

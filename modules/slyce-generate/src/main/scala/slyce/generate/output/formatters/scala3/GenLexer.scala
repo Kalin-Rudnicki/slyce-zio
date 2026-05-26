@@ -1,7 +1,6 @@
 package slyce.generate.output.formatters.scala3
 
-import harness.core.{Lazy as _, *}
-import harness.core.given
+import oxygen.predef.core.{unesc, IndentedString}
 
 import slyce.core.*
 import slyce.generate.groupChars

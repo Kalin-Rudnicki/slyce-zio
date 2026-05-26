@@ -1,9 +1,9 @@
 package slyce.generate
 
 import cats.syntax.option.*
-import harness.core.*
-import harness.zio.*
 import java.util.UUID
+import oxygen.predef.core.{unesc, IndentedString}
+import oxygen.zio.system.Path
 import scala.annotation.tailrec
 import zio.*
 
@@ -22,10 +22,8 @@ object Helpers {
     val newSeen = seen | unseen
     val newUnseen = unseen.flatMap(findF) &~ newSeen
 
-    if newUnseen.nonEmpty then
-      findAll(newUnseen, newSeen)(findF)
-    else
-      newSeen
+    if newUnseen.nonEmpty then findAll(newUnseen, newSeen)(findF)
+    else newSeen
   }
 
   trait ExactEquality {
@@ -45,7 +43,7 @@ object Helpers {
     }
 
   def sourceFromFile(file: Path): Task[Source] =
-    file.readString.map(Source(_, file.show.some))
+    file.read.map(Source(_, file.pathName.some))
 
 }
 

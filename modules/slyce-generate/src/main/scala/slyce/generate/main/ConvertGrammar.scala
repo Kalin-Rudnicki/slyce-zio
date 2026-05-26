@@ -156,7 +156,7 @@ object ConvertGrammar {
     (
       GrammarInput.Identifier.Raw(
         raw._2.toNonEmptyList.toList.map {
-          case CurrentGrammar.NonTerminal.Char._1(chars) => chars.text
+          case CurrentGrammar.NonTerminal.Char._1(chars)   => chars.text
           case CurrentGrammar.NonTerminal.Char._2(escChar) =>
             escChar.text(1) match {
               case 'n'  => "\n"

@@ -3,8 +3,8 @@ package slyce.generate.debugging
 import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.list.*
-import harness.core.{Lazy as _, *}
 import java.util.UUID
+import oxygen.predef.core.{unesc, IndentedString}
 import scalatags.Text.all.{id as htmlId, *}
 
 import slyce.core.*
@@ -169,15 +169,14 @@ object Result {
       def productTitleList(product: Product): Frag = {
         val simpleName = product.getClass.getSimpleName
         shared.titledList(if simpleName.nonEmpty then simpleName else product.toString)(
-          product.productElementNames.zip(product.productIterator).toList *,
+          product.productElementNames.zip(product.productIterator).toList*,
         )
       }
 
       object autoShow {
 
         def apply(any: Any, maxDepth: Int = -1): Frag =
-          if maxDepth == 0 then
-            any.toString
+          if maxDepth == 0 then any.toString
           else
             any.asInstanceOf[Matchable] match {
               case anonListNT: ExpandedGrammar.Identifier.NonTerminal.AnonListNt => showProduct(anonListNT, maxDepth - 1)
@@ -484,10 +483,8 @@ object Result {
                     ),
                   ),
                   shared.makeCell(shared.shadedIf(prod.elements.isEmpty))(
-                    if prod.elements.nonEmpty then
-                      shared.autoShow(prod.elements)
-                    else
-                      "[Empty Production]",
+                    if prod.elements.nonEmpty then shared.autoShow(prod.elements)
+                    else "[Empty Production]",
                   ),
                 )
 

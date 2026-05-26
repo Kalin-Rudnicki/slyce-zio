@@ -1,10 +1,8 @@
 package slyce.parse.exe
 
-import cats.data.NonEmptyList
-import cats.syntax.option.*
-import harness.cli.*
-import harness.core.*
-import harness.zio.*
+import oxygen.predef.core.*
+import oxygen.predef.executable.{*, given}
+import oxygen.predef.zio.*
 import zio.*
 
 import slyce.core.*
@@ -12,55 +10,51 @@ import slyce.parse.Parser as SlyceParser
 
 object ParseExe {
 
-  private given errorLogger: ErrorLogger[Throwable] =
-    ErrorLogger.withGetMessage[Throwable].atLevel.fatal
-
   private final case class Config(files: NonEmptyList[String])
   private object Config {
 
-    val parser: Parser[Config] =
+    val parser: Params[Config] =
       (
-        Parser.values.nel[String](LongName.unsafe("file")),
+        Params.value[String]("file").repeatedNel
       ).map(Config.apply)
 
   }
 
-  private def fileRec(file: Path, supportedFileTypes: Set[String]): RIO[HarnessEnv, List[Path]] =
+  private def fileRec(file: Path, supportedFileTypes: Set[String]): Task[List[Path]] =
     file.exists.flatMap {
       case true =>
-        file.isFile.flatMap {
-          case true =>
-            if file.pathName.ext.fold(false)(supportedFileTypes.contains) then ZIO.succeed(file :: Nil)
-            else Logger.log.warning(s"Ignoring file, invalid extension: $file").as(Nil)
-          case false =>
-            file.isDirectory.flatMap {
-              case true =>
-                Logger.log.detailed(s"Searching in directory: $file") *>
-                  file.children.flatMap { children => ZIO.foreach(children.toList)(fileRec(_, supportedFileTypes)) }.map(_.flatten)
-              case false => Logger.log.warning(s"File is not file or directory? : $file").as(Nil)
-            }
+        file.`type`.flatMap {
+          case Path.Type.File =>
+            if file.fileName.`extension`.fold(false)(supportedFileTypes.contains) then ZIO.succeed(file :: Nil)
+            else ZIO.logWarning(s"Ignoring file, invalid extension: $file").as(Nil)
+          case Path.Type.Directory =>
+            ZIO.logDetailed(s"Searching in directory: $file") *>
+              file.children.flatMap { children => ZIO.foreach(children.toList)(fileRec(_, supportedFileTypes)) }.map(_.flatten)
+          case Path.Type.Other =>
+            ZIO.logWarning(s"File is not file or directory? : $file").as(Nil)
         }
-      case false => Logger.log.warning(s"File does not exist: $file").as(Nil)
+      case false =>
+        ZIO.logWarning(s"File does not exist: $file").as(Nil)
     }
 
-  private def getFiles(config: Config, supportedFileTypes: Set[String]): RIO[HarnessEnv, List[Path]] =
-    ZIO.foreach(config.files.toList)(Path(_).flatMap(fileRec(_, supportedFileTypes))).map(_.flatten)
+  private def getFiles(config: Config, supportedFileTypes: Set[String]): Task[List[Path]] =
+    ZIO.foreach(config.files.toList)(Path.of(_).flatMap(fileRec(_, supportedFileTypes))).map(_.flatten)
 
   private def lexExe(parser: SlyceParser, supportedFileTypes: Set[String]): Executable =
     Executable
-      .withParser(Config.parser)
-      .withEffect { config =>
+      .withCLIParser(Config.parser)
+      .withExecute { config =>
         for {
-          _ <- Logger.log.info("=====| Running Lex |=====")
+          _ <- ZIO.logInfo("=====| Running Lex |=====")
           files <- getFiles(config, supportedFileTypes)
           _ <- ZIO.foreachDiscard(files) { file =>
             for {
-              str <- file.readString
+              str <- file.read
               source = Source(str, file.pathName.name.some)
               res = parser.lexer.tokenize(source)
               _ <- res match {
-                case Right(toks)  => Logger.log.info(source.mark(toks.map(tok => Marked(tok.tokName, tok.span))))
-                case Left(errors) => Logger.log.error(source.mark(errors.toList))
+                case Right(toks)  => ZIO.logInfo(source.mark(toks.map(tok => Marked(tok.tokName, tok.span))))
+                case Left(errors) => ZIO.logError(source.mark(errors.toList))
               }
             } yield ()
           }
@@ -69,29 +63,28 @@ object ParseExe {
 
   private def stressTestExe(parser: SlyceParser, supportedFileTypes: Set[String]): Executable =
     Executable
-      .withParser(Config.parser)
-      .withEffect { config =>
+      .withCLIParser(Config.parser)
+      .withExecute { config =>
         for {
-          _ <- Logger.log.info("=====| Running Stress Test |=====")
+          _ <- ZIO.logInfo("=====| Running Stress Test |=====")
           files <- getFiles(config, supportedFileTypes)
           _ <- ZIO.foreachDiscard(files) { file =>
             for {
-              str <- file.readString
+              str <- file.read
               source = Source(str, file.pathName.name.some)
               _ <- ZIO.succeed(parser.lexer.tokenize(source)).timed.flatMap {
                 case (duration1, Right(toks)) =>
                   ZIO.succeed(parser.grammar.buildTree(source, toks)).timed.flatMap {
                     case (duration2, Right(_)) =>
-                      Logger.log
-                        .info(s"$file\n  - duration.lexer: ${duration1.prettyPrint}\n  - duration.grammar: ${duration2.prettyPrint}\n  - duration.total: ${(duration1 + duration2).prettyPrint}")
+                      ZIO.logInfo(s"$file\n  - duration.lexer: ${duration1.render}\n  - duration.grammar: ${duration2.render}\n  - duration.total: ${(duration1 + duration2).render}")
                     case (duration2, Left(errors)) =>
-                      Logger.log.error(
-                        s"$file\n  - duration.lexer: ${duration1.prettyPrint}\n  - duration.grammar: ${duration2.prettyPrint}\n  - duration.total: ${(duration1 + duration2).prettyPrint}\n${source
-                          .mark(errors.toList)}",
+                      ZIO.logError(
+                        s"$file\n  - duration.lexer: ${duration1.render}\n  - duration.grammar: ${duration2.render}\n  - duration.total: ${(duration1 + duration2).render}\n${source
+                            .mark(errors.toList)}",
                       )
                   }
                 case (duration1, Left(errors)) =>
-                  Logger.log.error(s"$file\n  - duration.lexer: ${duration1.prettyPrint}\n${source.mark(errors.toList)}")
+                  ZIO.logError(s"$file\n  - duration.lexer: ${duration1.render}\n${source.mark(errors.toList)}")
               }
             } yield ()
           }
@@ -101,7 +94,7 @@ object ParseExe {
   def fromParser(parer: SlyceParser)(supportedFileType0: String, supportedFileTypeN: String*): Executable = {
     val supportedFileTypes: Set[String] = supportedFileTypeN.toSet + supportedFileType0
 
-    Executable.fromSubCommands(
+    Executable.oneOf(
       "lex" -> lexExe(parer, supportedFileTypes),
       "stress-test" -> stressTestExe(parer, supportedFileTypes),
     )

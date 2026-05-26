@@ -1,7 +1,7 @@
 package slyce.generate
 
 import cats.syntax.either.*
-import harness.core.*
+import oxygen.predef.core.{unesc, IndentedString}
 import scala.annotation.tailrec
 
 extension (chars: Set[Char]) {
@@ -26,18 +26,15 @@ extension (chars: Set[Char]) {
                     t,
                     h,
                   )
-                else
-                  (current, queue)
+                else (current, queue)
               case Nil =>
                 (current, Nil)
             }
 
           val (upper, rest) = loop2(tail, lower)
           val entry =
-            if upper - lower > 0 then
-              (lower, upper).asRight
-            else
-              lower.asLeft
+            if upper - lower > 0 then (lower, upper).asRight
+            else lower.asLeft
           loop(
             rest,
             entry :: stack,

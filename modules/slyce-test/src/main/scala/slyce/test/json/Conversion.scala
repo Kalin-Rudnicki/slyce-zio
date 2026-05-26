@@ -4,7 +4,7 @@ object Conversion {
 
   private def convertChar(char: JsonParser.NonTerminal.StrElem): String =
     char.lift match {
-      case JsonParser.Terminal.chars(text, _) => text
+      case JsonParser.Terminal.chars(text, _)   => text
       case JsonParser.Terminal.escChar(text, _) =>
         text(1) match {
           case 'n'  => "\n"
@@ -29,12 +29,12 @@ object Conversion {
           case JsonParser.Terminal.`true`(_)  => Json.JsonBoolean(true)
           case JsonParser.Terminal.`false`(_) => Json.JsonBoolean(false)
         }
-      case JsonParser.NonTerminal.JsonInt(value)    => Json.JsonInt(value.text.toInt)
-      case JsonParser.NonTerminal.JsonDouble(value) => Json.JsonDouble(BigDecimal(value.text))
-      case JsonParser.NonTerminal.JsonNull(_)       => Json.JsonNull
+      case JsonParser.NonTerminal.JsonInt(value)         => Json.JsonInt(value.text.toInt)
+      case JsonParser.NonTerminal.JsonDouble(value)      => Json.JsonDouble(BigDecimal(value.text))
+      case JsonParser.NonTerminal.JsonNull(_)            => Json.JsonNull
       case jsonObject: JsonParser.NonTerminal.JsonObject =>
         jsonObject match {
-          case JsonParser.NonTerminal.JsonObject._1(_, _) => Json.JsonObject(Map.empty)
+          case JsonParser.NonTerminal.JsonObject._1(_, _)              => Json.JsonObject(Map.empty)
           case JsonParser.NonTerminal.JsonObject._2(_, children, _, _) =>
             Json.JsonObject(children.toNonEmptyList.toList.map(p => (convertString(p._1), convert(p._3))).toMap)
         }

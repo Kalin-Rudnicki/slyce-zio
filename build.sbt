@@ -53,8 +53,10 @@ lazy val `slyce-core` =
     .settings(
       name := "slyce-core",
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-core" % Versions.harness,
-        MyOrg %% "harness-zio-test" % Versions.harness % Test,
+        MyOrg %% "oxygen-core" % Versions.oxygen,
+        MyOrg %% "oxygen-test" % Versions.oxygen % Test,
+        // TODO (KR) : remove this
+        "org.typelevel" %% "cats-core" % "2.13.0",
         "com.lihaoyi" %% "scalatags" % Versions.scalaTags,
         "com.github.julien-truffaut" %% "monocle-macro" % Versions.monocle,
       ),
@@ -78,7 +80,7 @@ lazy val `slyce-parse-exe` =
       name := "slyce-parse-exe",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-zio" % Versions.harness,
+        MyOrg %% "oxygen-executable" % Versions.oxygen,
       ),
     )
     .dependsOn(`slyce-parse` % testAndCompile)
@@ -89,10 +91,10 @@ lazy val `slyce-generate` =
     .settings(
       name := "slyce-generate",
       sonatypeCredentialHost := "s01.oss.sonatype.org",
-      // version := "2.1.5",
+      // version := "3.0.0",
       assemblyJarName := s"../../../../jars/${name.value}-${version.value}.jar",
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-zio" % Versions.harness,
+        MyOrg %% "oxygen-executable" % Versions.oxygen,
       ),
     )
     .dependsOn(`slyce-parse` % testAndCompile)
@@ -137,3 +139,6 @@ lazy val `slyce-root` =
       // TODO (KR) : IDEA-PLUGIN
       // `slyce-idea-plugin`
     )
+
+addCommandAlias("fmt", "scalafmtSbt; scalafmtAll;")
+addCommandAlias("fmt-check", "scalafmtSbtCheck; scalafmtCheckAll;")

@@ -1,7 +1,7 @@
 package slyce.generate.error
 
 import cats.data.NonEmptyList
-import harness.core.*
+import oxygen.predef.core.safeGetMessage
 
 import slyce.core.*
 

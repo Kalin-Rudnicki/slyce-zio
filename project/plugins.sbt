@@ -7,6 +7,8 @@ addSbtPlugin("com.geirsson" % "sbt-ci-release" % "1.5.7")
 
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "1.2.0")
 
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.6")
+
 // TODO (KR) : IDEA-PLUGIN
 // addSbtPlugin("org.jetbrains" % "sbt-idea-plugin" % "3.14.4")
 // addSbtPlugin("org.jetbrains.scala" % "sbt-ide-settings" % "1.1.1")

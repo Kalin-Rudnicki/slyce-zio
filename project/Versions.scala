@@ -2,7 +2,7 @@
 
 object Versions {
 
-  val harness = "4.2.5"
+  val oxygen = "0.4.1"
 
   val monocle = "3.0.0-M6"
 

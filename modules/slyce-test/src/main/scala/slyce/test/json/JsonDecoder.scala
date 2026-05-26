@@ -1,10 +1,6 @@
 package slyce.test.json
 
-import cats.data.EitherNel
-import cats.syntax.either.*
-import cats.syntax.option.*
-import cats.syntax.parallel.*
-import harness.core.StringDecoder
+import oxygen.predef.core.*
 
 trait JsonDecoder[+T] { self =>
 
@@ -57,7 +53,7 @@ object JsonDecoder {
     json =>
       pf.lift(json) match {
         case Some(value) => value.asRight
-        case None        => JsonDecoder.Fail.RootCause(s"expected type '$expType'").leftNel
+        case None        => JsonDecoder.Fail.RootCause(s"expected type '$expType'").asLeftNel
       }
 
   given json: JsonDecoder[Json] = _.asRight
@@ -102,7 +98,7 @@ object JsonDecoder {
     }
 
   given fromStringDecoder: [T: StringDecoder] => JsonDecoder[T] =
-    JsonDecoder.string.emap(StringDecoder[T].decodeAccumulating(_).leftMap(_.map(JsonDecoder.Fail.RootCause.apply)))
+    JsonDecoder.string.emap(StringDecoder[T].decodeDetailed(_).leftMap(e => NonEmptyList.one(JsonDecoder.Fail.RootCause(e))))
 
   def forKey[T: JsonDecoder](key: String): JsonDecoder[T] =
     JsonDecoder.jsonObject.emap { map =>
@@ -111,7 +107,7 @@ object JsonDecoder {
         case None       =>
           JsonDecoder[T].produce match {
             case Some(value) => value.asRight
-            case None        => JsonDecoder.Fail.RootCause("missing required key").leftNel
+            case None        => JsonDecoder.Fail.RootCause("missing required key").asLeftNel
           }
       }).leftMap(_.map(JsonDecoder.Fail.DownFieldObject(key, _)))
     }

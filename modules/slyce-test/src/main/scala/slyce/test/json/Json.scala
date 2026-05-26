@@ -1,8 +1,6 @@
 package slyce.test.json
 
-import cats.data.EitherNel
-import cats.syntax.either.*
-import cats.syntax.option.*
+import oxygen.predef.core.*
 
 import slyce.core.Source
 
@@ -34,7 +32,7 @@ object Json {
   def decode[T: JsonDecoder](source: Source): EitherNel[String, T] =
     Json.parse(source) match {
       case Right(json) => JsonDecoder[T].decodeAccumulating(json).leftMap(_.map(_.toString))
-      case Left(error) => error.leftNel
+      case Left(error) => error.asLeftNel
     }
   def decode[T: JsonDecoder](text: String, sourceName: String): EitherNel[String, T] =
     Json.decode(Source(text, sourceName.some))

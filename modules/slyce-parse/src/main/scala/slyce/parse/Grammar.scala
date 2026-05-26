@@ -71,7 +71,7 @@ object Grammar {
                   // TODO (KR) : Not sure if this one is right...
                   tmpState.onNT.lift(nt) match {
                     case Some(to) => loop(source, to, StackElement(nt.asRight, tmpState) :: newStack, tokens)
-                    case None =>
+                    case None     =>
                       badGrammar(
                         s"Tried to shift on invalid non-terminal (s${currentState.id} -> s${tmpState.id}(${nt.ntName}) -> ???)",
                         tokens.headOption match {

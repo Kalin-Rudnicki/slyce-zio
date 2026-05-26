@@ -1,6 +1,6 @@
 package slyce.generate.output.formatters.scala3
 
-import harness.core.{given, *}
+import oxygen.predef.core.{unesc, IndentedString}
 
 import slyce.generate.grammar.ExpandedGrammar
 import slyce.generate.output.Result

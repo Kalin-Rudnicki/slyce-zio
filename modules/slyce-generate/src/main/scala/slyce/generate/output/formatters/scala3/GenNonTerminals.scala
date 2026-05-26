@@ -3,7 +3,7 @@ package slyce.generate.output.formatters.scala3
 import cats.data.NonEmptyList
 import cats.syntax.list.*
 import cats.syntax.option.*
-import harness.core.{given, *}
+import oxygen.predef.core.{unesc, IndentedString}
 
 import slyce.generate.grammar.*
 import slyce.generate.output.*
