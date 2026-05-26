@@ -30,7 +30,7 @@ object Result {
       Marked(s"Unable to attempt building '$thing'", Span.Unknown).leftNel
 
     extension [R](r: R)
-      def attemptToBuild[R1, R2](nextName: String, buildWith: R => Validated[R1])(build: R1 => Validated[R2])(implicit zip: zio.Zippable[R, Validated[R2]]): zip.Out =
+      def attemptToBuild[R1, R2](nextName: String, buildWith: R => Validated[R1])(build: R1 => Validated[R2])(using zip: zio.Zippable[R, Validated[R2]]): zip.Out =
         buildWith(r) match {
           case Right(value) => zip.zip(r, build(value))
           case Left(_)      => zip.zip(r, unableToBuild(nextName))
@@ -86,7 +86,7 @@ object Result {
 
     extension (str: String)
       private def pluralize(amount: Long, pluralSuffix: String = "s", singularSuffix: String = ""): String =
-        s"$str${if (amount == 1) singularSuffix else pluralSuffix}"
+        s"$str${if amount == 1 then singularSuffix else pluralSuffix}"
 
     private object shared {
 
@@ -168,7 +168,7 @@ object Result {
 
       def productTitleList(product: Product): Frag = {
         val simpleName = product.getClass.getSimpleName
-        shared.titledList(if (simpleName.nonEmpty) simpleName else product.toString)(
+        shared.titledList(if simpleName.nonEmpty then simpleName else product.toString)(
           product.productElementNames.zip(product.productIterator).toList *,
         )
       }
@@ -176,7 +176,7 @@ object Result {
       object autoShow {
 
         def apply(any: Any, maxDepth: Int = -1): Frag =
-          if (maxDepth == 0)
+          if maxDepth == 0 then
             any.toString
           else
             any.asInstanceOf[Matchable] match {
@@ -195,7 +195,7 @@ object Result {
 
         private def showProduct(product: Product, maxDepth: Int): Frag =
           frag(
-            if (product.productArity == 0) product.toString else product.getClass.getSimpleName,
+            if product.productArity == 0 then product.toString else product.getClass.getSimpleName,
             ul(margin := "0")(
               product.productElementNames.zip(product.productIterator).toList.map { (k, v) =>
                 li(
@@ -484,7 +484,7 @@ object Result {
                     ),
                   ),
                   shared.makeCell(shared.shadedIf(prod.elements.isEmpty))(
-                    if (prod.elements.nonEmpty)
+                    if prod.elements.nonEmpty then
                       shared.autoShow(prod.elements)
                     else
                       "[Empty Production]",

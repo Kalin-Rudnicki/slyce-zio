@@ -162,13 +162,13 @@ object Lexer {
           (str, Span.Highlight(markedChars.value.head._2, markedChars.value.last._2, source)).asRight
         case Some((min, max)) =>
           def idx(i: Int): Validated[Int] = {
-            val i2 = if (i >= 0) i else i + str.length
-            if (i2 >= 0 && i2 <= str.length) i2.asRight
+            val i2 = if i >= 0 then i else i + str.length
+            if i2 >= 0 && i2 <= str.length then i2.asRight
             else badLexer(s"Invalid substring bounds ($i)", markedChars.span).leftNel
           }
 
           (idx(min), idx(max)).parTupled.flatMap { (min, max) =>
-            if (min <= max) {
+            if min <= max then {
               val text = str.substring(min, max + 1)
               val span = Span.Highlight(markedChars.value(min)._2, markedChars.value(max)._2, source)
               (text, span).asRight

@@ -10,7 +10,7 @@ import slyce.parse.Parser as SlyceParser
 
 object StressTest extends ExecutableApp {
 
-  private implicit val errorLogger: ErrorLogger[Throwable] =
+  private given errorLogger: ErrorLogger[Throwable] =
     ErrorLogger.withGetMessage[Throwable].atLevel.fatal
 
   private final case class Case(

@@ -11,7 +11,7 @@ trait Token extends Product {
 object Token {
 
   def mark(t: Token): Marked[String] =
-    Marked(if (t.isInstanceOf[Token.Const]) t.tokName else s"${t.tokName} : ${t.text.unesc}", t.span)
+    Marked(if t.isInstanceOf[Token.Const] then t.tokName else s"${t.tokName} : ${t.text.unesc}", t.span)
 
   trait Const { self: Token =>
     final val text = tokName

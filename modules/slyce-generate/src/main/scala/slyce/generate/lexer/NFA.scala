@@ -47,7 +47,7 @@ object NFA {
 
     private def validateNonEmptyModes(lexer: LexerInput): Validated[Any] =
       lexer.modes.parTraverse { mode =>
-        if (mode.lines.nonEmpty) ().rightNel
+        if mode.lines.nonEmpty then ().rightNel
         else mode.name.as(s"Mode has no lines : ${mode.name.value}").leftNel
       }
 
@@ -89,7 +89,7 @@ object NFA {
         }
 
       private def validateMin(lineSpan: Span, min: Int): Validated[Unit] =
-        if (min < 0) Marked(s"min($min) < 0", lineSpan).leftNel
+        if min < 0 then Marked(s"min($min) < 0", lineSpan).leftNel
         else ().asRight
 
       private def validateMax(lineSpan: Span, min: Int, max: Option[Int]): Validated[Unit] =
@@ -100,7 +100,7 @@ object NFA {
         }
 
       private def repeat(lineSpan: Span, reg: Regex, times: Int, next: Pointer[State]): Validated[Pointer[State]] =
-        if (times > 0) regexToState(lineSpan, reg, next).flatMap(repeat(lineSpan, reg, times - 1, _))
+        if times > 0 then regexToState(lineSpan, reg, next).flatMap(repeat(lineSpan, reg, times - 1, _))
         else next.asRight
 
       private def loopOnSelf(lineSpan: Span, reg: Regex, next: Pointer[State]): Validated[Pointer[State]] =
@@ -111,7 +111,7 @@ object NFA {
         }
 
       private def doRegexOrSkip(lineSpan: Span, reg: Regex, times: Int, next: Pointer[State]): Validated[Pointer[State]] =
-        if (times > 0)
+        if times > 0 then
           regexToState(lineSpan, reg, next).flatMap { _next =>
             doRegexOrSkip(
               lineSpan,

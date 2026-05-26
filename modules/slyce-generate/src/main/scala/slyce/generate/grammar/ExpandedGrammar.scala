@@ -3,8 +3,8 @@ package slyce.generate.grammar
 import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.option.*
-import java.util.UUID
 import harness.core.*
+import java.util.UUID
 import scala.annotation.tailrec
 
 import slyce.core.*
@@ -109,7 +109,7 @@ object ExpandedGrammar {
     }
     private object Expansion {
 
-      def mergeNTGroup(ntGroup: NTGroup)(includes: List[Expansion[_]]*): Expansion[Identifier] =
+      def mergeNTGroup(ntGroup: NTGroup)(includes: List[Expansion[?]]*): Expansion[Identifier] =
         Expansion(
           ntGroupHead(ntGroup),
           ntGroup :: includes.toList.flatten.flatMap(_.ntGroups),
@@ -285,7 +285,7 @@ object ExpandedGrammar {
           uuids.tail.map((_, uuids.head))
         }.toMap
 
-      if (newMappings.isEmpty)
+      if newMappings.isEmpty then
         (
           anonListNTs.map { nt => NTGroup.ListNT(nt.key.asRight, nt.partial.listType, nt.partial.startProds, nt.partial.repeatProds) },
           map,
@@ -358,7 +358,7 @@ object ExpandedGrammar {
     }
 
   private[generate] def assocNTId(name: String, idx: Int): Identifier.NonTerminal =
-    if (idx == 1) Identifier.NonTerminal.NamedNt(name)
+    if idx == 1 then Identifier.NonTerminal.NamedNt(name)
     else Identifier.NonTerminal.AssocNt(name, idx)
 
   private object convertNTGroup {
@@ -459,8 +459,8 @@ object ExpandedGrammar {
 
   private[generate] def ntGroupHead(ntGroup: NTGroup): Identifier.NonTerminal =
     ntGroup match {
-      case NTGroup.BasicNT(name, _) => Identifier.NonTerminal.NamedNt(name)
-      case NTGroup.LiftNT(name, _)  => Identifier.NonTerminal.NamedNt(name)
+      case NTGroup.BasicNT(name, _)                       => Identifier.NonTerminal.NamedNt(name)
+      case NTGroup.LiftNT(name, _)                        => Identifier.NonTerminal.NamedNt(name)
       case NTGroup.ListNT(name, listType, _, repeatProds) =>
         listNTId(
           name,

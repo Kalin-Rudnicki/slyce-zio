@@ -81,7 +81,7 @@ object Source {
     ): String = {
       // NOTE : I don't think this being used incorrectly is worth forcing this function to return an error type.
       msgs.foreach { msg =>
-        if (msg.span.optionalSource.exists(_ != source))
+        if msg.span.optionalSource.exists(_ != source) then
           throw new RuntimeException("`Source.mark` received marked messages not associated with source, consider using `Source.markAll`")
       }
 
@@ -213,34 +213,34 @@ object Source {
 
               rInLine.headOption.orElse(entering) match {
                 case Some(lastInLine) =>
-                  if (queueH.span == lastInLine.span) {
+                  if queueH.span == lastInLine.span then {
                     val (newEntering, newRInLine) = (entering, rInLine) match {
                       case (_, rInLineH :: rInLineT) => (entering, rInLineH.withMessage(queueH) :: rInLineT)
                       case (Some(entering), _)       => (entering.withMessage(queueH).some, rInLine)
                       case _                         => throw new RuntimeException("Not possible...")
                     }
                     loop(queueT, colorQueue, newEntering, newRInLine, rCurrentStack, rLaterStack, rFinishedStacks)
-                  } else if (queueH.span.start.absolutePos > lastInLine.span.end.absolutePos)
-                    if (queueH.span.start.lineNo != lastInLine.span.end.lineNo)
+                  } else if queueH.span.start.absolutePos > lastInLine.span.end.absolutePos then
+                    if queueH.span.start.lineNo != lastInLine.span.end.lineNo then
                       loop(queue, colorQueue, None, Nil, Line1(entering, rInLine.reverse, None) :: rCurrentStack, rLaterStack, rFinishedStacks)
-                    else if (queueH.spansMultipleLines)
+                    else if queueH.spansMultipleLines then
                       loop(queueT, nextColorQueue, cm.some, Nil, Line1(entering, rInLine.reverse, cm.some) :: rCurrentStack, rLaterStack, rFinishedStacks)
                     else loop(queueT, nextColorQueue, entering, cm :: rInLine, rCurrentStack, rLaterStack, rFinishedStacks)
                   else
                     loop(queueT, colorQueue, entering, rInLine, rCurrentStack, queueH :: rLaterStack, rFinishedStacks)
                 case None =>
-                  if (queueH.spansMultipleLines) {
+                  if queueH.spansMultipleLines then {
                     loop(queueT, nextColorQueue, cm.some, Nil, Line1(entering, rInLine.reverse, cm.some) :: rCurrentStack, rLaterStack, rFinishedStacks)
                   } else loop(queueT, nextColorQueue, entering, cm :: rInLine, rCurrentStack, rLaterStack, rFinishedStacks)
               }
             case Nil =>
               val newRCurrentStack =
-                if (entering.nonEmpty || rInLine.nonEmpty) Line1(entering, rInLine.reverse, None) :: rCurrentStack
+                if entering.nonEmpty || rInLine.nonEmpty then Line1(entering, rInLine.reverse, None) :: rCurrentStack
                 else rCurrentStack
               val newRFinishedStacks =
-                if (newRCurrentStack.nonEmpty) newRCurrentStack.reverse :: rFinishedStacks
+                if newRCurrentStack.nonEmpty then newRCurrentStack.reverse :: rFinishedStacks
                 else rFinishedStacks
-              if (rLaterStack.nonEmpty) loop(rLaterStack.reverse, colorQueue, None, Nil, Nil, Nil, newRFinishedStacks)
+              if rLaterStack.nonEmpty then loop(rLaterStack.reverse, colorQueue, None, Nil, Nil, Nil, newRFinishedStacks)
               else (newRFinishedStacks.reverse, colorQueue)
           }
 
@@ -309,17 +309,17 @@ object Source {
                   basicColorizedSubStr match {
                     case colorRegex(a, b, c) =>
                       List(
-                        if (c.nonEmpty) List(Color.Default.bgANSI, c.flatMap { case '\n' => "\\n"; case c => c.toString }, head.color.bgANSI)
+                        if c.nonEmpty then List(Color.Default.bgANSI, c.flatMap { case '\n' => "\\n"; case c => c.toString }, head.color.bgANSI)
                         else Nil,
                         List(Color.Default.fgANSI, b, head.color.fgANSI),
-                        if (a.nonEmpty) List(Color.Default.bgANSI, a, head.color.bgANSI) else Nil,
+                        if a.nonEmpty then List(Color.Default.bgANSI, a, head.color.bgANSI) else Nil,
                       ).flatten
                     case str => throw new RuntimeException(s"should not be possible...\n${str.unesc}")
                   }
 
                 val newRStack = Color.Default.fgANSI :: rColorizedSubStrs ::: plainSubStr :: rStack
 
-                if (head.span.end == line.lineEnd) newRStack
+                if head.span.end == line.lineEnd then newRStack
                 else loop2(head.span.end.onChar(source.input(head.span.end.inputIndex)), tail, newRStack)
               case Nil =>
                 source.input.substring(start.inputIndex, line.lineEnd.inputIndex + 1).stripSuffix("\n") :: rStack

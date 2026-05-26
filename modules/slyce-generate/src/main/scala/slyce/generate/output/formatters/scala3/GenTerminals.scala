@@ -46,7 +46,7 @@ private[scala3] object GenTerminals {
           IndentedString.indented(
             sortedRawTerminals.map { (n, _) =>
               val name =
-                if (n == "?") "`\\\\?`"
+                if n == "?" then "`\\\\?`"
                 else n.unesc("`")
               s"case ${n.unesc} => Terminal.$name(span)"
             },
@@ -80,16 +80,16 @@ private[scala3] object GenTerminals {
       ws: Option[NonEmptyList[Extras.With]],
   ): IndentedString = {
     val className =
-      if (isRaw)
-        if (baseTokName == "?") "`\\\\?`"
+      if isRaw then
+        if baseTokName == "?" then "`\\\\?`"
         else baseTokName.unesc("`")
       else baseTokName
-    val tokName = if (isRaw) baseTokName.unesc("\"\"\"\"") else baseTokName.unesc
-    val params = if (isRaw) s"span: $CorePath.Span.Highlight" else s"text: _root_.scala.Predef.String, span: $CorePath.Span.Highlight"
+    val tokName = if isRaw then baseTokName.unesc("\"\"\"\"") else baseTokName.unesc
+    val params = if isRaw then s"span: $CorePath.Span.Highlight" else s"text: _root_.scala.Predef.String, span: $CorePath.Span.Highlight"
     val body = s"final case class $className($params)"
     val idtStr = " " * body.length
     val extWiths = ws.fold(List.empty[Extras.With])(_.toList).map { w => s"${utils.qualifiedIdentifierName(w.nt)}.${w.withType}" }.sorted
-    val allWiths = if (isRaw) s"$CorePath.Token.Const" :: extWiths else extWiths
+    val allWiths = if isRaw then s"$CorePath.Token.Const" :: extWiths else extWiths
 
     IndentedString.inline(
       s"$body extends ${utils.qualifiedPath}.Terminal($tokName)",

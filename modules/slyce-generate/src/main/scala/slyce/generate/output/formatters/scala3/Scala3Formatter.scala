@@ -57,7 +57,7 @@ object Scala3Formatter extends Formatter {
     )
 
   private def packageName(pkg: List[String]): IndentedString =
-    if (pkg.nonEmpty) IndentedString.inline(pkg.mkString("package ", ".", ""), IndentedString.Break)
+    if pkg.nonEmpty then IndentedString.inline(pkg.mkString("package ", ".", ""), IndentedString.Break)
     else IndentedString.inline()
 
 }

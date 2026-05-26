@@ -12,7 +12,7 @@ import slyce.parse.Parser as SlyceParser
 
 object ParseExe {
 
-  private implicit val errorLogger: ErrorLogger[Throwable] =
+  private given errorLogger: ErrorLogger[Throwable] =
     ErrorLogger.withGetMessage[Throwable].atLevel.fatal
 
   private final case class Config(files: NonEmptyList[String])
@@ -30,7 +30,7 @@ object ParseExe {
       case true =>
         file.isFile.flatMap {
           case true =>
-            if (file.pathName.ext.fold(false)(supportedFileTypes.contains)) ZIO.succeed(file :: Nil)
+            if file.pathName.ext.fold(false)(supportedFileTypes.contains) then ZIO.succeed(file :: Nil)
             else Logger.log.warning(s"Ignoring file, invalid extension: $file").as(Nil)
           case false =>
             file.isDirectory.flatMap {

@@ -205,20 +205,20 @@ object ParsingTable {
 
       Validated.withValidations(
         allDefinedNTNames.groupBy(identity).toList.parTraverse { (nt, nts) =>
-          if (nts.size == 1) ().asRight
+          if nts.size == 1 then ().asRight
           else Marked(s"NT defined multiple times: $nt", Span.Unknown).leftNel
         },
         allReferencedNTs.toList.parTraverse { nt =>
-          if (allDefinedNTNameSet.contains(nt)) ().asRight
+          if allDefinedNTNameSet.contains(nt) then ().asRight
           else Marked(s"NT is referenced but not defined: $nt", Span.Unknown).leftNel
         },
-        if (allDefinedNTNameSet.contains(ExpandedGrammar.Identifier.NonTerminal.NamedNt(startName.value))) ().asRight
+        if allDefinedNTNameSet.contains(ExpandedGrammar.Identifier.NonTerminal.NamedNt(startName.value)) then ().asRight
         else startName.as(s"StartMode references undefined NT: ${startName.value}").leftNel,
       ) { ().asRight }
     }
 
     private def validateMaxLookAhead(maxLookAhead: Marked[Int]): Validated[Unit] =
-      if (maxLookAhead.value >= 1) ().asRight
+      if maxLookAhead.value >= 1 then ().asRight
       else maxLookAhead.as("max look ahead must be >= 1").leftNel
 
     private def mergeFollows(follows: List[List[Follow]]): List[Follow] =
@@ -238,14 +238,14 @@ object ParsingTable {
         ifPassThrough: List[Follow],
         maxLookAhead: Int,
     ): List[Follow] =
-      if (maxLookAhead <= 0) Nil
+      if maxLookAhead <= 0 then Nil
       else
         ids match {
-          case Nil => ifPassThrough.take(maxLookAhead)
+          case Nil                  => ifPassThrough.take(maxLookAhead)
           case (rt, sc, id) :: tail =>
             id match {
               case nt: ExpandedGrammar.Identifier.NonTerminal =>
-                if (alreadyExpanded.contains((rt, sc))) Nil
+                if alreadyExpanded.contains((rt, sc)) then Nil
                 else {
                   val newExpanded: Set[(ReducesTo, Int)] = alreadyExpanded + (rt -> sc)
                   val inlined: List[List[(ReducesTo, Int, ExpandedGrammar.Identifier)]] = {
@@ -375,14 +375,14 @@ object ParsingTable {
           }
         }
 
-      if (fesWithoutLookAhead.nonEmpty) {
+      if fesWithoutLookAhead.nonEmpty then {
         val fpStr = rFollowedPath.reverse.mkString(", ")
         val conflictsStr = fesWithoutLookAhead.map(fe => s"\n    - ${fe.reducesTo}[${fe.seen.size}] : ${fe.seen.mkString("  ")}").mkString
         Marked(
           s"No more look-ahead to use, consider increasing max-look-ahead.\n  Path followed: $fpStr\n  Conflicts:$conflictsStr",
           Span.Unknown,
         ).leftNel
-      } else if (fesWithLookAhead.isEmpty) {
+      } else if fesWithLookAhead.isEmpty then {
         val actionsOnTerminals = terminalTransitionMap.map { case (t, (c, _)) => (t, TmpActionState.Action.Push(c)) }
         TmpActionState.Action.LookAhead(actionsOnTerminals, None).asRight
       } else {
@@ -398,7 +398,7 @@ object ParsingTable {
 
         val actionOnEOF: Validated[Option[TmpActionState.Action.EOFAction]] =
           fesWithEOFLookAhead.toList match {
-            case Nil => None.asRight
+            case Nil          => None.asRight
             case value :: Nil =>
               value.reducesTo match {
                 case ReducesTo.###            => TmpActionState.Action.Accept.some.asRight
@@ -412,12 +412,12 @@ object ParsingTable {
             .parTraverse { (t, fes) =>
               (fes.toList, terminalTransitionMap.get(t)) match {
                 case (Nil, Some((c, _))) => (t, TmpActionState.Action.Push(c)).asRight
-                case (fe :: Nil, None) =>
+                case (fe :: Nil, None)   =>
                   fe.reducesTo match {
                     case prod: ReducesTo.Production => (t, TmpActionState.Action.Reduce(Closure.Production(prod, fe.seen))).asRight
                     case ReducesTo.###              => Marked("I don't think this should be possible... (reduce to ###)", Span.Unknown).leftNel
                   }
-                case (fes, None) => calcTerminalActions(Map.empty, fes.toSet, t :: rFollowedPath).map((t, _))
+                case (fes, None)           => calcTerminalActions(Map.empty, fes.toSet, t :: rFollowedPath).map((t, _))
                 case (fes, Some((c, cfs))) =>
                   cfs.toNel match {
                     case Some(NonEmptyList(head, tail)) => calcTerminalActions(head.validTerminals.toList.map((_, (c, tail))).toMap, fes.toSet, t :: rFollowedPath).map((t, _))

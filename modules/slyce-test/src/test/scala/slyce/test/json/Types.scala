@@ -10,7 +10,7 @@ object Types {
   )
   object Person {
 
-    implicit val decoder: JsonDecoder[Person] =
+    given decoder: JsonDecoder[Person] =
       JsonDecoder.jsonObject.flatMap { _ =>
         {
           JsonDecoder.forKey[String]("firstName") <*>
@@ -28,7 +28,7 @@ object Types {
   )
   object Friend {
 
-    implicit val decoder: JsonDecoder[Friend] =
+    given decoder: JsonDecoder[Friend] =
       JsonDecoder.jsonObject.flatMap { _ =>
         {
           JsonDecoder.forKey[String]("name") <*>

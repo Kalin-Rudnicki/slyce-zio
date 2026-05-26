@@ -83,7 +83,7 @@ private[scala3] object GenGrammar {
                 val prod = rawNT.productions.toList(prodNIdx)
 
                 val fqNT =
-                  if (rawNT.productions.size == 1) s"${utils.qualifiedIdentifierName(nt)}"
+                  if rawNT.productions.size == 1 then s"${utils.qualifiedIdentifierName(nt)}"
                   else s"${utils.qualifiedIdentifierName(nt)}._${prodNIdx + 1}"
 
                 val (
@@ -110,7 +110,7 @@ private[scala3] object GenGrammar {
                             case _: ExpandedGrammar.Identifier.NonTerminal => "Right"
                           }
                         val stateName =
-                          if (idx == 0) "toState"
+                          if idx == 0 then "toState"
                           else "_"
 
                         // TODO (KR) : I think this will break if there is '1 production' with '0 elements',
@@ -171,7 +171,7 @@ private[scala3] object GenGrammar {
       lookAhead: ParsingTable.ParseState.Action.LookAhead,
   ): List[(List[String], ParsingTable.ParseState.Action.Simple)] =
     lookAhead.actionsOnTerminals.toList.flatMap { case (term, action) =>
-      parserActionsOnTerminals(utils, prefix :+ s"(${if (prefix.isEmpty) "tok" else "_"}: ${utils.qualifiedIdentifierName(term)})", action)
+      parserActionsOnTerminals(utils, prefix :+ s"(${if prefix.isEmpty then "tok" else "_"}: ${utils.qualifiedIdentifierName(term)})", action)
     } :::
       lookAhead.actionOnEOF.map(parseActionOnEOF(prefix, _)).toList
 
@@ -196,7 +196,7 @@ private[scala3] object GenGrammar {
       utils: GenUtils,
       state: ParsingTable.ParseState,
   ): IndentedString =
-    if (state.actionsOnNonTerminals.isEmpty)
+    if state.actionsOnNonTerminals.isEmpty then
       "onNT = PartialFunction.empty"
     else
       IndentedString.inline(

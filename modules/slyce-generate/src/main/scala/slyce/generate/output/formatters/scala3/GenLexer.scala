@@ -32,7 +32,7 @@ private[scala3] object GenLexer {
       utils: GenUtils,
       state: DFA.State,
   ): IndentedString =
-    if (state.transitions.isEmpty) lexerStateDefault(utils, state)
+    if state.transitions.isEmpty then lexerStateDefault(utils, state)
     else {
       val grouped: List[(Either[Char, (Char, Char)], Int, Option[Lazy[DFA.State]])] =
         state.transitions.toList
@@ -55,7 +55,7 @@ private[scala3] object GenLexer {
       val first2: List[Int] = sizes.take(2)
       val afterThat: List[Int] = sizes.drop(2)
 
-      if (sizes.size <= 3 || first2.sum >= afterThat.sum) lexerStatePF(utils, state, grouped)
+      if sizes.size <= 3 || first2.sum >= afterThat.sum then lexerStatePF(utils, state, grouped)
       else lexerStateMap(utils, state)
     }
 

@@ -14,7 +14,7 @@ import slyce.generate.parsers.Lexer as CurrentLexer
 
 object Main extends ExecutableApp {
 
-  private implicit val errorLogger: ErrorLogger[GenerateError] =
+  private given errorLogger: ErrorLogger[GenerateError] =
     ErrorLogger.withGetMessage[GenerateError].atLevel.fatal
 
   private object generate {
@@ -175,7 +175,7 @@ object Main extends ExecutableApp {
             extName = TargetLanguage.extName(config.targetLanguage)
             slyceRoot <- srcDir.child("main/slyce").tap(_.ensureIsDirectory).mapError(GenerateError.Unexpected(_))
             srcRoot <- srcDir.child(s"main/$extName").mapError(GenerateError.Unexpected(_))
-            tail = if (config.snapshot) "Snapshot" else ""
+            tail = if config.snapshot then "Snapshot" else ""
 
             entries <- findEntries(slyceRoot, Nil)
             _ <- ZIO.traverse(entries) { entry =>

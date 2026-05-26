@@ -50,7 +50,7 @@ object Span {
       Span.Highlight(start, end, source)
     }
 
-    implicit val ordering: Ordering[Highlight] =
+    given ordering: Ordering[Highlight] =
       Ordering
         .by[Highlight, Int](_.start.absolutePos)
         .orElseBy(_.end.absolutePos)
@@ -134,7 +134,7 @@ object Span {
     def atStartOfLine: Pos = Pos(absolutePos - posInLine + Pos.PosInLineStart, lineNo, Pos.PosInLineStart)
 
     def toString(showAbsolute: Boolean): String =
-      s"${if (showAbsolute) s"$absolutePos @ " else ""}$lineNo:$posInLine"
+      s"${if showAbsolute then s"$absolutePos @ " else ""}$lineNo:$posInLine"
 
     override def toString: String =
       toString(false)
@@ -152,11 +152,11 @@ object Span {
     def eolAndSonl(pos: Pos, source: Source): (Pos, Pos) = {
       val idx = pos.inputIndex
       val newPos = pos.onChar(source.input(idx))
-      if (newPos.lineNo != pos.lineNo || idx == source.input.length) (pos, newPos)
+      if newPos.lineNo != pos.lineNo || idx == source.input.length then (pos, newPos)
       else eolAndSonl(newPos, source)
     }
 
-    implicit val posOrdering: Ordering[Pos] = Ordering.by(_.absolutePos)
+    given posOrdering: Ordering[Pos] = Ordering.by(_.absolutePos)
 
   }
 

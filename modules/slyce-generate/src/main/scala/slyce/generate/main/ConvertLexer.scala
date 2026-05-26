@@ -63,7 +63,7 @@ object ConvertLexer {
             ccChars.toNonEmptyList.toList.map(convertCCChars) *,
           )
 
-        if (isFlipped.toOption.nonEmpty) base.~
+        if isFlipped.toOption.nonEmpty then base.~
         else base
       case CurrentLexer.NonTerminal.CharClass._2(char) =>
         Regex.CharClass.inclusive(char.text.head)

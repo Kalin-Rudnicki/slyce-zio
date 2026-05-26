@@ -117,7 +117,7 @@ object DFA {
         }
 
       (nfa.startMode :: toModeNames).parTraverse { modeName =>
-        if (nfa.modes.contains(modeName.value)) ().asRight
+        if nfa.modes.contains(modeName.value) then ().asRight
         else modeName.as(s"Invalid mode name : ${modeName.value}").leftNel
       }
     }
@@ -183,7 +183,7 @@ object DFA {
           unseen: Map[NFAStates, IState],
           shadows: Set[Shadows],
       ): (Map[NFAStates, IState], Set[Shadows]) =
-        if (unseen.isEmpty) (seen, shadows)
+        if unseen.isEmpty then (seen, shadows)
         else {
           val newSeen: Map[NFAStates, IState] = seen ++ unseen
           val newUnseen: Set[NFAStates] = unseen.flatMap { (_, iState) => childrenOfIState(iState) }.toSet &~ newSeen.keySet

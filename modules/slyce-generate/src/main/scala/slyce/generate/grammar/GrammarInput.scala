@@ -44,9 +44,9 @@ object GrammarInput {
         chars match {
           case Nil => Raw(str)
           case c :: rest =>
-            if (c == '_') identify(rest)
-            else if (c.isUpper) NonTerminal(str)
-            else if (c.isLower) Terminal(str)
+            if c == '_' then identify(rest)
+            else if c.isUpper then NonTerminal(str)
+            else if c.isLower then Terminal(str)
             else Raw(str)
         }
 

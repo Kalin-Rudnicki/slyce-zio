@@ -22,7 +22,7 @@ object Helpers {
     val newSeen = seen | unseen
     val newUnseen = unseen.flatMap(findF) &~ newSeen
 
-    if (newUnseen.nonEmpty)
+    if newUnseen.nonEmpty then
       findAll(newUnseen, newSeen)(findF)
     else
       newSeen

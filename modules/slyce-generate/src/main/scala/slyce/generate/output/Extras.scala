@@ -107,7 +107,7 @@ object Extras {
       expandedGrammar.deDuplicatedNTGroups.parTraverse(withsFromNTGroup).map { withsList =>
         val allWiths: List[With] = withsList.flatten.distinct
         val withsByNTAndType: Map[(ExpandedGrammar.Identifier.NonTerminal, With.Type), Withs] =
-          allWiths.groupByNel(w => (w.nt, w.withType))(Order.by(_.toString)).toMap.map { (k, ws) => (k, Withs(ws)) }
+          allWiths.groupByNel(w => (w.nt, w.withType))(using Order.by(_.toString)).toMap.map { (k, ws) => (k, Withs(ws)) }
         val withIsSingular: Map[(ExpandedGrammar.Identifier, With.Type), Boolean] =
           withsByNTAndType.toList.flatMap { case ((_, t), withs) =>
             withs match {
@@ -153,7 +153,7 @@ object Extras {
     private def withsFromNTGroup(ntGroup: ExpandedGrammar.NTGroup): Validated[List[With]] = {
       val ntGroupHead: ExpandedGrammar.Identifier.NonTerminal = ExpandedGrammar.ntGroupHead(ntGroup)
       ntGroup match {
-        case ExpandedGrammar.NTGroup.BasicNT(_, _) => Nil.asRight
+        case ExpandedGrammar.NTGroup.BasicNT(_, _)    => Nil.asRight
         case ExpandedGrammar.NTGroup.LiftNT(_, prods) =>
           prods.toList.map { prod => With(prod.lift, ntGroupHead, With.Type.Lift) }.asRight
         case ExpandedGrammar.NTGroup.ListNT(_, _, startProds, repeatProds) =>
@@ -163,11 +163,11 @@ object Extras {
             assocs.toList.map { op => With(op._1, ntGroupHead, With.Type.Operator) }
           val withOperands: Validated[List[With]] =
             base match {
-              case Left(_) => List(With(ExpandedGrammar.Identifier.NonTerminal.AssocNt(name, assocs.size + 1), ntGroupHead, With.Type.Operand)).asRight
+              case Left(_)          => List(With(ExpandedGrammar.Identifier.NonTerminal.AssocNt(name, assocs.size + 1), ntGroupHead, With.Type.Operand)).asRight
               case Right(liftProds) =>
                 val all = liftProds.toList.map { prod => With(prod.lift, ntGroupHead, With.Type.Operand) }
                 val filtered = all.filter(_.target != ntGroupHead)
-                if (filtered.nonEmpty) filtered.asRight
+                if filtered.nonEmpty then filtered.asRight
                 else Marked(s"AssocNT $name only lifts to itself", Span.Unknown).leftNel
             }
 
@@ -224,7 +224,7 @@ object Extras {
           val prod1 =
             NonTerminal.Productions(
               NonEmptyList(
-                startProds.toList :+ (if (repeat.isEmpty) ntName else ntName2),
+                startProds.toList :+ (if repeat.isEmpty then ntName else ntName2),
                 listType match {
                   case GrammarInput.NonTerminal.ListNonTerminal.Type.* => Nil :: Nil
                   case GrammarInput.NonTerminal.ListNonTerminal.Type.+ => Nil
@@ -262,7 +262,7 @@ object Extras {
               withs = withsByTarget.get(ntName),
               prods = NonTerminal.Productions(prod1, ntName2 :: Nil)(identity),
               definedTypes =
-                if (idx == 1) List(typeDefinition(ntName, With.Type.Operand, withsByNTAndType), typeDefinition(ntName, With.Type.Operator, withsByNTAndType))
+                if idx == 1 then List(typeDefinition(ntName, With.Type.Operand, withsByNTAndType), typeDefinition(ntName, With.Type.Operator, withsByNTAndType))
                 else Nil,
               ntg = Option.when(idx == 1)(ntGroup),
             )

@@ -275,7 +275,7 @@ private[scala3] object GenNonTerminals {
                     IndentedString.indented(
                       lift.toList.zipWithIndex.map { (prod, idx) =>
                         val liftType = utils.qualifiedIdentifierName(prod.lift)
-                        if (liftType == ntName) s"case $baseName._${idx + 1}${caseParens(prod, "expr")} => toExpr1(expr)"
+                        if liftType == ntName then s"case $baseName._${idx + 1}${caseParens(prod, "expr")} => toExpr1(expr)"
                         else s"case $baseName._${idx + 1}${caseParens(prod, "expr")} => $ParsePath.Expression(expr)"
                       },
                     ),
@@ -320,7 +320,7 @@ private[scala3] object GenNonTerminals {
       IndentedString.inline(
         definedTypes.toList.map {
           case Extras.NonTerminal.TypeDefinition.Type(n, id)   => s"type $n = ${utils.qualifiedIdentifierName(id)}"
-          case Extras.NonTerminal.TypeDefinition.Trait(n, tok) => s"sealed trait $n${if (tok) s" extends $CorePath.Token" else ""}"
+          case Extras.NonTerminal.TypeDefinition.Trait(n, tok) => s"sealed trait $n${if tok then s" extends $CorePath.Token" else ""}"
         },
       )
     }

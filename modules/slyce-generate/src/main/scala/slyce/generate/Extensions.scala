@@ -21,7 +21,7 @@ extension (chars: Set[Char]) {
           ): (Char, List[Char]) =
             queue match {
               case h :: t =>
-                if (current + 1 == h)
+                if current + 1 == h then
                   loop2(
                     t,
                     h,
@@ -34,7 +34,7 @@ extension (chars: Set[Char]) {
 
           val (upper, rest) = loop2(tail, lower)
           val entry =
-            if (upper - lower > 0)
+            if upper - lower > 0 then
               (lower, upper).asRight
             else
               lower.asLeft
