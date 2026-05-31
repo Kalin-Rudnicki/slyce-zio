@@ -3,8 +3,7 @@ package slyce.generate.grammar
 import cats.data.NonEmptyList
 import cats.syntax.either.*
 import cats.syntax.option.*
-import java.util.UUID
-import oxygen.predef.core.{unesc, IndentedString}
+import oxygen.predef.core.unesc
 import scala.annotation.tailrec
 
 import slyce.core.*
@@ -15,7 +14,52 @@ final case class ExpandedGrammar private (
     maxLookAhead: Marked[Int],
     initialNTGroups: List[ExpandedGrammar.NTGroup],
     deDuplicatedNTGroups: List[ExpandedGrammar.NTGroup],
-)
+) {
+
+  lazy val listNtMap: Map[AnonListNtId, ExpandedGrammar.NTGroup.ListNT] =
+    initialNTGroups.collect { case listNt @ ExpandedGrammar.NTGroup.ListNT(name = Right(id)) => (id, listNt) }.toMap
+
+  private[grammar] def render(ident: ExpandedGrammar.Identifier, wrapIfComplex: Boolean): String = {
+    val (complexPrefix, complexSuffix) = if wrapIfComplex then ("(", ")") else ("", "")
+
+    ident match {
+      case ExpandedGrammar.Identifier.NonTerminal.NamedNt(name)         => name
+      case ExpandedGrammar.Identifier.Term.Terminal(name)               => name
+      case ExpandedGrammar.Identifier.Term.Raw(name)                    => name.unesc
+      case ExpandedGrammar.Identifier.NonTerminal.NamedListNtTail(name) => s"$complexPrefix$name[]t$complexSuffix"
+      case ExpandedGrammar.Identifier.NonTerminal.AssocNt(name, idx)    => s"$complexPrefix~$name[$idx]$complexSuffix"
+      case ExpandedGrammar.Identifier.NonTerminal.AnonOptNt(identifier) => s"$complexPrefix${render(identifier, true)}?$complexSuffix"
+      case ExpandedGrammar.Identifier.NonTerminal.AnonListNt(key, tpe)  =>
+        val showTpe: String = tpe.toString.head.toString
+        listNtMap.get(key) match {
+          case None         => s"$complexPrefix(?$key?)[]$showTpe$complexSuffix"
+          case Some(listNt) =>
+            listNt.repeatProds match {
+              case Some(repeatProds) => s"$complexPrefix[ ${render(listNt.startProds)} . ${render(repeatProds)} ]${listNt.listType}$showTpe$complexSuffix"
+              case None              => s"$complexPrefix[ ${render(listNt.startProds)} ]${listNt.listType}$showTpe$complexSuffix"
+            }
+        }
+
+      // TODO (KR) : need a key lookup...
+    }
+  }
+
+  private[grammar] def render(rt: ParsingTable.fromExpandedGrammar.ReducesTo): String =
+    rt match {
+      case ParsingTable.fromExpandedGrammar.ReducesTo.###                 => "###"
+      case ParsingTable.fromExpandedGrammar.ReducesTo.Production(nt, idx) => s"${render(nt, false)}($idx)"
+    }
+
+  private[grammar] def render(list: LiftList[ExpandedGrammar.Identifier]): String =
+    if list.before.nonEmpty || list.after.nonEmpty then
+      List[List[String]](
+        list.before.map { render(_, false) },
+        s"^${render(list.lift, false)}" :: Nil,
+        list.after.map { render(_, false) },
+      ).flatten.mkString(" ")
+    else render(list.lift, false)
+
+}
 object ExpandedGrammar {
 
   final case class Production(elements: List[Identifier])
@@ -41,7 +85,7 @@ object ExpandedGrammar {
         prods: NonEmptyList[LiftList[Identifier]],
     )
     case ListNT(
-        name: Either[String, UUID],
+        name: Either[String, AnonListNtId],
         listType: GrammarInput.NonTerminal.ListNonTerminal.Type,
         startProds: LiftList[Identifier],
         repeatProds: Option[LiftList[Identifier]],
@@ -66,9 +110,10 @@ object ExpandedGrammar {
   object Identifier {
 
     enum NonTerminal extends Identifier {
+
       case NamedNt(name: String)
       case NamedListNtTail(name: String)
-      case AnonListNt(key: UUID, `type`: NonTerminal.ListType)
+      case AnonListNt(key: AnonListNtId, `type`: NonTerminal.ListType)
       case AssocNt(name: String, idx: Int)
       case AnonOptNt(identifier: Identifier)
     }
@@ -117,7 +162,7 @@ object ExpandedGrammar {
 
     }
 
-    final case class AnonListNT(key: UUID, partial: AnonListNT.Partial)
+    final case class AnonListNT(key: AnonListNtId, partial: AnonListNT.Partial)
     object AnonListNT {
       final case class Partial(
           listType: GrammarInput.NonTerminal.ListNonTerminal.Type,
@@ -174,7 +219,7 @@ object ExpandedGrammar {
 
       Expansion.mergeNTGroup(
         NTGroup.ListNT(
-          name = name.toLeft(UUID.randomUUID),
+          name = name.toLeft(AnonListNtId.random),
           listType = listNT.`type`,
           startProds = expandedStart.value,
           repeatProds = expandedRepeat.map(_.value),
@@ -253,7 +298,7 @@ object ExpandedGrammar {
         case listNT: GrammarInput.NonTerminal.ListNonTerminal => expandListNT(None, listNT)
       }
 
-    private def replaceIdentifier(identifier: Identifier, map: Map[UUID, UUID]): Identifier =
+    private def replaceIdentifier(identifier: Identifier, map: Map[AnonListNtId, AnonListNtId]): Identifier =
       identifier match {
         case Identifier.NonTerminal.AnonListNt(key, listType) => Identifier.NonTerminal.AnonListNt(map.getOrElse(key, key), listType)
         case id                                               => id
@@ -275,12 +320,12 @@ object ExpandedGrammar {
     @tailrec
     private def deDuplicateAnonListNTs(
         anonListNTs: List[AnonListNT],
-        map: Map[UUID, UUID],
-    ): (List[NTGroup.ListNT], Map[UUID, UUID]) = {
-      val grouped: List[(AnonListNT.Partial, NonEmptyList[UUID])] =
+        map: Map[AnonListNtId, AnonListNtId],
+    ): (List[NTGroup.ListNT], Map[AnonListNtId, AnonListNtId]) = {
+      val grouped: List[(AnonListNT.Partial, NonEmptyList[AnonListNtId])] =
         anonListNTs.groupMap(_.partial)(_.key).toList.map { (partial, uuids) => (partial, NonEmptyList(uuids.head, uuids.tail)) }
 
-      val newMappings: Map[UUID, UUID] =
+      val newMappings: Map[AnonListNtId, AnonListNtId] =
         grouped.flatMap { (_, uuids) =>
           uuids.tail.map((_, uuids.head))
         }.toMap
@@ -312,7 +357,7 @@ object ExpandedGrammar {
       }
     }
 
-    private def replaceNTGroup(ntGroup: NTGroup, map: Map[UUID, UUID]): NTGroup =
+    private def replaceNTGroup(ntGroup: NTGroup, map: Map[AnonListNtId, AnonListNtId]): NTGroup =
       ntGroup match {
         case NTGroup.BasicNT(name, prods) =>
           NTGroup.BasicNT(
@@ -346,7 +391,7 @@ object ExpandedGrammar {
 
   }
 
-  private[generate] def listNTId(name: Either[String, UUID], listType: Identifier.NonTerminal.ListType): Identifier.NonTerminal =
+  private[generate] def listNTId(name: Either[String, AnonListNtId], listType: Identifier.NonTerminal.ListType): Identifier.NonTerminal =
     name match {
       case Left(name) =>
         listType match {

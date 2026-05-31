@@ -8,7 +8,8 @@ import slyce.generate.output.*
 
 private[scala3] final class GenUtils(pkg: List[String], name: String, result: Result) {
 
-  private val anonUUIDMap: Map[UUID, Int] = result.expandedGrammar.deDuplicatedNTGroups.collect { case ExpandedGrammar.NTGroup.ListNT(Right(uuid), _, _, _) => uuid }.distinct.zipWithIndex.toMap
+  private val anonUUIDMap: Map[AnonListNtId, Int] =
+    result.expandedGrammar.deDuplicatedNTGroups.collect { case ExpandedGrammar.NTGroup.ListNT(Right(uuid), _, _, _) => uuid }.distinct.zipWithIndex.toMap
 
   val qualifiedPath: String = ("_root_" :: pkg ::: name :: Nil).mkString(".")
 
@@ -36,8 +37,7 @@ private[scala3] final class GenUtils(pkg: List[String], name: String, result: Re
       case term: ExpandedGrammar.Identifier.Term =>
         term match {
           case ExpandedGrammar.Identifier.Term.Terminal(name) => name
-          case ExpandedGrammar.Identifier.Term.Raw("?")       => "`\\\\?`"
-          case ExpandedGrammar.Identifier.Term.Raw(name)      => name.unesc("`")
+          case ExpandedGrammar.Identifier.Term.Raw(name)      => GenUtils.rawTermName(name)
         }
     }
 
@@ -66,5 +66,10 @@ private[scala3] object GenUtils {
           .reverse,
       )
   }
+
+  def rawTermName(raw: String): String = raw match
+    case "?" => "`\\\\?`"
+    case "_" => "`\\\\_`"
+    case _   => raw.unesc("`")
 
 }

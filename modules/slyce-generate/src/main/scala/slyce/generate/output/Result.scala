@@ -30,7 +30,7 @@ object Result {
     }
 
     (lexerPart, grammarPart).parTupled.flatMap { case ((lexer, nfa, dfa), (grammar, expandedGrammar, parsingTable)) =>
-      Extras.build(dfa, expandedGrammar).map {
+      Extras.build(dfa, expandedGrammar, lexer).map {
         Result(
           lexer,
           nfa,

@@ -96,13 +96,13 @@ object Extras {
 
   object build {
 
-    def apply(dfa: DFA, expandedGrammar: ExpandedGrammar): Validated[Extras] = {
+    def apply(dfa: DFA, expandedGrammar: ExpandedGrammar, lexerInput: LexerInput): Validated[Extras] = {
       val allProducedTerminals: Set[ExpandedGrammar.Identifier.Term] = calcAllProducedTerminals(dfa)
       val allReferencedTerms: Set[ExpandedGrammar.Identifier.Term] = finalAllReferencedTerms(expandedGrammar)
 
       // TODO (KR) : Calculate/validate what NFA regular expressions can produce.
       //           : Once this is done, it also might be possible to remove the error type from (String, Span) => Token
-      val allTerminals: Set[ExpandedGrammar.Identifier.Term] = allProducedTerminals | allReferencedTerms
+      val allTerminals: Set[ExpandedGrammar.Identifier.Term] = allProducedTerminals | allReferencedTerms | lexerInput.atYields.map(ExpandedGrammar.Identifier.Term.Raw(_)).toSet
 
       expandedGrammar.deDuplicatedNTGroups.parTraverse(withsFromNTGroup).map { withsList =>
         val allWiths: List[With] = withsList.flatten.distinct
@@ -139,7 +139,10 @@ object Extras {
       dfa.states
         .flatMap(_.yields)
         .flatMap(_._2.yields.map(_.value))
-        .collect { case Yields.Yield.Terminal(name, _, _) => ExpandedGrammar.Identifier.Term.Terminal(name) }
+        .collect {
+          case Yields.Yield.Terminal(name, _, _) => ExpandedGrammar.Identifier.Term.Terminal(name)
+          case Yields.Yield.ConstText(name, _)   => ExpandedGrammar.Identifier.Term.Raw(name)
+        }
         .toSet
 
     private def finalAllReferencedTerms(expandedGrammar: ExpandedGrammar): Set[ExpandedGrammar.Identifier.Term] =

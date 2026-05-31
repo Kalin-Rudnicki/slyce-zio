@@ -58,6 +58,10 @@ object Main extends ExecutableApp {
 
         lexerInput = ConvertLexer.convertLexer(lexerAST)
         grammarInput = ConvertGrammar.convertGrammar(grammarAST)
+
+        atYields = lexerInput.atYields
+        _ <- ZIO.logDebug(s"Found ${atYields.size} @ yields:" + atYields.map { y => s"\n  - ${y.unesc}" }.mkString)
+
         _ <- ZIO.logInfo("--- result ---")
         result <- Helpers.validatedToHTask(output.Result.build(lexerInput, grammarInput))
         resultString = output.formatters.Formatter.format(targetLanguage, pkg, name, result, noWarn)

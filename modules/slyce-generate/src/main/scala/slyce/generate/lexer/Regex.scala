@@ -4,6 +4,7 @@ import cats.data.NonEmptyList
 import cats.syntax.option.*
 import oxygen.core.InfiniteSet
 import oxygen.predef.core.{unesc, IndentedString}
+import scala.annotation.tailrec
 
 import slyce.generate.*
 
@@ -54,6 +55,10 @@ sealed trait Regex {
         )
     }
 
+  private[Regex] def internalExhaustive: Option[NonEmptyList[String]]
+
+  final def exhaustive: Option[NonEmptyList[String]] = internalExhaustive.map(_.distinct.sorted)
+
 }
 
 object Regex {
@@ -71,6 +76,11 @@ object Regex {
         case InfiniteSet.Inclusive(explicit) => explicit.prettyChars("Inclusive")
         case InfiniteSet.Exclusive(explicit) => explicit.prettyChars("Exclusive")
       }
+
+    override private[Regex] def internalExhaustive: Option[NonEmptyList[String]] = chars match {
+      case InfiniteSet.Inclusive(explicit) if explicit.nonEmpty => NonEmptyList.fromListUnsafe(explicit.toList).map(_.toString).some
+      case _                                                    => None
+    }
 
   }
 
@@ -104,7 +114,25 @@ object Regex {
 
   }
 
-  final case class Sequence(seq: List[Regex]) extends Regex
+  final case class Sequence(seq: List[Regex]) extends Regex {
+
+    override private[Regex] def internalExhaustive: Option[NonEmptyList[String]] = {
+      @tailrec
+      def loop(seq: List[Regex], acc: NonEmptyList[String]): Option[NonEmptyList[String]] =
+        seq match {
+          case head :: tail =>
+            head.internalExhaustive match {
+              case Some(value) => loop(tail, crossStrings(acc, value))
+              case None        => None
+            }
+          case Nil =>
+            acc.some
+        }
+
+      loop(seq, NonEmptyList.one(""))
+    }
+
+  }
   object Sequence {
 
     def apply(regs: Regex*): Sequence =
@@ -115,7 +143,12 @@ object Regex {
 
   }
 
-  final case class Group(seqs: NonEmptyList[Sequence]) extends Regex
+  final case class Group(seqs: NonEmptyList[Sequence]) extends Regex {
+
+    override private[Regex] def internalExhaustive: Option[NonEmptyList[String]] =
+      seqs.traverse(_.internalExhaustive).map(_.flatMap(identity))
+
+  }
   object Group {
 
     def apply(seq0: Sequence, seqN: Sequence*): Group =
@@ -123,6 +156,43 @@ object Regex {
 
   }
 
-  final case class Repeat(reg: Regex, min: Int, max: Option[Int]) extends Regex
+  final case class Repeat(reg: Regex, min: Int, max: Option[Int]) extends Regex {
+
+    override private[Regex] def internalExhaustive: Option[NonEmptyList[String]] = {
+      @tailrec
+      def loop(
+          min: Int,
+          max: Int,
+          baseExhaustive: NonEmptyList[String],
+          acc: List[String],
+          current: NonEmptyList[String],
+      ): List[String] =
+        if max < 0 then acc
+        else {
+          val newCurrent: NonEmptyList[String] = crossStrings(current, baseExhaustive)
+
+          loop(
+            min - 1,
+            max - 1,
+            baseExhaustive,
+            if min <= 0 then acc ++ newCurrent.toList else acc,
+            newCurrent,
+          )
+        }
+
+      for {
+        max <- max
+        baseExhaustive <- reg.internalExhaustive
+        res <- NonEmptyList.fromList(loop(min, max, baseExhaustive, Nil, NonEmptyList.one("")))
+      } yield res
+    }
+
+  }
+
+  private def crossStrings(s1: NonEmptyList[String], s2: NonEmptyList[String]): NonEmptyList[String] =
+    for {
+      s1 <- s1
+      s2 <- s2
+    } yield s1 + s2
 
 }

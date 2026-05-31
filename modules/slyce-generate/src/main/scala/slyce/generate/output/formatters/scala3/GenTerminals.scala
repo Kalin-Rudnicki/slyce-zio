@@ -45,9 +45,7 @@ private[scala3] object GenTerminals {
           "span => {",
           IndentedString.indented(
             sortedRawTerminals.map { (n, _) =>
-              val name =
-                if n == "?" then "`\\\\?`"
-                else n.unesc("`")
+              val name = GenUtils.rawTermName(n)
               s"case ${n.unesc} => Terminal.$name(span)"
             },
           ),
@@ -80,9 +78,7 @@ private[scala3] object GenTerminals {
       ws: Option[NonEmptyList[Extras.With]],
   ): IndentedString = {
     val className =
-      if isRaw then
-        if baseTokName == "?" then "`\\\\?`"
-        else baseTokName.unesc("`")
+      if isRaw then GenUtils.rawTermName(baseTokName)
       else baseTokName
     val tokName = if isRaw then baseTokName.unesc("\"\"\"\"") else baseTokName.unesc
     val params = if isRaw then s"span: $CorePath.Span.Highlight" else s"text: _root_.scala.Predef.String, span: $CorePath.Span.Highlight"

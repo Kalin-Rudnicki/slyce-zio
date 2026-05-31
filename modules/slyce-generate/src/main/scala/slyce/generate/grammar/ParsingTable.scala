@@ -74,7 +74,7 @@ object ParsingTable {
           Helpers.findAll(Set(initialClosure)) { c => calcTransitionMap(productionsForNT, c, expandedGrammar.maxLookAhead.value).values.toSet }.toList
 
         allClosures
-          .parTraverse { c => calcActionState(productionsForNT, c, expandedGrammar.maxLookAhead.value).map((c, _)) }
+          .parTraverse { c => calcActionState(expandedGrammar, productionsForNT, c, expandedGrammar.maxLookAhead.value).map((c, _)) }
           .map { pairs =>
             val closureToActionState: Map[Closure, TmpActionState] = pairs.toMap
 
@@ -156,7 +156,7 @@ object ParsingTable {
           .toString
     }
 
-    private enum ReducesTo {
+    private[grammar] enum ReducesTo {
       case ###
       case Production(nt: ExpandedGrammar.Identifier.NonTerminal, idx: Int)
 
@@ -309,6 +309,7 @@ object ParsingTable {
         .map { (id, entries) => (id, expandEntries(productionsForNT, entries, maxLookAhead)) }
 
     private def calcActionState(
+        grammar: ExpandedGrammar,
         productionsForNT: Map[ExpandedGrammar.Identifier.NonTerminal, List[Closure.Production]],
         closure: Closure,
         maxLookAhead: Int,
@@ -318,7 +319,7 @@ object ParsingTable {
         terminalTransitionMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
       ) = calcSplitTransitionMaps(productionsForNT, closure, maxLookAhead)
 
-      calcTerminalActions(terminalTransitionMap, closure.finishedEntries, Nil)
+      calcTerminalActions(grammar, terminalTransitionMap, closure.finishedEntries, Nil)
         .map(TmpActionState(ntTransitionMap, _))
     }
 
@@ -362,6 +363,7 @@ object ParsingTable {
     //           : The reason for this is that both have to do with advancing the 'follows',
     //           : and the way that it is re-using types just does not seem very clear or straight-forward.
     private def calcTerminalActions(
+        grammar: ExpandedGrammar,
         terminalTransitionMap: Map[ExpandedGrammar.Identifier.Term, (Closure, List[Follow])],
         finishedEntries: Set[Closure.Entry.Finished], // NOTE : These have their 'follow' already adjusted
         rFollowedPath: List[ExpandedGrammar.Identifier.Term],
@@ -378,8 +380,8 @@ object ParsingTable {
         }
 
       if fesWithoutLookAhead.nonEmpty then {
-        val fpStr = rFollowedPath.reverse.mkString(", ")
-        val conflictsStr = fesWithoutLookAhead.map(fe => s"\n    - ${fe.reducesTo}[${fe.seen.size}] : ${fe.seen.mkString("  ")}").mkString
+        val fpStr = rFollowedPath.reverse.map(grammar.render(_, false)).mkString(", ")
+        val conflictsStr = fesWithoutLookAhead.map(fe => s"\n    - ${grammar.render(fe.reducesTo)}[${fe.seen.size}] : ${fe.seen.map(grammar.render(_, false)).mkString(", ")}").mkString
         Marked(
           s"No more look-ahead to use, consider increasing max-look-ahead.\n  Path followed: $fpStr\n  Conflicts:$conflictsStr",
           Span.Unknown,
@@ -419,10 +421,10 @@ object ParsingTable {
                     case prod: ReducesTo.Production => (t, TmpActionState.Action.Reduce(Closure.Production(prod, fe.seen))).asRight
                     case ReducesTo.###              => Marked("I don't think this should be possible... (reduce to ###)", Span.Unknown).leftNel
                   }
-                case (fes, None)           => calcTerminalActions(Map.empty, fes.toSet, t :: rFollowedPath).map((t, _))
+                case (fes, None)           => calcTerminalActions(grammar, Map.empty, fes.toSet, t :: rFollowedPath).map((t, _))
                 case (fes, Some((c, cfs))) =>
                   cfs.toNel match {
-                    case Some(NonEmptyList(head, tail)) => calcTerminalActions(head.validTerminals.toList.map((_, (c, tail))).toMap, fes.toSet, t :: rFollowedPath).map((t, _))
+                    case Some(NonEmptyList(head, tail)) => calcTerminalActions(grammar, head.validTerminals.toList.map((_, (c, tail))).toMap, fes.toSet, t :: rFollowedPath).map((t, _))
                     case None                           => Marked(s"No more look-ahead for: $c", Span.Unknown).leftNel
                   }
               }
