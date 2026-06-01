@@ -3,6 +3,7 @@ package slyce.parse
 import oxygen.predef.test.*
 
 import slyce.core.*
+import slyce.core.builtIn.*
 
 object ParserSpec extends OxygenSpecDefault {
 
@@ -37,7 +38,7 @@ object ParserSpec extends OxygenSpecDefault {
 
   final case class StringLit(
       open: `"`,
-      parts: List[StringLit.Part],
+      parts: ElementList[StringLit.Part],
       close: `"`,
   ) extends Literal,
         NonTerminal {
@@ -135,6 +136,7 @@ object ParserSpec extends OxygenSpecDefault {
         case None              => res.span
   }
 
+  type Tmp = Boolean
   val parser: Parser[Program] = Parser.derived
 
   ///////  ///////////////////////////////////////////////////////////////
