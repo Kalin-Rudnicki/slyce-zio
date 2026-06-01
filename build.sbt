@@ -110,6 +110,21 @@ lazy val `slyce-test` =
     )
     .dependsOn(`slyce-parse-exe` % testAndCompile)
 
+// =====|  |=====
+
+lazy val `slyce-core-v2` =
+  project
+    .in(file("modules-v2/slyce-core"))
+    .settings(
+      name := "slyce-core-v2",
+      libraryDependencies ++= Seq(
+        MyOrg %% "oxygen-core" % Versions.oxygen,
+        MyOrg %% "oxygen-test" % Versions.oxygen % Test,
+      ),
+      sonatypeCredentialHost := "s01.oss.sonatype.org",
+      Test / fork := true,
+    )
+
 // TODO (KR) : IDEA-PLUGIN
 /*
 lazy val `slyce-idea-plugin` =
