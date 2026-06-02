@@ -1,8 +1,13 @@
 package slyce.core
 
-final case class Marked[+S <: Span, +A](value: A, span: S)
+type Marked[+A] = PolyMarked.Range[A]
 object Marked {
-  type Span[+A] = Marked[slyce.core.Span, A]
-  type HasSource[+A] = Marked[slyce.core.Span.HasSource, A]
-  type Range[+A] = Marked[slyce.core.Span.Range, A]
+  def apply[A](value: A, span: Span.Range): Marked[A] = PolyMarked(value, span)
+}
+
+final case class PolyMarked[+S <: Span, +A](value: A, span: S)
+object PolyMarked {
+  type Span[+A] = PolyMarked[slyce.core.Span, A]
+  type HasSource[+A] = PolyMarked[slyce.core.Span.HasSource, A]
+  type Range[+A] = PolyMarked[slyce.core.Span.Range, A]
 }

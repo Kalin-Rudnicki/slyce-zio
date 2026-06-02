@@ -127,7 +127,7 @@ object ParserSpec extends OxygenSpecDefault {
   }
 
   final case class Program(
-      assignments: List[Assign],
+      assignments: ElementList[Assign],
       res: Expr,
   ) extends NonTerminal {
     override val span: Span.Range =
@@ -136,7 +136,6 @@ object ParserSpec extends OxygenSpecDefault {
         case None              => res.span
   }
 
-  type Tmp = Boolean
   val parser: Parser[Program] = Parser.derived
 
   ///////  ///////////////////////////////////////////////////////////////

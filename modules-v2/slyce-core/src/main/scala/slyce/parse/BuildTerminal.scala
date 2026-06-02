@@ -4,6 +4,7 @@ import oxygen.predef.core.*
 import scala.util.{Failure, Success, Try}
 
 import slyce.core.*
+import slyce.parse.`macro`.DeriveBuildTerminal
 
 trait BuildTerminal[A] {
   def build(text: String, span: Span.Range): Either[String, A]
@@ -15,5 +16,7 @@ object BuildTerminal {
       case Success(value)     => b(text, span, value).asRight
       case Failure(exception) => exception.safeGetMessage.asLeft
   }
+
+  inline def derived[A]: BuildTerminal[A] = ${ DeriveBuildTerminal.derivedImpl[A] }
 
 }
