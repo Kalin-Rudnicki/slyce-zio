@@ -1,14 +1,18 @@
-package slyce.parse.`macro`
+package slyce.generate
 
+import java.util.UUID
 import oxygen.meta.k0.*
 import oxygen.predef.core.*
 import oxygen.quoted.*
 import scala.quoted.*
 
+import slyce.core.{Position as _, *}
 import slyce.core.builtIn.*
 import slyce.parse.*
 
-private[`macro`] sealed trait ExtractedType {
+private[slyce] sealed trait ExtractedType {
+
+  final val typeId: ExtractedType.TypeId = ExtractedType.TypeId.random()
 
   ///////  ///////////////////////////////////////////////////////////////
 
@@ -34,7 +38,12 @@ private[`macro`] sealed trait ExtractedType {
   override def toString: String = renderInline
 
 }
-private[`macro`] object ExtractedType {
+private[slyce] object ExtractedType {
+
+  opaque type TypeId = UUID
+  object TypeId {
+    private[ExtractedType] final def random(): TypeId = UUID.randomUUID()
+  }
 
   private enum Lifecycle {
     case Uninitialized
@@ -56,11 +65,13 @@ private[`macro`] object ExtractedType {
     override def toString: String = renderRoot
   }
 
-  sealed trait TerminalLike extends ExtractedType.Custom {
+  sealed trait NotTerminalLike extends ExtractedType.Custom { // not a terminal
+  }
+  sealed trait TerminalLike extends ExtractedType.Custom { // only terminal
     override final val termType: String = "Terminal"
     override def roots: NonEmptyList[ExtractedType.ProductTerminal]
   }
-  sealed trait NonTerminalLike extends ExtractedType.Custom {
+  sealed trait NonTerminalLike extends ExtractedType.NotTerminalLike { // only non-terminal
     override final val termType: String = "NonTerminal"
     override def roots: NonEmptyList[ExtractedType.ProductNonTerminal]
   }
@@ -74,6 +85,7 @@ private[`macro`] object ExtractedType {
       val gen: ProductGeneric.CaseClassGeneric[?],
   )(
       val build: Expr[BuildTerminal[gen.AType]],
+      val regex: ParsedRegex,
   ) extends ExtractedType.ProductLike,
         ExtractedType.TerminalLike {
 
@@ -81,7 +93,7 @@ private[`macro`] object ExtractedType {
 
     override def renderInline: String = s"ProductTerminal[${typeRepr.showAnsiCode}]"
     override def renderRoot: String =
-      s"ProductTerminal[${typeRepr.showAnsiCode}]:"
+      s"ProductTerminal[${typeRepr.showAnsiCode}]: ${regex.regexText}"
 
     // =====|  |=====
 
@@ -114,7 +126,7 @@ private[`macro`] object ExtractedType {
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit = {
       val rawFields: NonEmptyList[gen.Field[?]] =
         NonEmptyList.fromList(gen.fields.toList).getOrElse { report.errorAndAbort("Not allowed: case class extends NonTerminal with no fields, use `Ignored`", gen.pos) }
-      _fields = rawFields.map { field => Field(field, cache.get(field.pos)(field.typeRepr)) }
+      _fields = rawFields.map { field => Field(field, cache.getOrCreate(field.pos)(field.typeRepr)) }
     }
 
   }
@@ -141,7 +153,7 @@ private[`macro`] object ExtractedType {
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit = {
       val rawCases: NonEmptyList[gen.Case[?]] =
         NonEmptyList.fromList(gen.cases.toList).getOrElse { report.errorAndAbort("Not allowed: sealed trait extends Terminal with no cases", gen.pos) }
-      _directChildren = rawCases.map { kase => cache.getNarrowed[ExtractedType.TerminalLike](kase.pos)(kase.typeRepr) }.flatMap(_.roots)
+      _directChildren = rawCases.map { kase => cache.getOrCreateNarrowed[ExtractedType.TerminalLike](kase.pos)(kase.typeRepr) }.flatMap(_.roots)
       _roots = _directChildren.flatMap(_.roots)
     }
 
@@ -169,7 +181,7 @@ private[`macro`] object ExtractedType {
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit = {
       val rawCases: NonEmptyList[gen.Case[?]] =
         NonEmptyList.fromList(gen.cases.toList).getOrElse { report.errorAndAbort("Not allowed: sealed trait extends NonTerminal with no cases", gen.pos) }
-      _directChildren = rawCases.map { kase => cache.getNarrowed[ExtractedType.NonTerminalLike](kase.pos)(kase.typeRepr) }
+      _directChildren = rawCases.map { kase => cache.getOrCreateNarrowed[ExtractedType.NonTerminalLike](kase.pos)(kase.typeRepr) }
       _roots = _directChildren.flatMap(_.roots)
     }
 
@@ -177,7 +189,8 @@ private[`macro`] object ExtractedType {
 
   final class SumElement(
       val gen: SumGeneric[?],
-  ) extends ExtractedType.SumLike {
+  ) extends ExtractedType.SumLike,
+        ExtractedType.NotTerminalLike {
 
     override val termType: String = "Element"
 
@@ -201,7 +214,7 @@ private[`macro`] object ExtractedType {
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit = {
       val rawCases: NonEmptyList[gen.Case[?]] =
         NonEmptyList.fromList(gen.cases.toList).getOrElse { report.errorAndAbort("Not allowed: sealed trait extends Element with no cases", gen.pos) }
-      _directChildren = rawCases.map { kase => cache.getNarrowed[ExtractedType.Custom](kase.pos)(kase.typeRepr) }
+      _directChildren = rawCases.map { kase => cache.getOrCreateNarrowed[ExtractedType.Custom](kase.pos)(kase.typeRepr) }
       val allRoots: List[ExtractedType.ProductLike] = _directChildren.toList.flatMap(_.roots.toList)
       _terminalRoots = NonEmptyList
         .fromList(allRoots.collect { case t: ExtractedType.ProductTerminal => t })
@@ -239,7 +252,7 @@ private[`macro`] object ExtractedType {
     private var _cases: NonEmptyList[ExtractedType.Custom] = null
 
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit =
-      _cases = NonEmptyList.unsafeFromList(typeRepr.orChildren.toList).map(cache.getNarrowed[ExtractedType.Custom](parentPos)(_))
+      _cases = NonEmptyList.unsafeFromList(typeRepr.orChildren.toList).map(cache.getOrCreateNarrowed[ExtractedType.Custom](parentPos)(_))
 
   }
 
@@ -257,7 +270,7 @@ private[`macro`] object ExtractedType {
     private var _elem: ExtractedType = null
 
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit =
-      _elem = cache.get(parentPos)(elemTypeRepr)
+      _elem = cache.getOrCreate(parentPos)(elemTypeRepr)
 
   }
 
@@ -275,7 +288,7 @@ private[`macro`] object ExtractedType {
     private var _elem: ExtractedType = null
 
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit =
-      _elem = cache.get(parentPos)(elemTypeRepr)
+      _elem = cache.getOrCreate(parentPos)(elemTypeRepr)
 
   }
 
@@ -293,7 +306,7 @@ private[`macro`] object ExtractedType {
     private var _elem: ExtractedType = null
 
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit =
-      _elem = cache.get(parentPos)(elemTypeRepr)
+      _elem = cache.getOrCreate(parentPos)(elemTypeRepr)
 
   }
 
@@ -320,10 +333,10 @@ private[`macro`] object ExtractedType {
     private var _after: ExtractedType = null
 
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit = {
-      _elem = cache.get(parentPos)(elemTypeRepr)
-      _before = cache.get(parentPos)(beforeTypeRepr)
-      _between = cache.get(parentPos)(betweenTypeRepr)
-      _after = cache.get(parentPos)(afterTypeRepr)
+      _elem = cache.getOrCreate(parentPos)(elemTypeRepr)
+      _before = cache.getOrCreate(parentPos)(beforeTypeRepr)
+      _between = cache.getOrCreate(parentPos)(betweenTypeRepr)
+      _after = cache.getOrCreate(parentPos)(afterTypeRepr)
     }
 
   }
@@ -351,10 +364,10 @@ private[`macro`] object ExtractedType {
     private var _after: ExtractedType = null
 
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit = {
-      _elem = cache.get(parentPos)(elemTypeRepr)
-      _before = cache.get(parentPos)(beforeTypeRepr)
-      _between = cache.get(parentPos)(betweenTypeRepr)
-      _after = cache.get(parentPos)(afterTypeRepr)
+      _elem = cache.getOrCreate(parentPos)(elemTypeRepr)
+      _before = cache.getOrCreate(parentPos)(beforeTypeRepr)
+      _between = cache.getOrCreate(parentPos)(betweenTypeRepr)
+      _after = cache.getOrCreate(parentPos)(afterTypeRepr)
     }
 
   }
@@ -384,7 +397,17 @@ private[`macro`] object ExtractedType {
       case ElementType.Terminal    =>
         val build: Expr[BuildTerminal[gen.AType]] =
           Implicits.searchOption[BuildTerminal[gen.AType]].getOrElse { DeriveBuildTerminal.derivedImpl[gen.AType](parentPos, true, gen) }
-        new ProductTerminal(gen)(build)
+        val regAnnot: Expr[regex] =
+          gen.annotations.optionalOf[regex].getOrElse { report.errorAndAbort("Missing required `@regex(\"...\".r)` annotation", gen.pos) }
+        val annotPos: Position = regAnnot.toTerm.pos
+
+        val regString: String = regAnnot match
+          case '{ new `regex`((${ Expr(string) }: String).r) } => string
+          case _                                               => report.errorAndAbort("Unable to extract regex", regAnnot)
+        val parsedRegex: RegularExpression = RegularExpression.parse(Source(regString, None)) match
+          case Right(value) => value
+          case Left(error)  => report.errorAndAbort(s"Unable to parse regex for ${gen.typeRepr.showAnsiCode}\n$error", regAnnot)
+        new ProductTerminal(gen)(build, ParsedRegex(regString, parsedRegex, annotPos))
     }
   }
 

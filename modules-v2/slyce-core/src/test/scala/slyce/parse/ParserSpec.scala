@@ -136,7 +136,7 @@ object ParserSpec extends OxygenSpecDefault {
         case None              => res.span
   }
 
-  val parser: Parser[Program] = Parser.derived
+  val parser: Parser[Program] = Parser.derived(2)
 
   ///////  ///////////////////////////////////////////////////////////////
 

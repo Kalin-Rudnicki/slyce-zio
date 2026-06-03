@@ -1,4 +1,4 @@
-package slyce.parse.`macro`
+package slyce.generate
 
 import oxygen.meta.k0.ProductGeneric
 import oxygen.predef.core.*

@@ -1,4 +1,4 @@
-package slyce.parse.`macro`
+package slyce.generate
 
 import oxygen.predef.core.*
 import oxygen.quoted.*
@@ -6,17 +6,18 @@ import scala.collection.mutable
 import scala.quoted.*
 import scala.reflect.TypeTest
 
-final class ExtractedTypeCache private (
+private[slyce] final class ExtractedTypeCache private (
     elementTypeRepr: TypeRepr,
     terminalTypeRepr: TypeRepr,
     nonTerminalTypeRepr: TypeRepr,
 ) {
 
   private val cache: mutable.Map[TypeRepr, ExtractedType] = mutable.Map.empty
+  private var typeIdCache: Map[ExtractedType.TypeId, ExtractedType] = Map.empty
 
   def getAllTypes: ArraySeq[ExtractedType] = ArraySeq.from(cache.values)
 
-  def get(parentPos: Position)(tpe: TypeRepr)(using Quotes): ExtractedType =
+  def getOrCreate(parentPos: Position)(tpe: TypeRepr)(using Quotes): ExtractedType =
     cache.get(tpe) match {
       case Some(value) => value
       case None        =>
@@ -26,10 +27,21 @@ final class ExtractedTypeCache private (
         extracted
     }
 
-  def getNarrowed[T <: ExtractedType: TypeTag as tag](parentPos: Position)(tpe: TypeRepr)(using TypeTest[ExtractedType, T], Quotes): T =
-    get(parentPos)(tpe) match
+  def getOrCreateNarrowed[T <: ExtractedType: TypeTag as tag](parentPos: Position)(tpe: TypeRepr)(using TypeTest[ExtractedType, T], Quotes): T =
+    getOrCreate(parentPos)(tpe) match
       case t: T => t
       case res  => report.errorAndAbort(s"Type not allowed here [expected: $tag] [actual: ${TypeTag.fromClass(res.getClass)}]", parentPos)
+
+  def typeFromId(id: ExtractedType.TypeId)(using Quotes): ExtractedType =
+    typeIdCache.get(id) match {
+      case Some(value) => value
+      case None        =>
+        typeIdCache = cache.values.map { t => (t.typeId, t) }.toMap
+        typeIdCache.get(id) match {
+          case Some(value) => value
+          case None        => report.errorAndAbort(s"Internal Defect : Unknown type id [$id]")
+        }
+    }
 
   def elementType(pos: Position)(tpe: TypeRepr)(using Quotes): ElementType = {
     val isElementType: Boolean = tpe <:< elementTypeRepr

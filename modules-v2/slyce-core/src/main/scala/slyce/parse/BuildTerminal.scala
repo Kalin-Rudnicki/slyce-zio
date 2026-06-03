@@ -4,7 +4,7 @@ import oxygen.predef.core.*
 import scala.util.{Failure, Success, Try}
 
 import slyce.core.*
-import slyce.parse.`macro`.DeriveBuildTerminal
+import slyce.generate.DeriveBuildTerminal
 
 trait BuildTerminal[A] {
   def build(text: String, span: Span.Range): Either[String, A]
