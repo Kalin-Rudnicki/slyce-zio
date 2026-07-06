@@ -80,7 +80,10 @@ private[slyce] object ExtractedType {
     override def roots: NonEmptyList[ExtractedType.ProductNonTerminal]
   }
 
-  sealed trait SumLike extends ExtractedType.Custom { override final val typeType: String = "Sum" }
+  sealed trait SumLike extends ExtractedType.Custom {
+    override final val typeType: String = "Sum"
+    def hasSumChildren: Boolean
+  }
   sealed trait ProductLike extends ExtractedType.Custom { override final val typeType: String = "Product" }
 
   ///////  ///////////////////////////////////////////////////////////////
@@ -145,20 +148,24 @@ private[slyce] object ExtractedType {
 
     override def renderInline: String = s"SumTerminal[${typeRepr.showAnsiCode}]"
     override def renderRoot: String =
-      s"SumTerminal[${typeRepr.showAnsiCode}]:" +
+      s"SumTerminal[${typeRepr.showAnsiCode}]" + (if hasSumChildren then " (HAS SUM CHILDREN):" else ":") +
         "\n  directChildren:" + directChildren.toList.map { f => s"\n    - ${f.renderInline}" }.mkString +
         "\n  roots:" + roots.toList.map { f => s"\n    - ${f.renderInline}" }.mkString
+
+    override def hasSumChildren: Boolean = _hasSumChildren
 
     // =====|  |=====
 
     private var _directChildren: NonEmptyList[ExtractedType.TerminalLike] = null
     private var _roots: NonEmptyList[ExtractedType.ProductTerminal] = null
+    private var _hasSumChildren: Boolean = false
 
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit = {
       val rawCases: NonEmptyList[gen.Case[?]] =
         NonEmptyList.fromList(gen.cases.toList).getOrElse { report.errorAndAbort("Not allowed: sealed trait extends Terminal with no cases", gen.pos) }
       _directChildren = rawCases.map { kase => cache.getOrCreateNarrowed[ExtractedType.TerminalLike](kase.pos)(kase.typeRepr) }.flatMap(_.roots)
       _roots = _directChildren.flatMap(_.roots)
+      _hasSumChildren = _directChildren.exists { case _: SumLike => true; case _ => false }
     }
 
   }
@@ -173,20 +180,24 @@ private[slyce] object ExtractedType {
 
     override def renderInline: String = s"SumNonTerminal[${typeRepr.showAnsiCode}]"
     override def renderRoot: String =
-      s"SumNonTerminal[${typeRepr.showAnsiCode}]:" +
+      s"SumNonTerminal[${typeRepr.showAnsiCode}]" + (if hasSumChildren then " (HAS SUM CHILDREN):" else ":") +
         "\n  directChildren:" + directChildren.toList.map { f => s"\n    - ${f.renderInline}" }.mkString +
         "\n  roots:" + roots.toList.map { f => s"\n    - ${f.renderInline}" }.mkString
+
+    override def hasSumChildren: Boolean = _hasSumChildren
 
     // =====|  |=====
 
     private var _directChildren: NonEmptyList[ExtractedType.NonTerminalLike] = null
     private var _roots: NonEmptyList[ExtractedType.ProductNonTerminal] = null
+    private var _hasSumChildren: Boolean = false
 
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit = {
       val rawCases: NonEmptyList[gen.Case[?]] =
         NonEmptyList.fromList(gen.cases.toList).getOrElse { report.errorAndAbort("Not allowed: sealed trait extends NonTerminal with no cases", gen.pos) }
       _directChildren = rawCases.map { kase => cache.getOrCreateNarrowed[ExtractedType.NonTerminalLike](kase.pos)(kase.typeRepr) }
       _roots = _directChildren.flatMap(_.roots)
+      _hasSumChildren = _directChildren.exists { case _: SumLike => true; case _ => false }
     }
 
   }
@@ -205,15 +216,18 @@ private[slyce] object ExtractedType {
 
     override def renderInline: String = s"SumElement[${typeRepr.showAnsiCode}]"
     override def renderRoot: String =
-      s"SumElement[${typeRepr.showAnsiCode}]:" +
+      s"SumElement[${typeRepr.showAnsiCode}]" + (if hasSumChildren then " (HAS SUM CHILDREN):" else ":") +
         "\n  directChildren:" + directChildren.toList.map { f => s"\n    - ${f.renderInline}" }.mkString +
         "\n  roots:" + roots.toList.map { f => s"\n    - ${f.renderInline}" }.mkString
+
+    override def hasSumChildren: Boolean = _hasSumChildren
 
     // =====|  |=====
 
     private var _directChildren: NonEmptyList[ExtractedType.Custom] = null
     private var _terminalRoots: NonEmptyList[ExtractedType.ProductTerminal] = null
     private var _nonTerminalRoots: NonEmptyList[ExtractedType.ProductNonTerminal] = null
+    private var _hasSumChildren: Boolean = false
 
     override protected def initializeInternal(parentPos: Position, cache: ExtractedTypeCache)(using Quotes): Unit = {
       val rawCases: NonEmptyList[gen.Case[?]] =
@@ -226,6 +240,7 @@ private[slyce] object ExtractedType {
       _nonTerminalRoots = NonEmptyList
         .fromList(allRoots.collect { case t: ExtractedType.ProductNonTerminal => t })
         .getOrElse { report.errorAndAbort("extend Terminal, you don't have any NonTerminal children" + allRoots.map { r => s"\n  - ${r.typeRepr.showAnsiCode}" }.mkString, gen.pos) }
+      _hasSumChildren = _directChildren.exists { case _: SumLike => true; case _ => false }
     }
 
   }
