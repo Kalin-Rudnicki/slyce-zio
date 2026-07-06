@@ -383,7 +383,7 @@ private[slyce] object ExtractedType {
   private def doExtractSealed(parentPos: Position, cache: ExtractedTypeCache)(typeRepr: TypeRepr)(using Quotes): ExtractedType.SumLike = {
     type T
     given Type[T] = typeRepr.asTypeOf
-    val gen: SumGeneric[T] = SumGeneric.of[T]
+    val gen: SumGeneric[T] = SumGeneric.of[T](Derivable.Config(defaultUnrollStrategy = SumGeneric.UnrollStrategy.Nested))
     cache.elementType(parentPos)(gen.typeRepr) match {
       case ElementType.Element     => new SumElement(gen)
       case ElementType.Terminal    => new SumTerminal(gen)
