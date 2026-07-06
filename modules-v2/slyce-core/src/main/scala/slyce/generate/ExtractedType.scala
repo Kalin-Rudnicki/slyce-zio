@@ -65,13 +65,17 @@ private[slyce] object ExtractedType {
     override def toString: String = renderRoot
   }
 
-  sealed trait NotTerminalLike extends ExtractedType.Custom { // not a terminal
-  }
-  sealed trait TerminalLike extends ExtractedType.Custom { // only terminal
+  /** NOT a Terminal */
+  sealed trait NotTerminalLike extends ExtractedType.Custom
+
+  /** Only Terminal */
+  sealed trait TerminalLike extends ExtractedType.Custom {
     override final val termType: String = "Terminal"
     override def roots: NonEmptyList[ExtractedType.ProductTerminal]
   }
-  sealed trait NonTerminalLike extends ExtractedType.NotTerminalLike { // only non-terminal
+
+  /** Only NonTerminal */
+  sealed trait NonTerminalLike extends ExtractedType.NotTerminalLike {
     override final val termType: String = "NonTerminal"
     override def roots: NonEmptyList[ExtractedType.ProductNonTerminal]
   }
@@ -218,10 +222,10 @@ private[slyce] object ExtractedType {
       val allRoots: List[ExtractedType.ProductLike] = _directChildren.toList.flatMap(_.roots.toList)
       _terminalRoots = NonEmptyList
         .fromList(allRoots.collect { case t: ExtractedType.ProductTerminal => t })
-        .getOrElse { report.errorAndAbort("extend NonTerminal, you don't have any Terminal children", gen.pos) }
+        .getOrElse { report.errorAndAbort("extend NonTerminal, you don't have any Terminal children" + allRoots.map { r => s"\n  - ${r.typeRepr.showAnsiCode}" }.mkString, gen.pos) }
       _nonTerminalRoots = NonEmptyList
         .fromList(allRoots.collect { case t: ExtractedType.ProductNonTerminal => t })
-        .getOrElse { report.errorAndAbort("extend Terminal, you don't have any NonTerminal children", gen.pos) }
+        .getOrElse { report.errorAndAbort("extend Terminal, you don't have any NonTerminal children" + allRoots.map { r => s"\n  - ${r.typeRepr.showAnsiCode}" }.mkString, gen.pos) }
     }
 
   }

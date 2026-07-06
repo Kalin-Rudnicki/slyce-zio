@@ -116,6 +116,27 @@ object ParserSpec extends OxygenSpecDefault {
 
   }
 
+  type Expr2 = Expr2.Node0
+  object Expr2 {
+
+    sealed trait Node0 extends NonTerminal
+    object Node0 {
+      final case class Bin(lhs: Node0, op: AddOp, rhs: Node1) extends Node0, NonTerminal { override val span: Span.Range = lhs.span <> rhs.span }
+    }
+
+    sealed trait Node1 extends Node0
+    object Node1 {
+      final case class Bin(lhs: Node1, op: AddOp, rhs: Node2) extends Node1, NonTerminal { override val span: Span.Range = lhs.span <> rhs.span }
+    }
+
+    sealed trait Node2 extends Node1 { self: Terminal | NonTerminal => }
+    sealed trait Leaf extends Node2
+    final case class LiteralExpr(lit: Literal) extends Expr2.Leaf { override val span: Span.Range = lit.span }
+    final case class IdentExpr(ident: Ident) extends Expr2.Leaf { override val span: Span.Range = ident.span }
+    final case class Wrap(open: `(`, wrapped: Expr, close: `)`) extends Expr2.Leaf { override val span: Span.Range = open.span <> close.span }
+
+  }
+
   ///////  ///////////////////////////////////////////////////////////////
 
   final case class Assign(
@@ -129,6 +150,7 @@ object ParserSpec extends OxygenSpecDefault {
   final case class Program(
       assignments: ElementList[Assign],
       res: Expr,
+      res2: Expr2,
   ) extends NonTerminal {
     override val span: Span.Range =
       assignments.headOption match
@@ -136,6 +158,7 @@ object ParserSpec extends OxygenSpecDefault {
         case None              => res.span
   }
 
+  //
   val parser: Parser[Program] = Parser.derived(2)
 
   ///////  ///////////////////////////////////////////////////////////////
