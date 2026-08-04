@@ -17,17 +17,20 @@ import slyce.parse.*
 
 // =====| Url |=====
 
-/** Practical URL subset: scheme '://' host [':' port] ['/' pathSeg]* ['/']? ['?' query] ['#' fragment]
-  *
-  * Examples: https://example.com https://example.com:8080/a/b?x=1&y=2#top http://127.0.0.1/
-  */
+/**
+ * Practical URL subset:
+ *   scheme '://' host [':' port] [ absPath ] [ '?' query ] [ '#' fragment ]
+ *
+ * AbsPath is left-factored so `/` is not ambiguous between path segments and a trailing slash:
+ *   - RootOnly: `/`
+ *   - PathWithSegs: `/seg` (`/seg`)* `/`?
+ */
 final case class Url(
     scheme: Scheme,
     sep: `://`,
     host: Host,
     port: ElementOption[Port],
-    path: ElementList[PathSeg],
-    trailingSlash: ElementOption[`/`],
+    path: ElementOption[AbsPath],
     query: ElementOption[Query],
     fragment: ElementOption[Fragment],
 ) extends NonTerminal {
@@ -36,13 +39,7 @@ final case class Url(
       fragment.toOption
         .map(_.span)
         .orElse(query.toOption.map(_.span))
-        .orElse(trailingSlash.toOption.map(_.span))
-        .orElse(path.headOption.map { _ =>
-          path match {
-            case n: NonEmptyElementList[?] => n.span
-            case n: ElementNil             => n.span
-          }
-        })
+        .orElse(path.toOption.map(_.span))
         .orElse(port.toOption.map(_.span))
         .getOrElse(host.span)
     scheme.span <> end
@@ -50,22 +47,22 @@ final case class Url(
 }
 object Url {
 
-  val parser: Parser[Url] =
-    new Parser[Url] {
-      override def parse(source: Source): Either[ParseError, Url] = ???
-    }
+  val parser: Parser[Url] = Parser.derived[Url](2)
 
 }
 
-@regex("[a-zA-Z][a-zA-Z0-9+.-]*".r)
+@regex("[a-zA-Z][-a-zA-Z0-9+.]*".r)
 final case class Scheme(text: String, span: Span.Range) extends Terminal
 
 // =====| Host |=====
 
-/** Host is either a dotted domain name (`a`.`b`.`c`) or an IPv4 address (`127`.`0`.`0`.`1`). */
+/** Host is either a dotted domain name or an IPv4 address. */
 sealed trait Host extends NonTerminal
 
-/** Domain name: one or more labels separated by `.` (e.g. `localhost`, `example.com`, `api.example.com`). */
+/**
+ * Domain name: one or more labels separated by `.`.
+ * Labels start with a letter so pure-numeric hosts go to [[Ipv4Host]] (LALR-friendly first-token split).
+ */
 final case class DomainHost(
     head: DomainLabel,
     tail: ElementList[DotDomainLabel],
@@ -88,7 +85,7 @@ final case class DotDomainLabel(
   override val span: Span.Range = dot.span <> label.span
 }
 
-@regex("[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?".r)
+@regex("[a-zA-Z][-a-zA-Z0-9]*".r)
 final case class DomainLabel(text: String, span: Span.Range) extends Terminal
 
 /** IPv4: exactly four decimal octets separated by `.`. */
@@ -131,11 +128,50 @@ object PortNum {
   given BuildTerminal[PortNum] = BuildTerminal.attemptDecode1(_.toInt)(PortNum.apply)
 }
 
+/**
+ * Absolute path after authority — fully left-factored on `/`:
+ *   AbsPath  ::= `/` | `/` seg PathRest?
+ *   PathRest ::= `/` (seg PathRest?)?
+ * so a bare `/` is never ambiguous with `/seg`.
+ */
+sealed trait AbsPath extends NonTerminal
+
+/** A single trailing `/` with no segments (e.g. `https://example.com/`). */
+final case class RootOnly(slash: `/`) extends AbsPath {
+  override val span: Span.Range = slash.span
+}
+
+/** At least one `/seg`, then optional further `/…` via [[PathRest]]. */
+final case class PathWithSegs(
+    head: PathSeg,
+    more: ElementOption[PathRest],
+) extends AbsPath {
+  override val span: Span.Range =
+    more.toOption.map(m => head.span <> m.span).getOrElse(head.span)
+}
+
 final case class PathSeg(
     slash: `/`,
     name: PathSegment,
 ) extends NonTerminal {
   override val span: Span.Range = slash.span <> name.span
+}
+
+/** Continuation after a segment: another `/` and optionally another segment (+ deeper rest). */
+final case class PathRest(
+    slash: `/`,
+    after: ElementOption[PathRestSeg],
+) extends NonTerminal {
+  override val span: Span.Range =
+    after.toOption.map(a => slash.span <> a.span).getOrElse(slash.span)
+}
+
+final case class PathRestSeg(
+    name: PathSegment,
+    more: ElementOption[PathRest],
+) extends NonTerminal {
+  override val span: Span.Range =
+    more.toOption.map(m => name.span <> m.span).getOrElse(name.span)
 }
 
 @regex("[^/?#\\s]+".r)
