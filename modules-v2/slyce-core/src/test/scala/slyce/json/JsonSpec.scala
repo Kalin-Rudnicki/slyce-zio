@@ -74,6 +74,7 @@ object JsonSpec extends OxygenSpecDefault {
               ArrBody(
                 IntLit("1", span(s, 1, 2), 1),
                 elementList[CommaJson](span(s, 2, 2))(),
+                eoNone(span(s, 2, 2)),
               ),
             ),
             `]`("]", span(s, 2, 3)),
@@ -88,9 +89,38 @@ object JsonSpec extends OxygenSpecDefault {
                 elementList[CommaJson](span(s, 4, 4))(
                   CommaJson(`,`( ",", span(s, 2, 3)), IntLit("2", span(s, 3, 4), 2)),
                 ),
+                eoNone(span(s, 4, 4)),
               ),
             ),
             `]`("]", span(s, 4, 5)),
+          )
+        },
+        parsesTo(Json.parser, "[1,]") { s =>
+          Arr(
+            `[`("[", span(s, 0, 1)),
+            eoSome(
+              ArrBody(
+                IntLit("1", span(s, 1, 2), 1),
+                elementList[CommaJson](span(s, 2, 2))(),
+                eoSome(`,`( ",", span(s, 2, 3))),
+              ),
+            ),
+            `]`("]", span(s, 3, 4)),
+          )
+        },
+        parsesTo(Json.parser, "[1,2,]") { s =>
+          Arr(
+            `[`("[", span(s, 0, 1)),
+            eoSome(
+              ArrBody(
+                IntLit("1", span(s, 1, 2), 1),
+                elementList[CommaJson](span(s, 4, 4))(
+                  CommaJson(`,`( ",", span(s, 2, 3)), IntLit("2", span(s, 3, 4), 2)),
+                ),
+                eoSome(`,`( ",", span(s, 4, 5))),
+              ),
+            ),
+            `]`("]", span(s, 5, 6)),
           )
         },
         parsesTo(Json.parser, "[null,true,[]]") { s =>
@@ -110,6 +140,7 @@ object JsonSpec extends OxygenSpecDefault {
                     ),
                   ),
                 ),
+                eoNone(span(s, 13, 13)),
               ),
             ),
             `]`("]", span(s, 13, 14)),
@@ -133,9 +164,27 @@ object JsonSpec extends OxygenSpecDefault {
                   IntLit("1", span(s, 5, 6), 1),
                 ),
                 elementList[CommaKeyPair](span(s, 6, 6))(),
+                eoNone(span(s, 6, 6)),
               ),
             ),
             `}`("}", span(s, 6, 7)),
+          )
+        },
+        parsesTo(Json.parser, "{\"a\":1,}") { s =>
+          Obj(
+            `{`("{", span(s, 0, 1)),
+            eoSome(
+              ObjBody(
+                KeyPair(
+                  str(s, "a", 1),
+                  `:`(":", span(s, 4, 5)),
+                  IntLit("1", span(s, 5, 6), 1),
+                ),
+                elementList[CommaKeyPair](span(s, 6, 6))(),
+                eoSome(`,`( ",", span(s, 6, 7))),
+              ),
+            ),
+            `}`("}", span(s, 7, 8)),
           )
         },
         parsesTo(Json.parser, "{\"a\":1,\"b\":false}") { s =>
@@ -158,9 +207,36 @@ object JsonSpec extends OxygenSpecDefault {
                     ),
                   ),
                 ),
+                eoNone(span(s, 16, 16)),
               ),
             ),
             `}`("}", span(s, 16, 17)),
+          )
+        },
+        parsesTo(Json.parser, "{\"a\":1,\"b\":false,}") { s =>
+          Obj(
+            `{`("{", span(s, 0, 1)),
+            eoSome(
+              ObjBody(
+                KeyPair(
+                  str(s, "a", 1),
+                  `:`(":", span(s, 4, 5)),
+                  IntLit("1", span(s, 5, 6), 1),
+                ),
+                elementList[CommaKeyPair](span(s, 16, 16))(
+                  CommaKeyPair(
+                    `,`( ",", span(s, 6, 7)),
+                    KeyPair(
+                      str(s, "b", 7),
+                      `:`(":", span(s, 10, 11)),
+                      FalseLit("false", span(s, 11, 16)),
+                    ),
+                  ),
+                ),
+                eoSome(`,`( ",", span(s, 16, 17))),
+              ),
+            ),
+            `}`("}", span(s, 17, 18)),
           )
         },
       ),
@@ -173,15 +249,17 @@ object JsonSpec extends OxygenSpecDefault {
         failsToParse(Json.parser, "\""),
         failsToParse(Json.parser, "\"unterminated"),
         failsToParse(Json.parser, "["),
-        failsToParse(Json.parser, "[1,]"),
+        failsToParse(Json.parser, "[,]"),
         failsToParse(Json.parser, "[1 2]"),
+        failsToParse(Json.parser, "[1,,2]"),
         failsToParse(Json.parser, "{"),
+        failsToParse(Json.parser, "{,}"),
         failsToParse(Json.parser, "{1:2}"),
         failsToParse(Json.parser, "{\"a\"}"),
         failsToParse(Json.parser, "{\"a\":}"),
+        failsToParse(Json.parser, "{\"a\":1,,}"),
         failsToParse(Json.parser, "null true"),
       ),
     )
-
 
 }

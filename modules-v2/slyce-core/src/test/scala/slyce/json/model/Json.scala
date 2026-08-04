@@ -94,15 +94,28 @@ final case class Arr(
   override val span: Span.Range = open.span <> close.span
 }
 
+/**
+ * Non-empty array elements with optional trailing comma (JSON5-style).
+ * `tail` is `,`+value pairs; `trailingComma` is a final `,` with no following value —
+ * classic list + optional trailer FIRST-overlap (grammar rewrite target).
+ */
 final case class ArrBody(
     head: Json,
     tail: ElementList[CommaJson],
+    trailingComma: ElementOption[`,`],
 ) extends NonTerminal {
-  override val span: Span.Range =
-    tail.headOption match {
-      case Some(last) => head.span <> last.span
-      case None       => head.span
-    }
+  override val span: Span.Range = {
+    val mid =
+      tail.headOption match {
+        case Some(_) =>
+          tail match {
+            case n: NonEmptyElementList[?] => head.span <> n.span
+            case n: ElementNil             => head.span
+          }
+        case None => head.span
+      }
+    trailingComma.toOption.map(c => mid <> c.span).getOrElse(mid)
+  }
 }
 
 final case class CommaJson(
@@ -123,15 +136,24 @@ final case class Obj(
   override val span: Span.Range = open.span <> close.span
 }
 
+/** Non-empty object members with optional trailing comma (same rewrite shape as [[ArrBody]]). */
 final case class ObjBody(
     head: KeyPair,
     tail: ElementList[CommaKeyPair],
+    trailingComma: ElementOption[`,`],
 ) extends NonTerminal {
-  override val span: Span.Range =
-    tail.headOption match {
-      case Some(last) => head.span <> last.span
-      case None       => head.span
-    }
+  override val span: Span.Range = {
+    val mid =
+      tail.headOption match {
+        case Some(_) =>
+          tail match {
+            case n: NonEmptyElementList[?] => head.span <> n.span
+            case n: ElementNil             => head.span
+          }
+        case None => head.span
+      }
+    trailingComma.toOption.map(c => mid <> c.span).getOrElse(mid)
+  }
 }
 
 final case class KeyPair(
