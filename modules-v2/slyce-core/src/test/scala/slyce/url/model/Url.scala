@@ -22,8 +22,9 @@ import slyce.url.cleaned as cleaned
  * Desired surface AST for URLs (human-sensible):
  *   scheme '://' host [':' port] ['/' pathSeg]* ['/']? ['?' query] ['#' fragment]
  *
- * Intentionally **not** LALR-safe as written (path list vs trailing `/`, host alternatives, …).
- * `Parser.derived[Url]` must fail at compile time until auto-rewrite exists.
+ * Domain labels start with a letter (same FIRST split as [[slyce.url.cleaned]]) so host
+ * is not a lexer-ambiguity problem. Still **not** LALR-safe as written because of path
+ * list vs trailing `/` FIRST overlap — `Parser.derived[Url]` fails until auto-rewrite exists.
  * Use [[slyce.url.cleaned.Url]] + [[fromCleaned]] for a working parser in the meantime.
  */
 final case class Url(
@@ -56,8 +57,8 @@ final case class Url(
 object Url {
 
   /**
-   * RED by design: desired AST is not a valid surface grammar for derivation.
-   * Expect compile error from [[GrammarValidity]] (path/trailingSlash FIRST overlap, host terminal overlap, …).
+   * RED by design: path list + trailing `/` FIRST overlap is not LALR-safe without rewrite.
+   * Expect compile error from [[GrammarValidity]] on path/trailingSlash.
    */
   val parser: Parser[Url] = Parser.derived[Url](2)
 
@@ -226,7 +227,8 @@ final case class DotDomainLabel(
   override val span: Span.Range = dot.span <> label.span
 }
 
-@regex("[a-zA-Z0-9][-a-zA-Z0-9]*".r)
+/** Labels start with a letter so pure-numeric hosts go to [[Ipv4Host]] (FIRST-token split). */
+@regex("[a-zA-Z][-a-zA-Z0-9]*".r)
 final case class DomainLabel(text: String, span: Span.Range) extends Terminal
 
 /** IPv4: exactly four decimal octets separated by `.`. */
