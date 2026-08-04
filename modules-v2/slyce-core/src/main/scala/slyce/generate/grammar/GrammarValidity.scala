@@ -8,85 +8,24 @@ import scala.quoted.*
 import slyce.generate.*
 
 /**
- * Surface-grammar validity checks **before** / independent of full LR construction.
+ * Early surface checks that **grammar rewrite cannot fix**.
  *
- * Contract: if the programmer-facing AST implies an ambiguous or otherwise non-LALR-safe
- * surface grammar (without rewrite), derivation must **fail at compile time** — not emit a
- * silent wrong parser.
+ * Adjacent FIRST-overlap on products (list vs trailer, etc.) is handled by
+ * [[GrammarRewrite]] + LR table construction — not aborted here.
  *
- * Auto-rewrite is future work; until then, these cases are hard errors.
+ * Still hard-fails sum alternatives whose **distinct leading terminals** can match the
+ * same input (lexer ambiguity), e.g. overlapping DomainLabel / Ipv4Octet regexes before
+ * a letter-start split.
  */
 private[slyce] object GrammarValidity {
 
   def assertValid(root: ExtractedType, cache: ExtractedTypeCache)(using Quotes): Unit = {
     val rootName = root.typeRepr.showCode
     cache.getAllTypes.foreach {
-      case p: ExtractedType.ProductNonTerminal => checkProduct(rootName, p)
-      case s: ExtractedType.SumNonTerminal     => checkSum(rootName, s.directChildren.toList, s.typeRepr.showCode)
-      case s: ExtractedType.SumElement         => checkSum(rootName, s.directChildren.toList, s.typeRepr.showCode)
-      case s: ExtractedType.SumTerminal        => checkSum(rootName, s.directChildren.toList, s.typeRepr.showCode)
-      case _                                   => ()
-    }
-  }
-
-  private def checkProduct(rootName: String, p: ExtractedType.ProductNonTerminal)(using Quotes): Unit = {
-    val fields = p.fields.toList.map(f => (f.field.name, f.extracted))
-    fields.sliding(2).foreach {
-      case List((lName, leftEt), (rName, rightEt)) =>
-        checkAdjacentFields(rootName, p.typeRepr.showCode, lName, leftEt, rName, rightEt)
-      case _ => ()
-    }
-  }
-
-  /**
-   * Classic ambiguity we hit on URL:
-   *   path: ElementList[PathSeg]   // PathSeg starts with `/`
-   *   trailingSlash: ElementOption[`/`]
-   * After zero or more path segs, `/` can start another PathSeg **or** the trailing slash.
-   */
-  private def checkAdjacentFields(
-      rootName: String,
-      productName: String,
-      leftName: String,
-      leftEt: ExtractedType,
-      rightName: String,
-      rightEt: ExtractedType,
-  )(using Quotes): Unit = {
-    val leftIsList =
-      leftEt.isInstanceOf[ExtractedType.ElementListBuiltIn] ||
-        leftEt.isInstanceOf[ExtractedType.NonEmptyElementListBuiltIn]
-
-    if leftIsList then {
-      val elemFirst = firstTerminals(elemOfList(leftEt))
-      val (rightFirst, _) = firstSet(rightEt)
-      val overlap = overlappingTerminals(elemFirst, rightFirst)
-      if overlap.nonEmpty then
-        report.errorAndAbort(
-          s"""|Invalid grammar for $rootName (while checking $productName):
-              |  Ambiguous consecutive fields — FIRST sets overlap (not LALR-safe without rewrite):
-              |    $leftName: ${leftEt.renderInline}
-              |    $rightName: ${rightEt.renderInline}
-              |  Overlapping terminal(s): ${overlap.map(_.typeRepr.showCode).mkString(", ")}
-              |  A token in that set can continue the list **or** start the next field.
-              |  Auto-rewrite is not implemented yet; fix the AST or parse a cleaned grammar + transform.
-              |""".stripMargin,
-        )
-    }
-
-    // nullable left + overlapping FIRST with right (general FIRST/FOLLOW hazard)
-    val (leftFirst, leftNullable) = firstSet(leftEt)
-    val (rightFirst, _) = firstSet(rightEt)
-    if leftNullable then {
-      val overlap = overlappingTerminals(leftFirst, rightFirst)
-      if overlap.nonEmpty && !leftIsList then // list case already reported more specifically
-        report.errorAndAbort(
-          s"""|Invalid grammar for $rootName (while checking $productName):
-              |  Ambiguous nullable field followed by overlapping FIRST:
-              |    $leftName: ${leftEt.renderInline}
-              |    $rightName: ${rightEt.renderInline}
-              |  Overlapping terminal(s): ${overlap.map(_.typeRepr.showCode).mkString(", ")}
-              |""".stripMargin,
-        )
+      case s: ExtractedType.SumNonTerminal => checkSum(rootName, s.directChildren.toList, s.typeRepr.showCode)
+      case s: ExtractedType.SumElement     => checkSum(rootName, s.directChildren.toList, s.typeRepr.showCode)
+      case s: ExtractedType.SumTerminal    => checkSum(rootName, s.directChildren.toList, s.typeRepr.showCode)
+      case _                               => ()
     }
   }
 
@@ -97,7 +36,6 @@ private[slyce] object GrammarValidity {
 
     leads.combinations(2).foreach {
       case List((c1, t1), (c2, t2)) =>
-        val overlap = overlappingTerminals(t1, t2)
         // same terminal type appearing in both is fine (same symbol); distinct terms with regex overlap is not
         val cross = for {
           a <- t1
@@ -121,13 +59,6 @@ private[slyce] object GrammarValidity {
     }
   }
 
-  private def elemOfList(et: ExtractedType): ExtractedType =
-    et match {
-      case e: ExtractedType.ElementListBuiltIn          => e.elem
-      case e: ExtractedType.NonEmptyElementListBuiltIn  => e.elem
-      case _                                            => et
-    }
-
   private def firstTerminals(et: ExtractedType): Set[ExtractedType.ProductTerminal] =
     firstSet(et)._1
 
@@ -137,7 +68,6 @@ private[slyce] object GrammarValidity {
       case t: ExtractedType.ProductTerminal =>
         (Set(t), false)
       case t: ExtractedType.ProductNonTerminal =>
-        // FIRST of product = FIRST of fields until a non-nullable field
         var terms = Set.empty[ExtractedType.ProductTerminal]
         var nullable = true
         t.fields.toList.foreach { f =>
@@ -158,10 +88,10 @@ private[slyce] object GrammarValidity {
         (parts.flatMap(_._1).toSet, parts.exists(_._2))
       case t: ExtractedType.ElementListBuiltIn =>
         val (e, _) = firstSet(t.elem)
-        (e, true) // empty list
+        (e, true)
       case t: ExtractedType.NonEmptyElementListBuiltIn =>
         val (e, en) = firstSet(t.elem)
-        (e, en) // only nullable if elem is
+        (e, en)
       case t: ExtractedType.ElementOptionBuiltIn =>
         val (e, _) = firstSet(t.elem)
         (e, true)
@@ -173,25 +103,6 @@ private[slyce] object GrammarValidity {
       case _ =>
         (Set.empty, false)
     }
-
-  private def overlappingTerminals(
-      a: Set[ExtractedType.ProductTerminal],
-      b: Set[ExtractedType.ProductTerminal],
-  ): Set[ExtractedType.ProductTerminal] = {
-    // same terminal type in both sets
-    val byNameA = a.map(t => t.typeRepr.showCode -> t).toMap
-    val byNameB = b.map(t => t.typeRepr.showCode -> t).toMap
-    val same = byNameA.keySet.intersect(byNameB.keySet).flatMap(byNameA.get)
-    // distinct terminals with regex overlap
-    val cross =
-      for {
-        x <- a
-        y <- b
-        if x.typeRepr.showCode != y.typeRepr.showCode
-        if regexesCanBothMatch(x.regex.regexText, y.regex.regexText)
-      } yield x
-    same ++ cross
-  }
 
   /** True if there exists some non-empty string that both patterns can match as a prefix (lookingAt). */
   private def regexesCanBothMatch(pa: String, pb: String): Boolean = {

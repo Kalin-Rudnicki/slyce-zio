@@ -29,4 +29,17 @@ object GSym {
     override def label: String = s"$$opt[$childLabel]"
   }
 
+  /**
+   * Left-factored sequence non-terminal (grammar rewrite).
+   * Head: `T Tail | ε`  — Tail: `rest… Head | ε`
+   * where `T` is a shared lead terminal of a former list element and following optional.
+   */
+  final case class SeqNt(id: String, phase: SeqPhase) extends NonTerm {
+    override def label: String = s"$$seq[$id].$phase"
+  }
+
+  enum SeqPhase {
+    case Head, Tail
+  }
+
 }

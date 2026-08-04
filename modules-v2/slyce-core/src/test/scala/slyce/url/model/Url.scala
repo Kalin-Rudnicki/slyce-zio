@@ -18,11 +18,13 @@ import slyce.url.cleaned as cleaned
 
 // =====| Url (desired / human-sensible AST) |=====
 
-/** Desired surface AST for URLs (human-sensible): scheme '://' host [':' port] ['/' pathSeg]* ['/']? ['?' query] ['#' fragment]
-  *
-  * Domain labels start with a letter (same FIRST split as [[slyce.url.cleaned]]) so host is not a lexer-ambiguity problem. Still **not** LALR-safe as written because of path list vs trailing `/`
-  * FIRST overlap — `Parser.derived[Url]` fails until auto-rewrite exists. Use [[slyce.url.cleaned.Url]] + [[fromCleaned]] for a working parser in the meantime.
-  */
+/**
+ * Desired surface AST for URLs (human-sensible):
+ *   scheme '://' host [':' port] ['/' pathSeg]* ['/']? ['?' query] ['#' fragment]
+ *
+ * Domain labels start with a letter so host FIRST-splits from IPv4.
+ * Path list vs trailing `/` is left-factored by grammar rewrite ([[slyce.generate.grammar.GrammarRewrite]]).
+ */
 final case class Url(
     scheme: Scheme,
     sep: `://`,
@@ -52,8 +54,6 @@ final case class Url(
 }
 object Url {
 
-  /** RED by design: path list + trailing `/` FIRST overlap is not LALR-safe without rewrite. Expect compile error from [[GrammarValidity]] on path/trailingSlash.
-    */
   val parser: Parser[Url] = Parser.derived[Url](2)
 
   def fromCleaned(u: cleaned.Url): Url = {

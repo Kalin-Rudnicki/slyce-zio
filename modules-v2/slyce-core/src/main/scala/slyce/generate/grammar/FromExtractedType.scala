@@ -14,15 +14,41 @@ import slyce.generate.*
  */
 private[slyce] object FromExtractedType {
 
+  /**
+   * How to obtain one product field when reducing a product production.
+   * Stack indices refer to the RHS of the (possibly rewritten) production.
+   */
+  enum FieldSource {
+    /** Use stack value at `idx` as this field. */
+    case Arg(idx: Int)
+    /** Stack value at `idx` is [[slyce.parse.FactoredSeq]]; use `.list`. */
+    case FactoredList(idx: Int)
+    /** Stack value at `idx` is [[slyce.parse.FactoredSeq]]; use `.trail`. */
+    case FactoredTrail(idx: Int)
+    /** Single-field product wrapper around `inner` (unit NT peeled during rewrite). */
+    case Product1(typeLabel: String, inner: FieldSource)
+  }
+
   enum ReduceKind {
-    /** Case-class product: pop `arity` values, instantiate via ProductGeneric at macro time. */
-    case Product(typeLabel: String, arity: Int)
+    /**
+     * Case-class product: build fields from stack according to `sources`
+     * (one entry per case-class field, in declaration order).
+     */
+    case Product(typeLabel: String, sources: List[FieldSource])
     /** Production is a single child already of the desired type (e.g. sum of terminals). */
     case Identity
     case ListNil
     case ListCons
     case OptSome
     case OptNone
+    /** `$seq.Head → ε` → empty FactoredSeq */
+    case SeqEmpty
+    /** `$seq.Head → T Tail` → combine shared term with FactoredTail */
+    case SeqCons(elemProductLabel: String, restArity: Int)
+    /** `$seq.Tail → ε` → FactoredTail.TrailOnly */
+    case SeqTailTrail
+    /** `$seq.Tail → rest… Head` → FactoredTail.Continues */
+    case SeqTailMore(restArity: Int)
   }
 
   final case class Result(
@@ -156,7 +182,7 @@ private[slyce] object FromExtractedType {
 
       val fieldSyms: List[GSym] = t.fields.toList.map(f => ref(f.extracted))
       groups += NTGroup.BasicNT(GSym.Nt(lab), NonEmptyList.one(fieldSyms))
-      reduces += ((lab, 0) -> ReduceKind.Product(lab, fieldSyms.size))
+      reduces += ((lab, 0) -> ReduceKind.Product(lab, fieldSyms.indices.map(FieldSource.Arg(_)).toList))
     }
 
     /** Sum of nonterminals only (e.g. Expr.Add). */
@@ -204,7 +230,12 @@ private[slyce] object FromExtractedType {
               // Prefer separate NT when product may be referenced elsewhere; still inline fields
               // into this sum prod so reduce builds the case class directly.
               val fieldSyms = c.fields.toList.map(f => ref(f.extracted))
-              reduces += ((lab, idx) -> ReduceKind.Product(labelOf(c), fieldSyms.size))
+              reduces += (
+                (
+                  lab,
+                  idx,
+                ) -> ReduceKind.Product(labelOf(c), fieldSyms.indices.map(FieldSource.Arg(_)).toList)
+              )
               // Also ensure named NT exists for external refs (KeyPair.key: Str)
               ensureProduct(c)
               fieldSyms
