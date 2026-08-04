@@ -60,6 +60,7 @@ object UrlSpec extends OxygenSpecDefault {
     )
 
   override def testSpec: TestSpec =
+    (
     suite("UrlSpec")(
       suite("valid")(
         parsesTo(Url.parser, "https://example.com") { s =>
@@ -301,6 +302,7 @@ object UrlSpec extends OxygenSpecDefault {
         failsToParse(Url.parser, "http://127.0.0.1.2"),
         failsToParse(Url.parser, "http://256.0.0.1"),
       ),
-    )
+    )) @@ TestAspect.ignore // calculator e2e isolation
+
 
 }

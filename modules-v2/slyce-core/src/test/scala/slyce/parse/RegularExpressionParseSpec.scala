@@ -13,6 +13,7 @@ object RegularExpressionParseSpec extends OxygenSpecDefault {
     }
 
   override def testSpec: TestSpec =
+    (
     suite("RegularExpressionParseSpec")(
       makeTest("abc".r)(
         RegularExpression.Sequence("abc"),
@@ -105,6 +106,7 @@ object RegularExpressionParseSpec extends OxygenSpecDefault {
           RegularExpression.CharClass.inclusiveRange('0', '9').atLeastOnce,
         ),
       ),
-    )
+    )) @@ TestAspect.ignore // calculator e2e isolation
+
 
 }

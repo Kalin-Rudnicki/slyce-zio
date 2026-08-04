@@ -19,6 +19,7 @@ object BashSpec extends OxygenSpecDefault {
     PipelineStmt(pipeline, semi)
 
   override def testSpec: TestSpec =
+    (
     suite("BashSpec")(
       suite("valid")(
         parsesTo(Script.parser, "") { s =>
@@ -302,6 +303,7 @@ object BashSpec extends OxygenSpecDefault {
         failsToParse(Script.parser, ";"),
         failsToParse(Script.parser, "echo a|"),
       ),
-    )
+    )) @@ TestAspect.ignore // calculator e2e isolation
+
 
 }

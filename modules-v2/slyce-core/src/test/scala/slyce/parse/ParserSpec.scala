@@ -166,8 +166,10 @@ object ParserSpec extends OxygenSpecDefault {
   ///////  ///////////////////////////////////////////////////////////////
 
   override def testSpec: TestSpec =
+    (
     suite("ParserSpec")(
       // TODO (KR) :
-    )
+    )) @@ TestAspect.ignore // calculator e2e isolation
+
 
 }

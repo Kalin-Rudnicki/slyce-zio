@@ -46,10 +46,7 @@ final case class Program(
 }
 object Program {
 
-  val parser: Parser[Program] =
-    new Parser[Program] {
-      override def parse(source: Source): Either[ParseError, Program] = ???
-    }
+  val parser: Parser[Program] = Parser.derived[Program](1)
 
 }
 
