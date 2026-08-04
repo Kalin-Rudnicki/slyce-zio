@@ -1,38 +1,41 @@
 package slyce.generate.grammar
 
-final case class NTGroup()
+import oxygen.predef.core.*
 
-// FIX-PRE-MERGE (KR) : remove
-/*
+/** High-level NT before expansion to flat RawNT productions. */
+enum NTGroup {
+  case BasicNT(name: GSym.Nt, prods: NonEmptyList[List[GSym]])
+  case ListNT(id: String, elem: GSym, nonempty: Boolean)
+  case Optional(child: GSym)
 
-  enum NTGroup {
-    case BasicNT(
-        name: String,
-        prods: NonEmptyList[List[Identifier]],
-    )
-    case LiftNT(
-        name: String,
-        prods: NonEmptyList[LiftList[Identifier]],
-    )
-    case ListNT(
-        name: Either[String, AnonListNtId],
-        listType: GrammarInput.NonTerminal.ListNonTerminal.Type,
-        startProds: LiftList[Identifier],
-        repeatProds: Option[LiftList[Identifier]],
-    )
-    case AssocNT(
-        name: String,
-        assocs: NonEmptyList[(Identifier, GrammarInput.NonTerminal.AssocNonTerminal.Type)],
-        base: Either[
-          NonEmptyList[List[Identifier]],
-          NonEmptyList[LiftList[Identifier]],
-        ],
-    )
-    case Optional(
-        id: Identifier,
-    )
+  final lazy val rawNTs: NonEmptyList[RawNT] = NTGroup.toRaw(this)
+}
+object NTGroup {
 
-    final lazy val rawNTs: NonEmptyList[RawNT] = convertNTGroup(this)
+  def toRaw(group: NTGroup): NonEmptyList[RawNT] =
+    group match {
+      case NTGroup.BasicNT(name, prods) =>
+        NonEmptyList.one(RawNT(name, prods.map(Production(_))))
+      case NTGroup.ListNT(id, elem, nonempty) =>
+        if nonempty then {
+          val head = GSym.ListNt(id, GSym.ListPhase.Head)
+          val tail = GSym.ListNt(id, GSym.ListPhase.Tail)
+          val cons = Production(elem, tail)
+          NonEmptyList.of(
+            RawNT(head, NonEmptyList.one(cons)),
+            RawNT(tail, NonEmptyList.of(cons, Production())),
+          )
+        } else {
+          val simple = GSym.ListNt(id, GSym.ListPhase.Simple)
+          NonEmptyList.one(
+            RawNT(simple, NonEmptyList.of(Production(elem, simple), Production())),
+          )
+        }
+      case NTGroup.Optional(child) =>
+        val name = GSym.OptNt(child.label)
+        NonEmptyList.one(
+          RawNT(name, NonEmptyList.of(Production(child), Production())),
+        )
+    }
 
-  }
- */
+}

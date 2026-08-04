@@ -1,13 +1,6 @@
 package slyce.generate.grammar
 
-final case class Production(
-    // FIX-PRE-MERGE (KR) :
-)
-
-// FIX-PRE-MERGE (KR) : remove
-/*
-  final case class Production(elements: List[Identifier])
-  object Production {
-    def apply(elements: Identifier*): Production = Production(elements.toList)
-  }
- */
+final case class Production(elements: List[GSym])
+object Production {
+  def apply(elements: GSym*): Production = Production(elements.toList)
+}

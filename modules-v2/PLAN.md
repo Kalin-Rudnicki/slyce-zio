@@ -3,7 +3,33 @@
 > Macro-derived parser generator. Replaces v1's external code-gen tool with compile-time `Parser.derived[A]`.
 
 **Branch:** `current/refactor/v2-round2`  
-**Status:** Type extraction done; grammar generation next.
+**Status:** Type extraction done; grammar generation next. Calculator e2e in progress.
+
+---
+
+## NON-NEGOTIABLE — Scala 3 macros / quoting
+
+These rules apply to **all** v2 generate/macro work (`DeriveParser`, reduce codegen, `Expr` construction, etc.). Treat as hard constraints, not style tips.
+
+1. **Look at Oxygen (local, next to this repo)** for Scala 3 macro patterns and APIs.  
+   Path: `../Oxygen` relative to this repo (e.g. `/home/kalin/dev/repo/current/Oxygen`).  
+   Prefer existing oxygen helpers over inventing quote/reflect glue.
+
+2. **Raw `scala.quoted.Quotes.reflect` is FORBIDDEN.**  
+   Do **not** call `quotes.reflect.*`, import `scala.quoted.quotes.reflect`, or drop to compiler TASTy APIs directly.  
+   Use **`oxygen.quoted`** wrappers exclusively for reflection/quoting surface area.
+
+3. **Preferred imports / namespaces** (search these first when stuck):
+   - `import oxygen.quoted.*` — quotes, `TypeRepr`, `Expr`, `Position`, report helpers, etc.
+   - `import oxygen.meta.*` / `import oxygen.meta.k0.*` — `ProductGeneric`, `SumGeneric`, instantiate, field walkers, derivation config
+   - Existing slyce usage already follows this (e.g. `ExtractedType.scala`, `DeriveBuildTerminal.scala`)
+
+4. **Inspiration checklist in Oxygen** when implementing codegen:
+   - `oxygen.meta.k0.ProductGeneric` — `instantiate.fieldsToInstance`, field maps
+   - `oxygen.meta.k0.SumGeneric` — case walk / nested unroll
+   - other `oxygen.quoted` / `oxygen.meta` call sites under `Oxygen/modules/**`
+
+If a task seems to “require” raw reflect, stop and find the oxygen equivalent (or extend oxygen) — do not bypass.
 
 ---
 

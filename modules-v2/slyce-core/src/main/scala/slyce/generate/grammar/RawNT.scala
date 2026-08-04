@@ -1,16 +1,8 @@
 package slyce.generate.grammar
 
-final case class RawNT(
-    // FIX-PRE-MERGE (KR) :
-)
+import oxygen.predef.core.*
 
-// FIX-PRE-MERGE (KR) : remove
-/*
-  final case class RawNT(
-      name: Identifier.NonTerminal,
-      productions: NonEmptyList[Production],
-  )
-  object RawNT {
-    def apply(name: Identifier.NonTerminal, prod0: Production, prodN: Production*): RawNT = RawNT(name, NonEmptyList(prod0, prodN.toList))
-  }
- */
+final case class RawNT(
+    name: GSym.Nt | GSym.ListNt | GSym.OptNt,
+    productions: NonEmptyList[Production],
+)
