@@ -22,6 +22,10 @@ private[slyce] object DeriveParser {
     val cache: ExtractedTypeCache = ExtractedTypeCache.empty
     val root: ExtractedType = cache.getOrCreate(Position.ofMacroExpansion)(TypeRepr.of[A])
 
+    // Fail at compile time if the surface AST implies an ambiguous / non-LALR-safe grammar.
+    // (Auto-rewrite comes later; until then this is a hard error — not a silent bad parser.)
+    GrammarValidity.assertValid(root, cache)
+
     val extracted = FromExtractedType(root, cache, maxLookAhead)
     val table = ParsingTable.fromExpandedGrammar(extracted.grammar) match {
       case Right(t)  => t

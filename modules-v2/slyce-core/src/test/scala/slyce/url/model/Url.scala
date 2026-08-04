@@ -19,11 +19,12 @@ import slyce.url.cleaned as cleaned
 // =====| Url (desired / human-sensible AST) |=====
 
 /**
- * Desired surface AST for URLs:
+ * Desired surface AST for URLs (human-sensible):
  *   scheme '://' host [':' port] ['/' pathSeg]* ['/']? ['?' query] ['#' fragment]
  *
- * This shape is intentional for programmers; it is **not** what the LR grammar parses
- * directly. Parsing goes through [[slyce.url.cleaned.Url]] then [[Url.fromCleaned]].
+ * Intentionally **not** LALR-safe as written (path list vs trailing `/`, host alternatives, …).
+ * `Parser.derived[Url]` must fail at compile time until auto-rewrite exists.
+ * Use [[slyce.url.cleaned.Url]] + [[fromCleaned]] for a working parser in the meantime.
  */
 final case class Url(
     scheme: Scheme,
@@ -54,12 +55,11 @@ final case class Url(
 }
 object Url {
 
-  /** Parse via the cleaned LALR grammar, then map into this desired AST. */
-  val parser: Parser[Url] =
-    new Parser[Url] {
-      override def parse(source: Source): Either[ParseError, Url] =
-        cleaned.Url.parser.parse(source).map(fromCleaned)
-    }
+  /**
+   * RED by design: desired AST is not a valid surface grammar for derivation.
+   * Expect compile error from [[GrammarValidity]] (path/trailingSlash FIRST overlap, host terminal overlap, …).
+   */
+  val parser: Parser[Url] = Parser.derived[Url](2)
 
   def fromCleaned(u: cleaned.Url): Url = {
     val (path, trailingSlash) = pathAndTrailFromCleaned(u.path)
@@ -80,7 +80,7 @@ object Url {
 
   private def mapOpt[A <: Element, B <: Element](opt: ElementOption[A])(f: A => B): ElementOption[B] =
     opt match {
-      case ElementOption.Some(v) => ElementOption.Some(f(v))
+      case ElementOption.Some(v)  => ElementOption.Some(f(v))
       case ElementOption.None(sp) => ElementOption.None(sp)
     }
 
@@ -158,17 +158,17 @@ object Url {
   private def consAll(head: PathSeg, tail: List[PathSeg]): ElementList[PathSeg] = {
     def go(xs: List[PathSeg]): ElementList[PathSeg] =
       xs match {
-        case Nil          => ElementNil(Span.Range(head.span.source, head.span.startInclusive, head.span.startInclusive))
-        case h :: Nil     => NonEmptyElementList(h, ElementNil(emptySpan(h.span)))
-        case h :: rest    => NonEmptyElementList(h, go(rest))
+        case Nil       => ElementNil(Span.Range(head.span.source, head.span.startInclusive, head.span.startInclusive))
+        case h :: Nil  => NonEmptyElementList(h, ElementNil(emptySpan(h.span)))
+        case h :: rest => NonEmptyElementList(h, go(rest))
       }
     go(head :: tail)
   }
 
   private def mapList[A <: Element, B <: Element](list: ElementList[A])(f: A => B): ElementList[B] =
     list match {
-      case ElementNil(sp)              => ElementNil(sp)
-      case NonEmptyElementList(h, t)   => NonEmptyElementList(f(h), mapList(t)(f))
+      case ElementNil(sp)            => ElementNil(sp)
+      case NonEmptyElementList(h, t) => NonEmptyElementList(f(h), mapList(t)(f))
     }
 
   private def queryFromCleaned(q: cleaned.Query): Query =
@@ -249,8 +249,8 @@ object Ipv4Octet {
     (text, span) =>
       text.toIntOption match {
         case Some(v) if v >= 0 && v <= 255 => Right(Ipv4Octet(text, span, v))
-        case Some(_)                      => Left(s"IPv4 octet out of range: $text")
-        case None                         => Left(s"Invalid IPv4 octet: $text")
+        case Some(_)                       => Left(s"IPv4 octet out of range: $text")
+        case None                          => Left(s"Invalid IPv4 octet: $text")
       }
 }
 
