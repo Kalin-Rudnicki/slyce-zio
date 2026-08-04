@@ -22,10 +22,7 @@ import slyce.parse.*
 sealed trait Json extends Element { self: Terminal | NonTerminal => }
 object Json {
 
-  val parser: Parser[Json] =
-    new Parser[Json] {
-      override def parse(source: Source): Either[ParseError, Json] = ???
-    }
+  val parser: Parser[Json] = Parser.derived[Json](2)
 
 }
 

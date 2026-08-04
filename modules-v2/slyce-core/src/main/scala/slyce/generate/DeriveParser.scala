@@ -88,6 +88,11 @@ private[slyce] object DeriveParser {
             }
           }
 
+        case FromExtractedType.ReduceKind.Identity =>
+          '{ (args: IArray[Any], src: Source, pos: Int) =>
+            args(0)
+          }
+
         case FromExtractedType.ReduceKind.ListNil =>
           '{ (args: IArray[Any], src: Source, pos: Int) =>
             val p = src.positions(math.min(pos, src.length))

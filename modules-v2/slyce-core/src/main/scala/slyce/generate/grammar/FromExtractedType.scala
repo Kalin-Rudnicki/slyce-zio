@@ -17,6 +17,8 @@ private[slyce] object FromExtractedType {
   enum ReduceKind {
     /** Case-class product: pop `arity` values, instantiate via ProductGeneric at macro time. */
     case Product(typeLabel: String, arity: Int)
+    /** Production is a single child already of the desired type (e.g. sum of terminals). */
+    case Identity
     case ListNil
     case ListCons
     case OptSome
@@ -49,7 +51,7 @@ private[slyce] object FromExtractedType {
           products = ctx.products.toMap,
         )
       case other =>
-        report.errorAndAbort(s"Parser root must be a non-terminal, got: $other")
+        report.errorAndAbort(s"Parser root must be a named non-terminal, got: $other")
     }
   }
 
@@ -79,14 +81,18 @@ private[slyce] object FromExtractedType {
 
         case t: ExtractedType.SumNonTerminal =>
           val lab = labelOf(t)
-          ensureSum(t)
+          ensureSumNonTerminal(t)
           GSym.Nt(lab)
 
         case t: ExtractedType.SumTerminal =>
-          report.errorAndAbort(s"SumTerminal not supported as production element yet: ${labelOf(t)}")
+          val lab = labelOf(t)
+          ensureSumTerminal(t)
+          GSym.Nt(lab)
 
         case t: ExtractedType.SumElement =>
-          report.errorAndAbort(s"SumElement not supported as production element yet: ${labelOf(t)}")
+          val lab = labelOf(t)
+          ensureSumElement(t)
+          GSym.Nt(lab)
 
         case t: ExtractedType.ElementListBuiltIn =>
           listSym(t.elem, nonempty = false)
@@ -98,19 +104,16 @@ private[slyce] object FromExtractedType {
           optSym(t.elem)
 
         case t: ExtractedType.IgnoreBuiltIn =>
-          report.errorAndAbort("IgnoreBuiltIn fields are not supported in calculator path yet")
+          report.errorAndAbort("IgnoreBuiltIn fields are not supported yet")
 
         case t: ExtractedType.UnionBuiltIn =>
           report.errorAndAbort(s"UnionBuiltIn not supported yet: ${t.typeRepr.showCode}")
 
         case t: ExtractedType.VElementListBuiltIn =>
-          report.errorAndAbort("VElementList not supported in calculator path yet")
+          report.errorAndAbort("VElementList not supported yet")
 
         case t: ExtractedType.NonEmptyVElementListBuiltIn =>
-          report.errorAndAbort("NonEmptyVElementList not supported in calculator path yet")
-
-        case other =>
-          report.errorAndAbort(s"Unsupported ExtractedType: $other")
+          report.errorAndAbort("NonEmptyVElementList not supported yet")
       }
 
     private def listSym(elemEt: ExtractedType, nonempty: Boolean): GSym = {
@@ -122,7 +125,6 @@ private[slyce] object FromExtractedType {
         seenNt += s"list:$id"
         groups += NTGroup.ListNT(id, elem, nonempty)
         if nonempty then {
-          // Head: only cons; Tail: cons | nil
           reduces += ((GSym.ListNt(id, GSym.ListPhase.Head).label, 0) -> ReduceKind.ListCons)
           reduces += ((GSym.ListNt(id, GSym.ListPhase.Tail).label, 0) -> ReduceKind.ListCons)
           reduces += ((GSym.ListNt(id, GSym.ListPhase.Tail).label, 1) -> ReduceKind.ListNil)
@@ -157,29 +159,74 @@ private[slyce] object FromExtractedType {
       reduces += ((lab, 0) -> ReduceKind.Product(lab, fieldSyms.size))
     }
 
-    private def ensureSum(t: ExtractedType.SumNonTerminal): Unit = {
+    /** Sum of nonterminals only (e.g. Expr.Add). */
+    private def ensureSumNonTerminal(t: ExtractedType.SumNonTerminal): Unit = {
       val lab = labelOf(t)
       if seenNt.contains(lab) then return
       seenNt += lab
+      emitSumProds(lab, t.directChildren.toList)
+    }
 
-      // One production per direct child case. Product cases are inlined as field sequences
-      // and reduced with that product's constructor (not a separate NT unless referenced elsewhere).
+    /** Sum of terminals only (e.g. StrPart). */
+    private def ensureSumTerminal(t: ExtractedType.SumTerminal): Unit = {
+      val lab = labelOf(t)
+      if seenNt.contains(lab) then return
+      seenNt += lab
+      emitSumProds(lab, t.directChildren.toList)
+    }
+
+    /** Mixed Element sum (e.g. Json = terminals + nonterminals). */
+    private def ensureSumElement(t: ExtractedType.SumElement): Unit = {
+      val lab = labelOf(t)
+      if seenNt.contains(lab) then return
+      seenNt += lab
+      emitSumProds(lab, t.directChildren.toList)
+    }
+
+    /**
+     * One production per direct child:
+     * - ProductTerminal → [Term] + Identity
+     * - ProductNonTerminal → inlined fields + Product reduce
+     * - nested Sum* → [ChildNt] + Identity (value already has parent type if <: Element)
+     */
+    private def emitSumProds(lab: String, children: List[ExtractedType]): Unit = {
       val prods: List[List[GSym]] =
-        t.directChildren.toList.zipWithIndex.map {
-          case (child: ExtractedType.ProductNonTerminal, idx) =>
-            products.update(labelOf(child), child)
-            val fieldSyms = child.fields.toList.map(f => ref(f.extracted))
-            reduces += ((lab, idx) -> ReduceKind.Product(labelOf(child), fieldSyms.size))
-            fieldSyms
-          case (child: ExtractedType.SumNonTerminal, idx) =>
-            val childSym = ref(child) // recurse
-            // lift: single child NT — treat as product arity 1 wrapping? Sum-of-sum:
-            // production is just the child NT; value is already the child type which <: parent.
-            // For Expr.Add vs nested, children are products only in calculator.
-            reduces += ((lab, idx) -> ReduceKind.Product(labelOf(child), 1))
-            List(childSym)
-          case (child, _) =>
-            report.errorAndAbort(s"Unsupported sum child in ${lab}: ${child}")
+        children.zipWithIndex.map { case (child, idx) =>
+          child match {
+            case c: ExtractedType.ProductTerminal =>
+              val tLab = labelOf(c)
+              terminals.update(tLab, c)
+              reduces += ((lab, idx) -> ReduceKind.Identity)
+              List(GSym.Term(tLab))
+
+            case c: ExtractedType.ProductNonTerminal =>
+              products.update(labelOf(c), c)
+              // Prefer separate NT when product may be referenced elsewhere; still inline fields
+              // into this sum prod so reduce builds the case class directly.
+              val fieldSyms = c.fields.toList.map(f => ref(f.extracted))
+              reduces += ((lab, idx) -> ReduceKind.Product(labelOf(c), fieldSyms.size))
+              // Also ensure named NT exists for external refs (KeyPair.key: Str)
+              ensureProduct(c)
+              fieldSyms
+
+            case c: ExtractedType.SumNonTerminal =>
+              val childSym = ref(c)
+              reduces += ((lab, idx) -> ReduceKind.Identity)
+              List(childSym)
+
+            case c: ExtractedType.SumTerminal =>
+              val childSym = ref(c)
+              reduces += ((lab, idx) -> ReduceKind.Identity)
+              List(childSym)
+
+            case c: ExtractedType.SumElement =>
+              val childSym = ref(c)
+              reduces += ((lab, idx) -> ReduceKind.Identity)
+              List(childSym)
+
+            case other =>
+              report.errorAndAbort(s"Unsupported sum child in $lab: $other")
+          }
         }
 
       NonEmptyList.fromList(prods) match {
