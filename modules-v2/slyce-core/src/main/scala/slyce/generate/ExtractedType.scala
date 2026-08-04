@@ -82,7 +82,7 @@ private[slyce] object ExtractedType {
 
   sealed trait SumLike extends ExtractedType.Custom {
     override final val typeType: String = "Sum"
-    def hasSumChildren: Boolean
+    def hasSumChildren: Boolean // TODO (KR) : should this be `any sum children` or only `sum non-terminal`? move to different trait?
   }
   sealed trait ProductLike extends ExtractedType.Custom { override final val typeType: String = "Product" }
 
