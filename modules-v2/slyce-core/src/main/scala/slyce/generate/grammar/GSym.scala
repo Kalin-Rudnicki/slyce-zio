@@ -10,11 +10,13 @@ object GSym {
   /** Product terminal. */
   final case class Term(label: String) extends GSym
 
+  sealed trait NonTerm extends GSym
+
   /** Named non-terminal (product or sum). */
-  final case class Nt(label: String) extends GSym
+  final case class Nt(label: String) extends NonTerm
 
   /** Anonymous list non-terminal phases after expansion. */
-  final case class ListNt(id: String, phase: ListPhase) extends GSym {
+  final case class ListNt(id: String, phase: ListPhase) extends NonTerm {
     override def label: String = s"$$list[$id].$phase"
   }
 
@@ -23,7 +25,7 @@ object GSym {
   }
 
   /** Anonymous optional non-terminal. */
-  final case class OptNt(childLabel: String) extends GSym {
+  final case class OptNt(childLabel: String) extends NonTerm {
     override def label: String = s"$$opt[$childLabel]"
   }
 
