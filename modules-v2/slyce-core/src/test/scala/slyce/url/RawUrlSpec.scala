@@ -5,9 +5,9 @@ import oxygen.predef.test.*
 import slyce.TestUtils.*
 import slyce.core.*
 import slyce.core.builtIn.*
-import slyce.url.model.*
+import slyce.url.cleaned.*
 
-object UrlSpec extends OxygenSpecDefault {
+object RawUrlSpec extends OxygenSpecDefault {
 
   private def domainHost(s: Source, hostText: String, from: Int = 0): DomainHost = {
     val hostStart = s.text.indexOf(hostText, from)
@@ -63,7 +63,7 @@ object UrlSpec extends OxygenSpecDefault {
   }
 
   override def testSpec: TestSpec =
-    suite("UrlSpec")(
+    suite("RawUrlSpec")(
       suite("valid")(
         parsesTo(Url.parser, "https://example.com") { s =>
           bareUrl(s, "https", "example.com")
