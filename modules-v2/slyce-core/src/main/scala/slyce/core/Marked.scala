@@ -3,6 +3,9 @@ package slyce.core
 type Marked[+A] = PolyMarked.Range[A]
 object Marked {
   def apply[A](value: A, span: Span.Range): Marked[A] = PolyMarked(value, span)
+
+  /** When the span may not be a [[Span.Range]] (unknown position/source). Prefer [[apply]] for parse trees. */
+  def of[A](value: A, span: Span): PolyMarked.Span[A] = PolyMarked(value, span)
 }
 
 final case class PolyMarked[+S <: Span, +A](value: A, span: S)

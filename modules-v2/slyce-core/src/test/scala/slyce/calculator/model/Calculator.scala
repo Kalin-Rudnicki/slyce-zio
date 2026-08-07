@@ -10,6 +10,8 @@ import slyce.parse.*
 @regex("\\(".r) final case class `(`(text: String, span: Span.Range) extends Terminal
 @regex("\\)".r) final case class `)`(text: String, span: Span.Range) extends Terminal
 @regex(";".r) final case class `;`(text: String, span: Span.Range) extends Terminal
+/** Surface `_` (cannot be named `` `_` `` — Scala treats that as the wildcard). */
+@regex("_".r) final case class Underscore(text: String, span: Span.Range) extends Terminal
 
 @regex("[+\\-]".r)
 final case class AddOp(text: String, span: Span.Range) extends Terminal
@@ -19,7 +21,8 @@ final case class MulOp(text: String, span: Span.Range) extends Terminal
 
 // =====| Atoms |=====
 
-@regex("[A-Za-z_][A-Za-z_0-9]*".r)
+/** Not bare `_` (that is [[Underscore]] for [[GenericBoxEmpty]]); `_foo` still ok. */
+@regex("(?:[A-Za-z][A-Za-z_0-9]*|_[A-Za-z_0-9]+)".r)
 final case class Ident(text: String, span: Span.Range) extends Terminal
 
 @regex("-?\\d+".r)
@@ -50,10 +53,15 @@ object Program {
 
 }
 
+/**
+ * RHS is [[GenericBox]]`[Expr]`: either a real expression (`Has`) or empty (`Empty` = `_`,
+ * so surface form is `name = _;`). Nested generic sum — exercised via [[Program.parser]], not only
+ * as a standalone root.
+ */
 final case class Assignment(
     name: Ident,
     eq: `=`,
-    expr: Expr,
+    expr: GenericBox[Expr],
     semi: `;`,
 ) extends NonTerminal {
   override val span: Span.Range = name.span <> semi.span
@@ -94,5 +102,33 @@ object Expr {
   final case class Paren(open: `(`, expr: Add, close: `)`) extends Atom {
     override val span: Span.Range = open.span <> close.span
   }
+
+}
+
+// =====| Generic sum (SumGeneric type params; used in Assignment + standalone roots) |=====
+
+/**
+ * Generic sum — `Has[A]` forwards raw type param `A`; `Empty` fixes `A = Nothing`.
+ *
+ * Used inside the calculator AST as [[Assignment.expr]] (`GenericBox[Expr]`), and also as
+ * monomorphized standalone roots (`GenericBox[Ident]` / `GenericBox[IntLit]`).
+ */
+sealed trait GenericBox[+A <: Element] extends NonTerminal
+final case class GenericBoxHas[A <: Element](value: A) extends GenericBox[A] {
+  override val span: Span.Range = value.span
+}
+final case class GenericBoxEmpty(hole: Underscore) extends GenericBox[Nothing] {
+  override val span: Span.Range = hole.span
+}
+object GenericBox {
+
+  type Has[A <: Element] = GenericBoxHas[A]
+  val Has = GenericBoxHas
+  type Empty = GenericBoxEmpty
+  val Empty = GenericBoxEmpty
+
+  /** Standalone monomorphizations (terminals as `A`) — also covered nested via [[Program.parser]]. */
+  val parserIdent: Parser[GenericBox[Ident]] = Parser.derived[GenericBox[Ident]](1)
+  val parserIntLit: Parser[GenericBox[IntLit]] = Parser.derived[GenericBox[IntLit]](1)
 
 }

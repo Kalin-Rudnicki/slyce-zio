@@ -20,11 +20,13 @@ object CalculatorSpec extends OxygenSpecDefault {
   private def addNext(mul: Expr.Mul): Expr.Add = Expr.Add.Next(mul)
   private def atomExpr(atom: Expr.Atom): Expr = addNext(mulNext(atom))
 
+  private def boxed(expr: Expr): GenericBox[Expr] = GenericBox.Has(expr)
+
   private def assign(s: Source, name: String, expr: Expr, semiAt: Int): Assignment =
     Assignment(
       Ident(name, spanOf(s, name)),
       `=`("=", spanOf(s, "=")),
-      expr,
+      boxed(expr),
       `;`(";", span(s, semiAt, semiAt + 1)),
     )
 
@@ -48,7 +50,7 @@ object CalculatorSpec extends OxygenSpecDefault {
               Assignment(
                 Ident("y", spanOf(s, "y")),
                 `=`("=", spanOf(s, "=", from = 4)),
-                atomExpr(lit(s, "2")),
+                boxed(atomExpr(lit(s, "2"))),
                 `;`(";", span(s, 7, 8)),
               ),
             ),
@@ -180,11 +182,13 @@ object CalculatorSpec extends OxygenSpecDefault {
               Assignment(
                 Ident("y", spanOf(s, "y", from = 6)),
                 `=`("=", spanOf(s, "=", from = 6)),
-                addNext(
-                  Expr.Mul.Bin(
-                    ref(s, "x", from = 6),
-                    MulOp("*", spanOf(s, "*")),
-                    mulNext(lit(s, "2")),
+                boxed(
+                  addNext(
+                    Expr.Mul.Bin(
+                      ref(s, "x", from = 6),
+                      MulOp("*", spanOf(s, "*")),
+                      mulNext(lit(s, "2")),
+                    ),
                   ),
                 ),
                 `;`(";", span(s, 11, 12)),
@@ -196,6 +200,19 @@ object CalculatorSpec extends OxygenSpecDefault {
           Program(
             elementList[Assignment](eofSpan(s))(
               assign(s, "ans", atomExpr(lit(s, "-5")), semiAt = 6),
+            ),
+          )
+        },
+        // Nested GenericBox[Expr] Empty branch: `name = _;`
+        parsesTo(Program.parser, "x=_;") { s =>
+          Program(
+            elementList[Assignment](eofSpan(s))(
+              Assignment(
+                Ident("x", spanOf(s, "x")),
+                `=`("=", spanOf(s, "=")),
+                GenericBox.Empty(Underscore("_", span(s, 2, 3))),
+                `;`(";", span(s, 3, 4)),
+              ),
             ),
           )
         },
@@ -212,6 +229,25 @@ object CalculatorSpec extends OxygenSpecDefault {
         failsToParse(Program.parser, "1=2;"),
         failsToParse(Program.parser, "x=1 2;"),
         failsToParse(Program.parser, "x==1;"),
+      ),
+      suite("generic sum - GenericBox standalone")(
+        // GenericBox[Ident]: Has forwards Ident, Empty is `_` (Nothing)
+        parsesTo(GenericBox.parserIdent, "foo") { s =>
+          GenericBox.Has(Ident("foo", spanOf(s, "foo")))
+        },
+        parsesTo(GenericBox.parserIdent, "_") { s =>
+          GenericBox.Empty(Underscore("_", span(s, 0, 1)))
+        },
+        // GenericBox[IntLit]: Has forwards IntLit, Empty is `_`
+        parsesTo(GenericBox.parserIntLit, "123") { s =>
+          GenericBox.Has(IntLit("123", spanOf(s, "123"), BigInt("123")))
+        },
+        parsesTo(GenericBox.parserIntLit, "_") { s =>
+          GenericBox.Empty(Underscore("_", span(s, 0, 1)))
+        },
+        parsesTo(GenericBox.parserIdent, "bar") { s =>
+          GenericBox.Has(Ident("bar", spanOf(s, "bar")))
+        },
       ),
     )
 

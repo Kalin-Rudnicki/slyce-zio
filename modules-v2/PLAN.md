@@ -5,6 +5,8 @@
 **Branch:** `current/refactor/v2-round2`  
 **Status:** Type extraction done; grammar generation next. Calculator e2e in progress.
 
+**Span API:** `Span.Range` is the long-term known-position type (v1 `Span.Highlight` maps here). `UnknownPosition` / `UnknownSource` cover incomplete spans.
+
 ---
 
 ## NON-NEGOTIABLE — Scala 3 macros / quoting
