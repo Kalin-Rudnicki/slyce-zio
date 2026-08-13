@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Grammar Rewrite Research — slyce v2</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --bg2: #1a2332;
+      --bg3: #243044;
+      --ink: #e7ecf3;
+      --muted: #9aa8bc;
+      --accent: #5b9fd4;
+      --accent2: #7dcfb6;
+      --warn: #e8b86d;
+      --danger: #e07a7a;
+      --ok: #7dcfb6;
+      --card: #151c27;
+      --border: #2a3548;
+      --code-bg: #0a0e14;
+      --radius: 12px;
+      --shadow: 0 12px 40px rgba(0,0,0,.35);
+      --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #1c3a5a 0%, transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, #1a3d36 0%, transparent 50%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+      font-size: 16px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    header.hero {
+      background: linear-gradient(145deg, var(--bg2), var(--card));
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 4px);
+      padding: 2rem 2rem 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    header.hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(91,159,212,.08) 50%, transparent 100%);
+      pointer-events: none;
+    }
+    .eyebrow {
+      font-size: .75rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      font-weight: 600;
+      margin: 0 0 .5rem;
+    }
+    h1 {
+      font-size: clamp(1.6rem, 3vw, 2.15rem);
+      line-height: 1.2;
+      margin: 0 0 .75rem;
+      font-weight: 700;
+    }
+    .lede {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 46rem;
+      margin: 0 0 1.25rem;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: .3rem .75rem;
+      font-size: .8rem;
+    }
+    .pill a { color: inherit; }
+
+    nav.toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: .5rem;
+      margin: 1.5rem 0 2rem;
+    }
+    nav.toc a {
+      display: block;
+      padding: .65rem .8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--ink);
+      font-size: .88rem;
+      transition: border-color .15s, transform .15s;
+    }
+    nav.toc a:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+    nav.toc span {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      margin-top: .15rem;
+    }
+
+    section {
+      margin-bottom: 2rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.5rem 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    }
+    section h2 {
+      margin: 0 0 1rem;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    section h2 .num {
+      font-family: var(--mono);
+      font-size: .8rem;
+      color: var(--accent);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .2rem .45rem;
+    }
+    h3 {
+      margin: 1.25rem 0 .5rem;
+      font-size: 1rem;
+      color: var(--accent2);
+    }
+    p { margin: 0 0 .85rem; color: #d5dbe6; }
+    ul, ol { margin: 0 0 1rem; padding-left: 1.2rem; color: #d5dbe6; }
+    li { margin-bottom: .35rem; }
+    strong { color: #fff; font-weight: 600; }
+
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: var(--bg2);
+      padding: .9rem 1rem;
+      border-radius: 0 10px 10px 0;
+      margin: 1rem 0;
+    }
+    .callout.warn { border-left-color: var(--warn); }
+    .callout.ok { border-left-color: var(--ok); }
+    .callout.danger { border-left-color: var(--danger); }
+    .callout .label {
+      font-size: .72rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .35rem;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+      margin: .75rem 0 1rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: .55rem .65rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--bg3);
+      color: var(--ink);
+      font-weight: 600;
+      font-size: .8rem;
+      letter-spacing: .03em;
+    }
+    td { color: #cfd7e4; }
+    tr:nth-child(even) td { background: rgba(255,255,255,.015); }
+    .true { color: var(--ok); font-weight: 600; }
+    .false { color: var(--danger); font-weight: 600; }
+    .soft { color: var(--warn); font-weight: 600; }
+
+    pre, code { font-family: var(--mono); }
+    code {
+      font-size: .86em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: .1rem .35rem;
+      color: #c8e0f5;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+      font-size: .82rem;
+      line-height: 1.45;
+      color: #c5d4e8;
+      margin: .75rem 0 1rem;
+    }
+
+    .pipeline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      align-items: center;
+      margin: 1rem 0;
+    }
+    .pipe-step {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .55rem .75rem;
+      font-size: .82rem;
+      max-width: 11rem;
+    }
+    .pipe-step strong { display: block; font-size: .78rem; color: var(--accent); }
+    .arrow { color: var(--muted); font-size: 1.1rem; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: .75rem;
+    }
+    .card-mini {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .85rem 1rem;
+    }
+    .card-mini h4 {
+      margin: 0 0 .4rem;
+      font-size: .92rem;
+    }
+    .card-mini p { margin: 0; font-size: .88rem; color: var(--muted); }
+
+    .prio {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .72rem;
+      padding: .12rem .4rem;
+      border-radius: 4px;
+      margin-right: .35rem;
+    }
+    .p0 { background: #4a2c2c; color: #ffb4b4; }
+    .p1 { background: #3a3420; color: #f0d78c; }
+    .p2 { background: #1e3340; color: #9ec9e8; }
+    .p3 { background: #243028; color: #a8d4b8; }
+
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    footer code { font-size: .8em; }
+
+    @media (max-width: 560px) {
+      header.hero { padding: 1.4rem; }
+      section { padding: 1.1rem; }
+    }
+
+    @media print {
+      body { background: #fff; color: #111; }
+      section, header.hero { box-shadow: none; border-color: #ccc; background: #fff; }
+      p, li, td { color: #222; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="eyebrow">slyce v2 · research brief</p>
+      <h1>Rewriting grammars into LALR(1) / LR(1)</h1>
+      <p class="lede">
+        How theory and real parser generators turn awkward surface grammars into
+        deterministic bottom-up parsers—and what that means for automatic rewrite
+        in <code>Parser.derived</code>.
+      </p>
+      <div class="meta">
+        <span class="pill">Theory · Knuth · Mickunas</span>
+        <span class="pill">Tools · Bison · Menhir · ANTLR</span>
+        <span class="pill"><a href="./GRAMMAR-RESEARCH-RAW.md">Raw notes</a></span>
+        <span class="pill"><a href="./GRAMMAR-RESEARCH-FINDINGS.md">Agent findings</a></span>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Sections">
+      <a href="#claim">The claim<span>LALR(n) → LALR(1)?</span></a>
+      <a href="#hierarchy">Hierarchy<span>LR / LALR / IELR</span></a>
+      <a href="#theory">Theory<span>Knuth &amp; Mickunas</span></a>
+      <a href="#covers">Covers<span>Map trees back</span></a>
+      <a href="#tools">Tools<span>What industry does</span></a>
+      <a href="#slyce">For slyce<span>Architecture</span></a>
+      <a href="#plan">Build plan<span>Priorities</span></a>
+      <a href="#refs">Sources<span>Citations</span></a>
+    </nav>
+
+    <section id="claim">
+      <h2><span class="num">01</span> The memorable claim</h2>
+      <div class="callout">
+        <div class="label">User recollection</div>
+        <p style="margin:0"><em>“Any LALR(n) can be rewritten into LALR(1).”</em></p>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Statement</th><th>Verdict</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Every <strong>LR(k) language</strong> (k≥1) is an <strong>LR(1) language</strong> (deterministic CFL)</td>
+            <td class="true">True — Knuth 1965</td>
+          </tr>
+          <tr>
+            <td>Every <strong>LR(k) grammar</strong> can be <strong>mechanically transformed</strong> to an equivalent <strong>LR(1) grammar</strong></td>
+            <td class="true">True — Mickunas et al. 1976</td>
+          </tr>
+          <tr>
+            <td>The new grammar keeps the <strong>same AST / production shape</strong></td>
+            <td class="false">False — need a cover / tree map</td>
+          </tr>
+          <tr>
+            <td>LALR-merge conflicts always vanish by “becoming LALR(1)” without change</td>
+            <td class="false">False — may need LR(1), IELR, or a different grammar</td>
+          </tr>
+          <tr>
+            <td>Ambiguous grammars become deterministic by rewrite alone</td>
+            <td class="false">False — need policy (prec) or multi-parse</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout ok">
+        <div class="label">One-liner</div>
+        <p style="margin:0">
+          Directionally right for <strong>LR(k) → LR(1)</strong> at the language/grammar level.
+          Not a free pass that preserves your human ADT without an explicit mapping.
+        </p>
+      </div>
+    </section>
+
+    <section id="hierarchy">
+      <h2><span class="num">02</span> Grammar-class hierarchy</h2>
+      <pre>LR(0)  ⊂  SLR(1)  ⊂  LALR(1)  ⊂  LR(1)  =  LR(k) languages (k≥1)</pre>
+      <div class="grid-2">
+        <div class="card-mini">
+          <h4>LALR(1)</h4>
+          <p>Merge LR(1) states that share the same core. Smaller tables; can reintroduce conflicts that pure LR(1) would avoid. Classic yacc/bison default family.</p>
+        </div>
+        <div class="card-mini">
+          <h4>Canonical LR(1)</h4>
+          <p>Full item+lookahead states. Menhir’s world. Handles more grammars; larger automata.</p>
+        </div>
+        <div class="card-mini">
+          <h4>IELR(1)</h4>
+          <p>Start LALR, <strong>split states</strong> only when merges lose power. LR(1)-class recognition with smaller tables (Bison option).</p>
+        </div>
+        <div class="card-mini">
+          <h4>LR(k), k&gt;1</h4>
+          <p>More lookahead in the <em>grammar sense</em>. Prefer transforming the grammar to LR(1) over shipping a k-lookahead engine.</p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <div class="label">Important</div>
+        <p style="margin:0">
+          <strong>Languages</strong> collapse (LR(k) ≡ LR(1) ≡ DCFL for k≥1).
+          <strong>Your written grammar</strong> may still not be LR(1) until rewritten.
+        </p>
+      </div>
+    </section>
+
+    <section id="theory">
+      <h2><span class="num">03</span> Theory that matters</h2>
+
+      <h3>Knuth (1965)</h3>
+      <p>
+        Invented LR(k). Proved efficient linear-time parsing for the class, and that for every
+        k≥1 a language has an LR(k) grammar <strong>iff</strong> it is deterministic context-free
+        <strong>iff</strong> it has an LR(1) grammar.
+      </p>
+
+      <h3>Mickunas, Lancaster &amp; Schneider (1976)</h3>
+      <p>
+        Give a <strong>direct algorithm</strong>: arbitrary LR(k) grammar → equivalent LR(1) grammar.
+        Also: prefix-free LR(k) → LR(0); further transforms toward SLR(1) / BRC.
+      </p>
+      <p>Core moves:</p>
+      <ul>
+        <li><strong>Right-stratification</strong> — split long RHS for easier surgery</li>
+        <li><strong>Right-context extraction</strong> — pull distinguishing right context into structure</li>
+        <li><strong>Premature scanning</strong> — force early shift of that context so reduces don’t need k&gt;1</li>
+      </ul>
+      <div class="callout warn">
+        <div class="label">Costs (from the paper)</div>
+        <p style="margin:0">
+          (1) Original grammatical <strong>structure is not preserved</strong>.
+          (2) Rule count can grow <strong>dramatically</strong> (sometimes exponentially in pathological cases).
+        </p>
+      </div>
+
+      <h3>Decidability</h3>
+      <ul>
+        <li>Is G LR(k) for <em>fixed</em> k? <strong>Decidable</strong></li>
+        <li>Does there exist any k making G LR(k)? <strong>Undecidable</strong></li>
+      </ul>
+      <p>Macros must bound k and use heuristics—not search forever.</p>
+    </section>
+
+    <section id="covers">
+      <h2><span class="num">04</span> Covers: why rewrite alone is not enough</h2>
+      <p>
+        Language equivalence only guarantees the <strong>same strings</strong>.
+        Compilers and slyce need the <strong>same user-facing values</strong>.
+      </p>
+      <div class="pipeline">
+        <div class="pipe-step"><strong>Input</strong>tokens</div>
+        <span class="arrow">→</span>
+        <div class="pipe-step"><strong>Parse G′</strong>LALR/LR tables</div>
+        <span class="arrow">→</span>
+        <div class="pipe-step"><strong>Cover φ</strong>prod′ ↦ prod / AST</div>
+        <span class="arrow">→</span>
+        <div class="pipe-step"><strong>User ADT</strong>Url, Json, …</div>
+      </div>
+      <p>
+        Classical name: <strong>grammatical cover</strong> (Gray &amp; Harrison; used heavily by Mickunas
+        as internal/external parse). ANTLR does the modern UX version: rewrite left recursion,
+        then <strong>repair trees</strong> so the programmer never sees G′.
+      </p>
+      <div class="callout ok">
+        <div class="label">slyce today</div>
+        <p style="margin:0">
+          Hand-cleaned URL grammar + <code>fromCleaned</code> is exactly this architecture.
+          Auto-rewrite should generalize it—not hardcode <code>Url</code> into the macro.
+        </p>
+      </div>
+    </section>
+
+    <section id="tools">
+      <h2><span class="num">05</span> What real tools do</h2>
+      <table>
+        <thead>
+          <tr><th>Tool</th><th>Base</th><th>Auto rewrite?</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Bison LALR</td>
+            <td>LALR(1)</td>
+            <td>No</td>
+            <td>Defaults: prefer shift; first reduce. <code>%left</code>/<code>%right</code> precedence.</td>
+          </tr>
+          <tr>
+            <td>Bison IELR</td>
+            <td>≈LR(1)</td>
+            <td>Automaton split</td>
+            <td>Fixes many LALR-only conflicts without changing grammar text.</td>
+          </tr>
+          <tr>
+            <td>Menhir</td>
+            <td>LR(1)</td>
+            <td><code>%inline</code></td>
+            <td>Best-in-class conflict explanations.</td>
+          </tr>
+          <tr>
+            <td>Happy</td>
+            <td>LALR(1)</td>
+            <td>No</td>
+            <td>Yacc-like culture: human rewrites + precedence.</td>
+          </tr>
+          <tr>
+            <td>ANTLR 4</td>
+            <td>ALL(*)</td>
+            <td>Yes (left-rec)</td>
+            <td>Direct left-recursion elim + tree repair. LL world, great UX pattern.</td>
+          </tr>
+          <tr>
+            <td>slyce v2 now</td>
+            <td>LALR-ish</td>
+            <td>No</td>
+            <td>Hard fail via <code>GrammarValidity</code> (good RED signal).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Human rewrites everyone documents</h3>
+      <ul>
+        <li><strong>Left factoring</strong> — factor common prefixes of alternatives</li>
+        <li><strong>Layered expression NTs</strong> — encode precedence in grammar shape</li>
+        <li><strong>Nonterminal cloning</strong> — manual state split for LALR false conflicts</li>
+        <li><strong>Token merging</strong> — lexer absorbs <code>:=</code>, <code>-&gt;</code></li>
+        <li><strong>Absorb optional trailers</strong> — list + trailing sep into one NT</li>
+      </ul>
+      <p>
+        Note: bottom-up LR <em>likes</em> left recursion. Left-recursion <em>elimination</em> is an LL tool,
+        not the primary LALR weapon—except as inspiration for “rewrite + restore trees.”
+      </p>
+    </section>
+
+    <section id="slyce">
+      <h2><span class="num">06</span> Architecture for slyce auto-rewrite</h2>
+      <pre>User ADT
+   │ extract
+   ▼
+Surface grammar G ──► conflict detect
+   │                      │
+   │         ┌────────────┼────────────┐
+   │         │ ok         │ LALR-only  │ not LR(1) / shape
+   │         ▼            ▼            ▼
+   │      codegen     IELR/LR1     rewrite G′ + cover φ
+   │         │         / clone         │
+   └─────────┴────────────┴────────────┘
+                      │
+                      ▼
+              tables + reduces
+                      │
+                      ▼
+           tokens → values → User ADT</pre>
+
+      <h3>Conflict classes (detect these)</h3>
+      <table>
+        <thead>
+          <tr><th>Class</th><th>Symptom</th><th>Fix</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>LALR inadequacy</td>
+            <td>Fails LALR, passes LR(1)</td>
+            <td>IELR / full LR(1) / clone NTs — no AST map</td>
+          </tr>
+          <tr>
+            <td>Classic ambiguity</td>
+            <td>Expr ops, dangling else</td>
+            <td>Annotations or layered ADT</td>
+          </tr>
+          <tr>
+            <td>LR(k), k&gt;1 structure</td>
+            <td>Reduce too early; needs right context</td>
+            <td>Mickunas-lite / delayed commit + cover</td>
+          </tr>
+          <tr>
+            <td>List + optional trailer</td>
+            <td>S/R after list when trailer shares First</td>
+            <td>Absorb into one parse NT + split cover</td>
+          </tr>
+          <tr>
+            <td>True multi-parse</td>
+            <td>Multiple trees, no policy</td>
+            <td>Hard compile error</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout danger">
+        <div class="label">Non-goals</div>
+        <ul style="margin:0;padding-left:1.1rem">
+          <li>Hardcoding <code>Url</code> / <code>PathAndTrail</code> into core rewrite</li>
+          <li>Silent yacc-style shift preference without annotations</li>
+          <li>Assuming language equivalence ⇒ ADT equivalence</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="plan">
+      <h2><span class="num">07</span> Recommended build order</h2>
+      <ol>
+        <li>
+          <span class="prio p0">P0</span>
+          <strong>Classify conflicts</strong> — LALR-only vs true non-LR(1); better error text.
+        </li>
+        <li>
+          <span class="prio p1">P1</span>
+          <strong>Stronger automata</strong> — LR(1) or IELR-like splitting; NT clone with same ctor cover.
+        </li>
+        <li>
+          <span class="prio p2">P2</span>
+          <strong>Shape heuristics</strong>
+          <ul>
+            <li>List + optional trailer absorb</li>
+            <li>Left factor shared prefixes on one NT</li>
+            <li>Delayed commit for competing prefix NTs (host-like)</li>
+            <li>Optional <code>@prec</code> / <code>@left</code> for exprs</li>
+          </ul>
+        </li>
+        <li>
+          <span class="prio p3">P3</span>
+          <strong>Full Mickunas</strong> only if heuristics fail; cap grammar size growth.
+        </li>
+      </ol>
+
+      <h3>Success criteria</h3>
+      <ul>
+        <li>Calculator &amp; JSON stay green with no rewrite</li>
+        <li>URL <em>model</em> derives green via <strong>general</strong> rewrite + cover</li>
+        <li>Ambiguity without policy still <strong>RED</strong></li>
+        <li>No domain-type special cases in <code>FromExtractedType</code></li>
+      </ul>
+    </section>
+
+    <section id="refs">
+      <h2><span class="num">08</span> Sources</h2>
+      <ol>
+        <li>Knuth, D. E. (1965). <em>On the Translation of Languages from Left to Right</em>.</li>
+        <li>Mickunas, Lancaster, Schneider (1976). <em>Transforming LR(k) Grammars to LR(1)…</em> JACM 23(3).
+          <br /><a href="https://www.cs.sfu.ca/~anoop/courses/CMPT-379-Spring-2004/lrk_xform.pdf">Course PDF</a>
+          · <a href="https://dl.acm.org/doi/10.1145/321958.321972">ACM</a>
+        </li>
+        <li>Gray &amp; Harrison (1972). <em>On the Covering and Reduction Problems for CFGs</em>.</li>
+        <li>Denny &amp; Malloy (2008). <em>IELR(1)</em>.
+          <a href="https://malloy.people.clemson.edu/publications/papers/sac08/paper.pdf">PDF</a>
+        </li>
+        <li>Wikipedia: <a href="https://en.wikipedia.org/wiki/LR_parser">LR parser</a>,
+          <a href="https://en.wikipedia.org/wiki/LALR_parser">LALR</a>,
+          <a href="https://en.wikipedia.org/wiki/Left_recursion">Left recursion</a>.</li>
+        <li>Menhir: <a href="https://gallium.inria.fr/~fpottier/menhir/">gallium.inria.fr/~fpottier/menhir</a></li>
+        <li>ANTLR ALL(*): <a href="https://www.antlr.org/papers/allstar-techreport.pdf">tech report</a></li>
+        <li>Bison manual: LR table construction / IELR / GLR.</li>
+        <li>Dragon Book — left factoring, LR constructions.</li>
+      </ol>
+      <p>
+        Full annotated dump with more links:
+        <a href="./GRAMMAR-RESEARCH-RAW.md"><code>GRAMMAR-RESEARCH-RAW.md</code></a>.
+        Implementer checklist:
+        <a href="./GRAMMAR-RESEARCH-FINDINGS.md"><code>GRAMMAR-RESEARCH-FINDINGS.md</code></a>.
+      </p>
+    </section>
+
+    <footer>
+      <p>
+        Generated for the slyce-v2 refactor. Research is append-friendly in the raw markdown;
+        this HTML is the polished human view. Open the file in a browser for the styled brief.
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
