@@ -1,34 +1,16 @@
 package slyce.core
 
-import oxygen.predef.core.*
+type Marked[+A] = PolyMarked.Range[A]
+object Marked {
+  def apply[A](value: A, span: Span.Range): Marked[A] = PolyMarked(value, span)
 
-final case class Marked[+T](
-    value: T,
-    span: Span,
-) {
+  /** When the span may not be a [[Span.Range]] (unknown position/source). Prefer [[apply]] for parse trees. */
+  def of[A](value: A, span: Span): PolyMarked.Span[A] = PolyMarked(value, span)
+}
 
-  inline def as[T2](f: => T2): Marked[T2] =
-    map(_ => f)
-
-  def map[T2](f: T => T2): Marked[T2] =
-    Marked(f(value), span)
-
-  def flatMap[T2](f: T => Marked[T2]): Marked[T2] = {
-    val marked2 = f(value)
-    Marked(marked2.value, Span.joinSpans(span, marked2.span))
-  }
-
-  def toString(showAbsolute: Boolean): String = {
-    val str: String =
-      value.asInstanceOf[Matchable] match {
-        case str: String => str.unesc
-        case any         => any.toString
-      }
-
-    s"$str @ ${span.toString(showAbsolute)}"
-  }
-
-  override def toString: String =
-    toString(false)
-
+final case class PolyMarked[+S <: Span, +A](value: A, span: S)
+object PolyMarked {
+  type Span[+A] = PolyMarked[slyce.core.Span, A]
+  type HasSource[+A] = PolyMarked[slyce.core.Span.HasSource, A]
+  type Range[+A] = PolyMarked[slyce.core.Span.Range, A]
 }
