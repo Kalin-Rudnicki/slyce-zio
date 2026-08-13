@@ -1,0 +1,42 @@
+package slyce.generate.grammar
+
+/** Grammar symbol identity for expansion + LR table keys. */
+sealed trait GSym {
+  def label: String
+  override def toString: String = label
+}
+object GSym {
+
+  /** Product terminal. */
+  final case class Term(label: String) extends GSym
+
+  sealed trait NonTerm extends GSym
+
+  /** Named non-terminal (product or sum). */
+  final case class Nt(label: String) extends NonTerm
+
+  /** Anonymous list non-terminal phases after expansion. */
+  final case class ListNt(id: String, phase: ListPhase) extends NonTerm {
+    override def label: String = s"$$list[$id].$phase"
+  }
+
+  enum ListPhase {
+    case Simple, Head, Tail
+  }
+
+  /** Anonymous optional non-terminal. */
+  final case class OptNt(childLabel: String) extends NonTerm {
+    override def label: String = s"$$opt[$childLabel]"
+  }
+
+  /** Left-factored sequence non-terminal (grammar rewrite). Head: `T Tail | ε` — Tail: `rest… Head | ε` where `T` is a shared lead terminal of a former list element and following optional.
+    */
+  final case class SeqNt(id: String, phase: SeqPhase) extends NonTerm {
+    override def label: String = s"$$seq[$id].$phase"
+  }
+
+  enum SeqPhase {
+    case Head, Tail
+  }
+
+}

@@ -55,73 +55,10 @@ lazy val `slyce-core` =
       libraryDependencies ++= Seq(
         MyOrg %% "oxygen-core" % Versions.oxygen,
         MyOrg %% "oxygen-test" % Versions.oxygen % Test,
-        // TODO (KR) : remove this
-        "org.typelevel" %% "cats-core" % "2.13.0",
-        "com.lihaoyi" %% "scalatags" % Versions.scalaTags,
-        "com.github.julien-truffaut" %% "monocle-macro" % Versions.monocle,
       ),
       sonatypeCredentialHost := "s01.oss.sonatype.org",
       Test / fork := true,
     )
-
-lazy val `slyce-parse` =
-  project
-    .in(file("modules/slyce-parse"))
-    .settings(
-      name := "slyce-parse",
-      sonatypeCredentialHost := "s01.oss.sonatype.org",
-    )
-    .dependsOn(`slyce-core` % testAndCompile)
-
-lazy val `slyce-parse-exe` =
-  project
-    .in(file("modules/slyce-parse-exe"))
-    .settings(
-      name := "slyce-parse-exe",
-      sonatypeCredentialHost := "s01.oss.sonatype.org",
-      libraryDependencies ++= Seq(
-        MyOrg %% "oxygen-executable" % Versions.oxygen,
-      ),
-    )
-    .dependsOn(`slyce-parse` % testAndCompile)
-
-lazy val `slyce-generate` =
-  project
-    .in(file("modules/slyce-generate"))
-    .settings(
-      name := "slyce-generate",
-      sonatypeCredentialHost := "s01.oss.sonatype.org",
-      // version := "3.0.2",
-      assemblyJarName := s"../../../../jars/${name.value}-${version.value}.jar",
-      libraryDependencies ++= Seq(
-        MyOrg %% "oxygen-executable" % Versions.oxygen,
-      ),
-    )
-    .dependsOn(`slyce-parse` % testAndCompile)
-
-lazy val `slyce-test` =
-  project
-    .in(file("modules/slyce-test"))
-    .settings(
-      name := "slyce-test",
-      publish / skip := true,
-      Test / fork := true,
-      sonatypeCredentialHost := "s01.oss.sonatype.org",
-    )
-    .dependsOn(`slyce-parse-exe` % testAndCompile)
-
-// TODO (KR) : IDEA-PLUGIN
-/*
-lazy val `slyce-idea-plugin` =
-  project
-    .in(file("modules/slyce-idea-plugin"))
-    .enablePlugins(SbtIdeaPlugin)
-    .settings(
-      name := "slyce-idea-plugin",
-      sonatypeCredentialHost := "s01.oss.sonatype.org",
-    )
-    .dependsOn(`slyce-generate` % testAndCompile)
- */
 
 lazy val `slyce-root` =
   project
@@ -132,12 +69,6 @@ lazy val `slyce-root` =
     )
     .aggregate(
       `slyce-core`,
-      `slyce-generate`,
-      `slyce-parse`,
-      `slyce-parse-exe`,
-      `slyce-test`,
-      // TODO (KR) : IDEA-PLUGIN
-      // `slyce-idea-plugin`
     )
 
 addCommandAlias("fmt", "scalafmtSbt; scalafmtAll;")
