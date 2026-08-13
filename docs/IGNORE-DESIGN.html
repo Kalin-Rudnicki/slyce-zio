@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>slyce v2 — Ignore design brief</title>
+  <style>
+    :root {
+      --bg: #0c1017;
+      --card: #141b26;
+      --bg2: #1a2332;
+      --border: #2a3548;
+      --ink: #e8eef7;
+      --muted: #9aabc0;
+      --accent: #6eb5ff;
+      --teal: #5fd0b0;
+      --amber: #e8b86d;
+      --rose: #e07a7a;
+      --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background:
+        radial-gradient(900px 500px at 0% 0%, #1a3050 0%, transparent 55%),
+        radial-gradient(700px 400px at 100% 10%, #16352e 0%, transparent 50%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+      font-size: 16px;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 2.25rem 1.25rem 4rem; }
+    header {
+      background: linear-gradient(145deg, var(--bg2), var(--card));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem 1.75rem 1.4rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    }
+    .eyebrow {
+      font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--teal); font-weight: 600; margin: 0 0 .4rem;
+    }
+    h1 { margin: 0 0 .6rem; font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.2; }
+    .lede { color: var(--muted); margin: 0; max-width: 46rem; }
+    .pills { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
+    .pill {
+      font-size: .78rem; border: 1px solid var(--border); background: var(--bg2);
+      border-radius: 999px; padding: .25rem .7rem; color: var(--ink);
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.4rem 1.4rem;
+      margin-bottom: 1.1rem;
+    }
+    h2 {
+      margin: 0 0 .85rem; font-size: 1.15rem;
+      display: flex; align-items: center; gap: .55rem;
+    }
+    h2 .num {
+      font-family: var(--mono); font-size: .75rem; color: var(--accent);
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 7px; padding: .15rem .4rem;
+    }
+    h3 { margin: 1.1rem 0 .4rem; font-size: .98rem; color: var(--teal); }
+    p, li { color: #d4dce8; }
+    p { margin: 0 0 .75rem; }
+    ul, ol { margin: 0 0 .8rem; padding-left: 1.2rem; }
+    li { margin-bottom: .3rem; }
+    strong { color: #fff; }
+    a { color: var(--accent); }
+    code, pre { font-family: var(--mono); }
+    code {
+      font-size: .86em; background: #0a0e14; border: 1px solid var(--border);
+      border-radius: 5px; padding: .08rem .35rem; color: #c5def5;
+    }
+    pre {
+      background: #0a0e14; border: 1px solid var(--border); border-radius: 10px;
+      padding: .9rem 1rem; overflow-x: auto; font-size: .8rem; line-height: 1.45;
+      color: #c5d4e8; margin: .55rem 0 .9rem;
+    }
+    .opt {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      margin: 0 0 .85rem;
+      background: var(--bg2);
+    }
+    .opt h3 { margin: 0 0 .45rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .tag {
+      font-size: .68rem; font-family: var(--mono); letter-spacing: .04em;
+      border-radius: 5px; padding: .12rem .4rem; font-weight: 600;
+    }
+    .tag.rec { background: #1e3d32; color: var(--teal); }
+    .tag.mid { background: #3a3420; color: var(--amber); }
+    .tag.heavy { background: #3a2228; color: #f0a0a8; }
+    .tag.alt { background: #1e2a40; color: var(--accent); }
+    table {
+      width: 100%; border-collapse: collapse; font-size: .88rem; margin: .5rem 0 1rem;
+    }
+    th, td {
+      border: 1px solid var(--border); padding: .5rem .6rem; text-align: left; vertical-align: top;
+    }
+    th { background: var(--bg2); font-size: .78rem; letter-spacing: .03em; }
+    td { color: #cfd7e4; }
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: var(--bg2);
+      padding: .75rem .9rem;
+      border-radius: 0 10px 10px 0;
+      margin: .75rem 0;
+    }
+    .callout.warn { border-left-color: var(--amber); }
+    .callout.ok { border-left-color: var(--teal); }
+    .callout .label {
+      font-size: .7rem; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--muted); font-weight: 600; margin-bottom: .25rem;
+    }
+    .grid2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: .7rem;
+    }
+    .mini {
+      background: #0f1520; border: 1px solid var(--border); border-radius: 10px;
+      padding: .75rem .85rem;
+    }
+    .mini h4 { margin: 0 0 .35rem; font-size: .9rem; }
+    .mini p { margin: 0; font-size: .85rem; color: var(--muted); }
+    footer {
+      margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);
+      color: var(--muted); font-size: .85rem;
+    }
+    .matrix td:first-child { font-family: var(--mono); font-size: .8rem; white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">slyce v2 · design brief</p>
+      <h1>How should <code>ignore</code> work?</h1>
+      <p class="lede">
+        Open question before implementation. Today we have annotation stubs
+        (<code>ignoreBefore</code> / <code>ignoreAfter</code> / <code>ignoreBetween</code>),
+        an <code>Ignore</code> nonterminal type, and PLAN notes that
+        <code>IgnoreBuiltIn</code> is “omitted from the production.” Those are
+        <strong>different mechanisms</strong>. This brief lays out options so we can pick a coherent surface API.
+      </p>
+      <div class="pills">
+        <span class="pill">whitespace / noise tokens</span>
+        <span class="pill">not in the ADT</span>
+        <span class="pill">grammar inserts, reduce skips</span>
+        <span class="pill">related: VElementList</span>
+      </div>
+    </header>
+
+    <section>
+      <h2><span class="num">00</span> What problem are we solving?</h2>
+      <p>
+        Many grammars want tokens that are <strong>required for the language</strong> but
+        <strong>unwanted in the typed AST</strong> — usually runs of whitespace, sometimes
+        comments. Bash wants spaces between words without modeling
+        <code>SpacedWord(ws, word)</code> forever. JSON often wants optional spaces around
+        <code>:</code> and <code>,</code>.
+      </p>
+      <div class="callout ok">
+        <div class="label">Non-goal</div>
+        <p style="margin:0">
+          This is not about “skip invalid input.” Ignored terminals still have to
+          <em>match</em> when present; they just don’t become case-class fields.
+        </p>
+      </div>
+      <h3>Two existing stubs (don’t conflate them)</h3>
+      <table>
+        <thead><tr><th>Stub</th><th>Likely intent</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>Ignore</code> / <code>IgnoreBuiltIn</code></td>
+            <td>A <em>field type</em> that is omitted from the grammar production (and maybe from construction). PLAN: “omitted from production.” Empty product edge case: “use <code>Ignored</code>.”</td>
+          </tr>
+          <tr>
+            <td><code>@ignoreBefore[T]</code> / <code>After</code> / <code>Between</code></td>
+            <td>Annotations that <em>inject</em> optional (or starred) terminals of type <code>T</code> around real structure, without ADT fields.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Recommendation: treat annotations as the main “whitespace” feature; keep
+        <code>Ignore</code> as a separate “this field is not parsed” escape hatch only if we still need it.
+      </p>
+    </section>
+
+    <section>
+      <h2><span class="num">01</span> Shared design knobs (apply to every option)</h2>
+      <div class="grid2">
+        <div class="mini">
+          <h4>Which terminal?</h4>
+          <p>Annotation type arg <code>T &lt;: Terminal</code> must be a product terminal with <code>@regex</code> (e.g. <code>Ws</code> matching <code>[ \t\n\r]+</code>).</p>
+        </div>
+        <div class="mini">
+          <h4>Optional vs star</h4>
+          <p>Most tools insert <code>(Ws)?</code> if <code>Ws</code> already matches a <em>run</em> (<code>\s+</code>). Alternatively insert <code>Ws*</code> for single-char tokens. <strong>Default proposal: optional once</strong> (<code>ElementOption</code>-shaped ignore), assuming multi-char runs in the regex.</p>
+        </div>
+        <div class="mini">
+          <h4>Reduce / cover</h4>
+          <p>Grammar RHS gains symbols that <strong>do not</strong> map to case-class fields. Same idea as <code>FieldSource</code> skipping rewrite scaffolding — ignore slots are popped but discarded (or reduce to unit).</p>
+        </div>
+        <div class="mini">
+          <h4>Lexer interaction</h4>
+          <p>State-scoped lex already only tries terminals legal in the current state. Ignore terminals become legal wherever the grammar inserts them. No global “skip all Ws.”</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="num">02</span> Attachment options</h2>
+
+      <div class="opt">
+        <h3>
+          A — Type-level on products only
+          <span class="tag rec">lean</span>
+          <span class="tag alt">good first slice</span>
+        </h3>
+        <pre>@ignoreBefore[Ws]
+@ignoreAfter[Ws]
+@ignoreBetween[Ws]
+final case class Arr(
+  open: `[`,
+  body: ElementOption[ArrBody],
+  close: `]`,
+) extends Json, NonTerminal</pre>
+        <p><strong>Grammar expansion</strong> (optional once each):</p>
+        <pre>Arr → Ws?  `[`  Ws?  body?  Ws?  `]`  Ws?</pre>
+        <ul>
+          <li><code>ignoreBefore</code> → before first field</li>
+          <li><code>ignoreBetween</code> → between consecutive fields</li>
+          <li><code>ignoreAfter</code> → after last field</li>
+        </ul>
+        <p><strong>Does not</strong> insert spaces inside <code>ElementList[…]</code> elements. Nested products need their own annotations (or inherit — see option D).</p>
+        <p><strong>Pros:</strong> simple, matches annotation placement as written, greenable for “spaces around punctuation.”  
+        <strong>Cons:</strong> Bash words still need list-internal spacing strategy.</p>
+      </div>
+
+      <div class="opt">
+        <h3>
+          B — Type-level + auto list inter-element
+          <span class="tag mid">convenient</span>
+          <span class="tag heavy">surprising?</span>
+        </h3>
+        <pre>@ignoreBetween[Ws]
+final case class BashCommand(
+  words: NonEmptyElementList[Word],
+  end: ElementOption[CmdEnd],
+)</pre>
+        <p>Product gaps get <code>Ws?</code>, <strong>and</strong> any <code>ElementList</code> / <code>NonEmptyElementList</code> field under this product expands as:</p>
+        <pre>words → Word (Ws? Word)*</pre>
+        <p><strong>Pros:</strong> Bash becomes natural without <code>SpacedWord</code>.  
+        <strong>Cons:</strong> Magic coupling (“annotation on product affects list encoding”). Harder to have spaces between product fields but <em>not</em> inside a nested list of numbers, etc. JSON <code>ArrBody.tail: ElementList[CommaJson]</code> would get spaces between <code>,value</code> chunks (usually fine) — also between other lists unexpectedly.</p>
+      </div>
+
+      <div class="opt">
+        <h3>
+          C — Field-level annotations
+          <span class="tag rec">precise</span>
+          <span class="tag mid">more API</span>
+        </h3>
+        <pre>final case class BashCommand(
+  @ignoreBetween[Ws]
+  words: NonEmptyElementList[Word],
+  @ignoreBefore[Ws]
+  end: ElementOption[CmdEnd],
+)</pre>
+        <p>Meaning proposal:</p>
+        <ul>
+          <li>On a <strong>list field</strong>: <code>ignoreBetween</code> = between elements; <code>ignoreBefore</code>/<code>After</code> = before first / after last element of that list.</li>
+          <li>On a <strong>scalar field</strong>: <code>ignoreBefore</code>/<code>After</code> = immediately before/after that field’s symbol(s).</li>
+          <li>Type-level annotations can still exist as defaults for all product gaps.</li>
+        </ul>
+        <p><strong>Pros:</strong> express exactly Bash vs Arr vs KeyPair without magic.  
+        <strong>Cons:</strong> need field annotation extraction (Oxygen fields already expose <code>annotations</code>); more rules to document.</p>
+      </div>
+
+      <div class="opt">
+        <h3>
+          D — Inheritance / cascade into nested NTs
+          <span class="tag heavy">powerful</span>
+          <span class="tag heavy">complex</span>
+        </h3>
+        <p>
+          Annotate root <code>Json</code> once; all nested products/lists inherit the same ignore terminal
+          unless overridden. Great for “JSON is space-insensitive everywhere.”
+        </p>
+        <p><strong>Pros:</strong> one annotation for a whole language.  
+        <strong>Cons:</strong> hard to reason about; interactions with rewrite; over-inserts ignore in places that change FIRST sets and conflicts.</p>
+      </div>
+
+      <div class="opt">
+        <h3>
+          E — Explicit VElementList (already sketched)
+          <span class="tag alt">orthogonal</span>
+        </h3>
+        <pre>// Significant separators that *do* appear in a rich list structure
+VElementList[Elem, Before, Between, After]
+// e.g. Between = `,` for JSON without trailing-comma sugar</pre>
+        <p>
+          This is for <strong>visible</strong> separators that participate in list structure
+          (and possibly AST via <code>toVList</code>), not for “throw away Ws.”
+          Complements ignore; does not replace it. PLAN still has VElementList expansion as TODO.
+        </p>
+      </div>
+
+      <div class="opt">
+        <h3>
+          F — Global / lexer-level skip
+          <span class="tag mid">classic yacc</span>
+        </h3>
+        <pre>// Conceptual — not in current annotations
+// Always drop Ws anywhere the lexer runs, never produce tokens
+</pre>
+        <p>
+          Simple for free-form languages; <strong>fights</strong> state-scoped lex and significant-whitespace languages (Python, Bash if newlines are tokens).
+          Not recommended as the only mechanism given slyce’s per-state lexers.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="num">03</span> Behavior matrix (examples)</h2>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Input / goal</th>
+            <th>Best-fit option</th>
+            <th>Sketch</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>[ 1 , 2 ]</code></td>
+            <td>A or C on Arr / ArrBody / CommaJson</td>
+            <td>Spaces around structure; commas stay real fields</td>
+          </tr>
+          <tr>
+            <td><code>echo hello world</code></td>
+            <td>B or C on list field</td>
+            <td><code>Word (Ws? Word)*</code> without <code>SpacedWord</code></td>
+          </tr>
+          <tr>
+            <td><code>echo;</code> tight</td>
+            <td>A/C without forcing Ws</td>
+            <td>Ignore is optional — zero width OK</td>
+          </tr>
+          <tr>
+            <td><code>a\nb</code> newline-significant</td>
+            <td>Not global F</td>
+            <td>Newline remains a real terminal; Ws might be <code>[ \t]+</code> only</td>
+          </tr>
+          <tr>
+            <td>Trailing comma JSON</td>
+            <td>Already done</td>
+            <td>Real <code>ElementOption[`,`]</code> field — not ignore</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2><span class="num">04</span> Expansion semantics (proposal detail)</h2>
+      <p>Regardless of attachment, the <em>mechanics</em> can be shared:</p>
+      <ol>
+        <li>Resolve annotation type <code>T</code> → <code>ProductTerminal</code> (regex + <code>BuildTerminal</code>).</li>
+        <li>Allocate a shared ignore NT, e.g. <code>$ign[T.label]</code> with productions <code>T | ε</code> (optional once).  
+            Alternative star: list NT of <code>T</code>.</li>
+        <li>When building a production’s symbol list, interleave ignore NTs per rules.</li>
+        <li>Product <code>FieldSource</code> only references stack slots of real fields (ignore reduces still push a value, discarded — or special “no push” reduce if we want).</li>
+        <li>Grammar rewrite / FIRST analysis sees ignore as nullable symbols — usually fine; may create new nullable-overlap cases (watch carefully).</li>
+      </ol>
+      <div class="callout warn">
+        <div class="label">Nullable hazard</div>
+        <p style="margin:0">
+          Inserting nullable ignore between <code>List[A]</code> and <code>Option[B]</code> can create extra FIRST/FOLLOW mess.
+          Prefer inserting ignore only where the adjacent real symbols already have disjoint FIRST,
+          or treat ignore as “transparent” for rewrite detection (advanced).
+        </p>
+      </div>
+      <pre>// Example: ignoreBetween only, optional once
+// fields: open, body, close
+// RHS: open, $ign, body, $ign, close
+
+// FieldSource: Arg(0), Arg(2), Arg(4)
+// $ign reduces OptSome/OptNone → discarded</pre>
+    </section>
+
+    <section>
+      <h2><span class="num">05</span> Suggested decision path</h2>
+      <ol>
+        <li>
+          <strong>Ship A first</strong> — type-level before/after/between on products, optional once,
+          explicit tests (JSON with spaces; a tiny product fixture).
+        </li>
+        <li>
+          <strong>Add C for lists</strong> — field-level <code>@ignoreBetween[Ws]</code> on
+          <code>ElementList</code> / <code>NonEmptyElementList</code> so Bash can drop <code>SpacedWord</code>.
+        </li>
+        <li>
+          <strong>Defer D/F</strong> — cascade and global skip until A/C are proven.
+        </li>
+        <li>
+          <strong>Clarify <code>Ignore</code> type</strong> — either implement “omit field from production”
+          for rare cases, or delete / rename to avoid confusion with annotations.
+        </li>
+        <li>
+          <strong>VElementList</strong> stays the path for <em>significant</em> separators (commas you care about in structure), separate epic.
+        </li>
+      </ol>
+      <div class="callout">
+        <div class="label">What I need from you</div>
+        <ul style="margin:0;padding-left:1.1rem">
+          <li>Attachment: <strong>A only</strong>, <strong>A+C</strong>, <strong>B</strong>, or something else?</li>
+          <li>Ignore multiplicity: <strong>optional once</strong> vs <strong>star</strong>?</li>
+          <li>Should <code>Ws</code> include newlines, or keep newline as a real token (Bash)?</li>
+          <li>Any desire for comments (<code>//…</code>) as a second ignore terminal / union of ignore?</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="num">06</span> Strawman target APIs</h2>
+      <h3>JSON (spaces around structure)</h3>
+      <pre>@regex("[ \\t\\n\\r]+".r)
+final case class Ws(text: String, span: Span.Range) extends Terminal
+
+@ignoreBefore[Ws] @ignoreAfter[Ws] @ignoreBetween[Ws]
+final case class Arr(
+  open: `[`,
+  body: ElementOption[ArrBody],
+  close: `]`,
+) extends Json, NonTerminal
+
+@ignoreBetween[Ws]
+final case class ArrBody(
+  head: Json,
+  tail: ElementList[CommaJson],
+  trailingComma: ElementOption[`,`],
+) ...</pre>
+      <h3>Bash (if we take field-level list ignore)</h3>
+      <pre>@regex("[ \\t]+".r)  // not newlines — newline is CmdEnd
+final case class Ws(...) extends Terminal
+
+final case class BashCommand(
+  @ignoreBetween[Ws]
+  words: NonEmptyElementList[Word],
+  @ignoreBefore[Ws]
+  end: ElementOption[CmdEnd],
+)</pre>
+      <h3>What we have today (no ignore)</h3>
+      <pre>// Explicit SpacedWord — works, but noisy
+final case class BashCommand(
+  head: Word,
+  args: ElementList[SpacedWord], // SpacedWord(ws, word)
+  trailWs: ElementOption[Ws],
+  end: ElementOption[CmdEnd],
+)</pre>
+    </section>
+
+    <footer>
+      Generated for slyce-v2. File:
+      <code>modules-v2/IGNORE-DESIGN.html</code>.
+      No implementation until attachment + multiplicity are locked.
+    </footer>
+  </div>
+</body>
+</html>
