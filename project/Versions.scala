@@ -2,6 +2,6 @@
 
 object Versions {
 
-  val oxygen = "0.7.7"
+  val oxygen = "0.7.11"
 
 }
