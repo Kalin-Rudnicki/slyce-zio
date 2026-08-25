@@ -44,6 +44,14 @@ private[slyce] object GrammarValidity {
           a <- t1
           b <- t2
           if a.typeRepr.showCode != b.typeRepr.showCode
+          // For an equal-length overlap THIS CHECK DETECTS, an EXPLICIT priority difference makes the tie
+          // deterministic (see `slyce.parse.priority` and `ParserImpl.lexOne`), so such overlaps are ALLOWED
+          // — this is what lets a higher-priority keyword terminal coexist with an `Identifier` regex.
+          // Overlaps with EQUAL priority (the default 0 included) remain a hard error. Caveat: the overlap
+          // check is a finite-sample heuristic (see `regexesCanBothMatch`), so a genuine equal-priority
+          // equal-length collision it fails to sample slips through and falls back to first-match-wins at
+          // runtime (Set-order-dependent; pre-existing, not introduced by priority).
+          if a.regex.priority == b.regex.priority
           if regexesCanBothMatch(a.regex.regexText, b.regex.regexText)
         } yield (a, b)
         if cross.nonEmpty then {
@@ -161,6 +169,19 @@ private[slyce] object GrammarValidity {
       terms.getOrElse(et.typeId, Set.empty)
   }
 
+  /** Decide whether two terminal regexes can BOTH match some common input at the SAME LENGTH.
+    *
+    * Only EQUAL-LENGTH overlaps matter here. The runtime lexer (`ParserImpl.lexOne`) resolves DIFFERENT-length overlaps deterministically by maximal munch (longest match wins), so a mere prefix
+    * overlap — e.g. `in` vs `insert`, or `struct` vs an `Identifier` that starts with it — is NOT an ambiguity and must NOT be flagged. Only when two terminals can match the SAME input to the SAME
+    * end position is the lexer forced into a genuine tie, which priority (`ParserImpl.lexOne` / `slyce.parse.priority`) is designed to break. So this returns true only when some sample string is
+    * matched by BOTH regexes ending at the same position (`ma.end() == mb.end()`, both `lookingAt` from index 0, non-empty).
+    *
+    * SOUNDNESS GAP (documented, not fully closed): this is a heuristic that probes a FINITE sample of candidate strings, not a real regex-intersection-emptiness test. A genuine equal-length overlap
+    * that only occurs on a string OUTSIDE the sample is missed here, so an ambiguous equal-priority grammar can still slip past this check; at runtime that unflagged tie then falls back to
+    * first-match-wins (dependent on lexer `allowed`-set / Set iteration order — a pre-existing property, unchanged by priority). To make the common keyword-vs-identifier case reliable, the two
+    * patterns' OWN texts (`pa`, `pb`) are added to the sample: for a literal-keyword regex like `struct` this puts the exact keyword string into the probe, so its equal-length overlap with an
+    * `Identifier` regex is detected (see the `findings-hard-keywords` analysis). A complete fix would be a genuine regex-intersection check.
+    */
   private def regexesCanBothMatch(pa: String, pb: String): Boolean = {
     val ca =
       try Pattern.compile(pa)
@@ -170,38 +191,41 @@ private[slyce] object GrammarValidity {
       catch { case _: Exception => return false }
 
     val samples =
-      List(
-        "0",
-        "1",
-        "12",
-        "127",
-        "255",
-        "256",
-        "a",
-        "A",
-        "com",
-        "example",
-        "x1",
-        "1x",
-        "/",
-        "://",
-        ".",
-        "?",
-        "#",
-        "=",
-        "&",
-        ":",
-        "-",
-        "_",
-        " ",
-      ) ++
+      List(pa, pb) ++
+        List(
+          "0",
+          "1",
+          "12",
+          "127",
+          "255",
+          "256",
+          "a",
+          "A",
+          "com",
+          "example",
+          "x1",
+          "1x",
+          "/",
+          "://",
+          ".",
+          "?",
+          "#",
+          "=",
+          "&",
+          ":",
+          "-",
+          "_",
+          " ",
+        ) ++
         (0 to 30).map(_.toString) ++
         ('a' to 'z').map(_.toString)
 
     samples.exists { s =>
       val ma = ca.matcher(s)
       val mb = cb.matcher(s)
-      ma.lookingAt() && mb.lookingAt() && ma.end() > 0 && mb.end() > 0
+      // EQUAL-LENGTH common match only: both must match from index 0 and end at the SAME position.
+      // Different-length (prefix) overlaps are resolved by maximal munch at runtime and are NOT ambiguous.
+      ma.lookingAt() && mb.lookingAt() && ma.end() > 0 && ma.end() == mb.end()
     }
   }
 
