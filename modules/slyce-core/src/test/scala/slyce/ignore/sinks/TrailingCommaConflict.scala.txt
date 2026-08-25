@@ -1,0 +1,49 @@
+DISABLED REPRO (kept as .txt so it does NOT compile — it CANNOT build a table).
+
+FINDING: A trailing-comma list under an ignore annotation exceeds any fixed look-ahead, so the
+parser-table build fails at COMPILE time with:
+
+    Failed to build parsing table:
+    Need more look-ahead (path: ..., NWs; conflicts: Production($list[...].Simple,1)/0).
+    Try increasing maxLookAhead.
+
+Increasing maxLookAhead does not help: the `Noise*` run between the comma and the next element is
+UNBOUNDED in tokens (each whitespace run and each comment is its own token), so no fixed k suffices.
+After reading a `,` the parser cannot decide within k tokens whether that comma starts another element
+(list continues) or is the trailing comma (list ends), because arbitrarily many Noise tokens may follow
+before the answer (`value` vs `]`) appears.
+
+Minimal repro (put in a self-contained package; every terminal in the same file):
+
+    sealed trait Noise extends Terminal
+    @regex("[ \\t\\n\\r]+".r) final case class NWs(text: String, span: Span.Range) extends Noise
+    @regex("//[^\\n]*".r)     final case class LineComment(text: String, span: Span.Range) extends Noise
+
+    @regex("\\[".r) final case class `[`(text: String, span: Span.Range) extends Terminal
+    @regex("\\]".r) final case class `]`(text: String, span: Span.Range) extends Terminal
+    @regex(",".r)   final case class `,`(text: String, span: Span.Range) extends Terminal
+    @regex("[0-9]+".r) final case class N(text: String, span: Span.Range, value: BigInt) extends Terminal
+    object N { given BuildTerminal[N] = BuildTerminal.attemptDecode1(BigInt(_))(N.apply) }
+
+    @ignoreBefore[Noise] @ignoreAfter[Noise]
+    final case class TArr(open: `[`, body: ElementOption[TBody], close: `]`) extends NonTerminal {
+      override val span: Span.Range = open.span <> close.span
+    }
+    object TArr { val parser: Parser[TArr] = Parser.derived[TArr](2) } // <-- fails to build table
+
+    @ignoreBetween[Noise]
+    final case class TBody(
+        head: N,
+        tail: ElementList[TComma],
+        trailingComma: ElementOption[`,`],   // <-- THIS optional trailing comma is what breaks it
+    ) extends NonTerminal { override val span: Span.Range = head.span }
+
+    @ignoreBetween[Noise]
+    final case class TComma(comma: `,`, value: N) extends NonTerminal {
+      override val span: Span.Range = comma.span <> value.span
+    }
+
+Workaround used by the working sinks in this package: drop the optional trailing comma
+(`JArrBody`/`JObjBody`/`ParamList` carry only `head` + `ElementList[...]`). A trailing-comma list with
+NO ignore builds fine (see json.model.ArrBody), and a comma-list WITH ignore but NO trailing comma
+builds fine (see sinks.RecordList) — it is specifically the combination that is unbuildable.

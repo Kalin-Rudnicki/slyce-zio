@@ -13,6 +13,10 @@ import slyce.parse.*
 
 private[slyce] object DeriveParser {
 
+  // How many parse-table states each generated thunk method emits; kept small so no single chunk method
+  // approaches the JVM's 64KB method-size limit (see the state-emission split below).
+  private val stateChunkSize: Int = 16
+
   def derivedImpl[A: Type](
       maxLookAheadExpr: Expr[Int],
   )(using Quotes): Expr[Parser[A]] = {
@@ -287,8 +291,19 @@ private[slyce] object DeriveParser {
 
     val termsArr: Expr[IArray[ParserImpl.Terminal]] =
       '{ IArray(${ Varargs(terminalExprs) }*) }
+
+    // The parse table can have many states, each with a deeply-nested look-ahead tree (worse at higher k).
+    // Emitting them all as one `IArray(...)` varargs puts the whole table in a single method (the enclosing
+    // object's static initializer), which readily exceeds the JVM's 64KB method-size limit. Split the states
+    // across many small thunk methods (one lambda per chunk) and flatten at runtime, so no single method is
+    // large. Chunk size is deliberately small so an individual chunk method stays well under the limit.
+    val chunkThunks: List[Expr[() => List[ParserImpl.State]]] =
+      stateExprs
+        .grouped(stateChunkSize)
+        .toList
+        .map(group => '{ () => List(${ Varargs(group) }*) })
     val statesArr: Expr[IArray[ParserImpl.State]] =
-      '{ IArray(${ Varargs(stateExprs) }*) }
+      '{ IArray.from(List(${ Varargs(chunkThunks) }*).flatMap(_.apply())) }
 
     '{
       new ParserImpl[A](

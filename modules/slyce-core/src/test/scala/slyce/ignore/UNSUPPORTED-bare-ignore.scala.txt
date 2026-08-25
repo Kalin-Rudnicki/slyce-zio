@@ -1,0 +1,19 @@
+NOTE (kept as .txt so it does NOT compile — it aborts the derivation macro by design).
+
+A bare `slyce.core.builtIn.Ignore` builtin used AS A FIELD is intentionally unsupported: the ignore
+ANNOTATIONS (@ignoreBefore / @ignoreBetween / @ignoreAfter) are the supported mechanism. Attempting a
+bare-Ignore field aborts at COMPILE time inside `FromExtractedType.ref`:
+
+    case t: ExtractedType.IgnoreBuiltIn =>
+      report.errorAndAbort("IgnoreBuiltIn fields are not supported yet")
+
+Repro (would fail to compile):
+
+    final case class HasIgnore(a: Num, gap: slyce.core.builtIn.Ignore, b: Num) extends NonTerminal {
+      override val span: Span.Range = a.span <> b.span
+    }
+    object HasIgnore { val parser: Parser[HasIgnore] = Parser.derived[HasIgnore](2) }
+    //                                                 ^ errorAndAbort: "IgnoreBuiltIn fields are not supported yet"
+
+This is documented (not asserted with a live test) to keep the suite green and fast; a bare-Ignore
+field cannot appear in a compiled source without breaking the whole module's test compilation.
