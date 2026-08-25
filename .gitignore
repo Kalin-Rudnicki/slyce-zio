@@ -8,3 +8,6 @@
 target/
 project/project/
 project/metals.sbt
+
+# per-worktree jgit/dynver version shim (local only; must not track)
+version.sbt

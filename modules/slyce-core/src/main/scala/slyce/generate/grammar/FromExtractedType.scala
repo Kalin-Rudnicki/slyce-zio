@@ -1,6 +1,7 @@
 package slyce.generate.grammar
 
 import java.util.UUID
+import oxygen.meta.k0.*
 import oxygen.predef.core.*
 import oxygen.quoted.*
 import scala.collection.mutable
@@ -93,6 +94,7 @@ private[slyce] object FromExtractedType {
 
     private val seenNt: mutable.Set[String] = mutable.Set.empty
     private val listIds: mutable.Map[String, String] = mutable.Map.empty
+    private val foldedElemIds: mutable.Map[String, GSym] = mutable.Map.empty
 
     def labelOf(et: ExtractedType): String =
       et.typeRepr.showCode
@@ -146,8 +148,7 @@ private[slyce] object FromExtractedType {
           report.errorAndAbort("NonEmptyVElementList not supported yet")
       }
 
-    private def listSym(elemEt: ExtractedType, nonempty: Boolean): GSym = {
-      val elem = ref(elemEt)
+    private def listSymOf(elem: GSym, nonempty: Boolean): GSym = {
       val key = s"${elem.label}|${if nonempty then "+" else "*"}"
       val id = listIds.getOrElseUpdate(key, UUID.randomUUID().toString)
       val phase = if nonempty then GSym.ListPhase.Head else GSym.ListPhase.Simple
@@ -166,8 +167,9 @@ private[slyce] object FromExtractedType {
       GSym.ListNt(id, phase)
     }
 
-    private def optSym(elemEt: ExtractedType): GSym = {
-      val elem = ref(elemEt)
+    private def listSym(elemEt: ExtractedType, nonempty: Boolean): GSym = listSymOf(ref(elemEt), nonempty)
+
+    private def optSymOf(elem: GSym): GSym = {
       val name = GSym.OptNt(elem.label)
       if !seenNt.contains(name.label) then {
         seenNt += name.label
@@ -178,15 +180,142 @@ private[slyce] object FromExtractedType {
       name
     }
 
+    private def optSym(elemEt: ExtractedType): GSym = optSymOf(ref(elemEt))
+
+    /**
+      * A synthetic "element followed by an ignore run" NT: `foldElem → elem T*` (or `elem T?` when
+      * `bounded`), reducing (Identity) to the element value (the trailing ignore is discarded). Wrapping
+      * THIS in the ordinary Opt/List machinery yields `(elem T*)?` / `(elem T*)*` — the ignore is folded
+      * INSIDE the nullable, so an absent element contributes zero ignore runs and no two ignore runs are
+      * ever adjacent. `bounded` picks `T?` (single maximal-munch ignore) over `T*`; the cache key already
+      * distinguishes them because the opt- and list-NT labels differ.
+      */
+    private def foldedElemSym(elemEt: ExtractedType, igEt: ExtractedType, bounded: Boolean): GSym = {
+      val elem = ref(elemEt)
+      val ign = if bounded then optSym(igEt) else listSym(igEt, nonempty = false)
+      val key = s"${elem.label}~${ign.label}"
+      foldedElemIds.getOrElseUpdate(
+        key, {
+          val name = GSym.Nt(s"$$foldElem[$key]")
+          groups += NTGroup.BasicNT(name, NonEmptyList.one(List(elem, ign)))
+          reduces += ((name.label, 0) -> ReduceKind.Identity)
+          name
+        },
+      )
+    }
+
+    /** One declared ignore slot: the ignore terminal(s) plus whether the slot is bounded (`T?`) or star (`T*`). */
+    private final case class Ign(et: ExtractedType, bounded: Boolean)
+
+    /** Ignore terminals declared on a product via `@ignoreBefore/@ignoreBetween/@ignoreAfter[T]` (star) or their `…One` (bounded) variants. */
+    private final case class IgnoreSpec(
+        before: Option[Ign],
+        between: Option[Ign],
+        after: Option[Ign],
+    ) {
+      def isEmpty: Boolean = before.isEmpty && between.isEmpty && after.isEmpty
+    }
+
+    private val ignoreFqns: Set[String] =
+      Set(
+        "slyce.parse.ignoreBefore", "slyce.parse.ignoreBetween", "slyce.parse.ignoreAfter",
+        "slyce.parse.ignoreBeforeOne", "slyce.parse.ignoreBetweenOne", "slyce.parse.ignoreAfterOne",
+      )
+
+    /**
+      * Fail loud on a FIELD-level ignore annotation. Only PRODUCT-level `@ignore*` is implemented
+      * (design "Option A"); a field-level annotation (design "Option C", per-list ignore) would
+      * otherwise be silently ignored — a footgun. Erroring is better than a silent no-op.
+      */
+    private def assertNoFieldLevelIgnore(gen: ProductGeneric.CaseClassGeneric[?]): Unit =
+      gen.fields.foreach { f =>
+        f.annotations.all.map(_.tpe.typeSymbol.fullName).find(ignoreFqns.contains).foreach { fqn =>
+          report.errorAndAbort(
+            s"@${fqn.split('.').last} on field '${f.name}' is not supported — put ignore annotations on the " +
+              s"PRODUCT (the case class), not a field. Field-level (per-list) ignore is not implemented yet.",
+            f.pos,
+          )
+        }
+      }
+
+    private def readIgnores(gen: ProductGeneric.CaseClassGeneric[?]): IgnoreSpec = {
+      assertNoFieldLevelIgnore(gen)
+      val annTypes: List[TypeRepr] = gen.annotations.all.map(_.tpe)
+      def find(fqn: String): Option[ExtractedType] =
+        annTypes
+          .collectFirst { case tr if tr.typeSymbol.fullName == fqn && tr.typeArgs.nonEmpty => tr.typeArgs.head }
+          .map(tr => cache.getOrCreate(gen.pos)(tr))
+      def slot(starFqn: String, oneFqn: String): Option[Ign] =
+        (find(starFqn), find(oneFqn)) match {
+          case (Some(_), Some(_)) =>
+            report.errorAndAbort(
+              s"a product may not carry both @${starFqn.split('.').last} and @${oneFqn.split('.').last}",
+              gen.pos,
+            )
+          case (_, Some(et)) => Some(Ign(et, bounded = true))
+          case (Some(et), _) => Some(Ign(et, bounded = false))
+          case (None, None)  => None
+        }
+      IgnoreSpec(
+        before = slot("slyce.parse.ignoreBefore", "slyce.parse.ignoreBeforeOne"),
+        between = slot("slyce.parse.ignoreBetween", "slyce.parse.ignoreBetweenOne"),
+        after = slot("slyce.parse.ignoreAfter", "slyce.parse.ignoreAfterOne"),
+      )
+    }
+
+    /**
+      * Interleave ignore into a product's RHS using the **trailing-fold** rule, so nullable fields
+      * (Option/List) never create two adjacent ignore runs:
+      *   - `@ignoreBefore` → one leading `T*`.
+      *   - each field carries its TRAILING ignore (`@ignoreBetween` on non-last fields, `@ignoreAfter`
+      *     on the last field). For a NON-nullable field that is `field  T*` (two RHS symbols, the `T*`
+      *     discarded); for a nullable `ElementOption[B]` / `ElementList[B]` / `NonEmptyElementList[B]`
+      *     the trailing ignore is folded INSIDE via [[foldedElemSym]] → `(B T*)?` / `(B T*)*` / `(B T*)+`,
+      *     so an absent element contributes no ignore run and the previous field's trailing run covers
+      *     the gap. Field sources point at each real field's slot; ignore slots are discarded.
+      */
+    private def productRhs(gen: ProductGeneric.CaseClassGeneric[?], fields: List[ExtractedType]): (List[GSym], List[FieldSource]) = {
+      val ign = readIgnores(gen)
+      if ign.isEmpty then {
+        val syms = fields.map(ref)
+        (syms, syms.indices.map(FieldSource.Arg(_)).toList)
+      } else {
+        val rhs = mutable.ArrayBuffer.empty[GSym]
+        val sources = mutable.ArrayBuffer.empty[FieldSource]
+        def ignSlot(b: Ign): GSym = if b.bounded then optSym(b.et) else listSym(b.et, nonempty = false)
+        ign.before.foreach(b => rhs += ignSlot(b))
+        val n = fields.size
+        fields.zipWithIndex.foreach { case (fEt, i) =>
+          val trailing: Option[Ign] = if i == n - 1 then ign.after else ign.between
+          trailing match {
+            case None =>
+              sources += FieldSource.Arg(rhs.size)
+              rhs += ref(fEt)
+            case Some(b) =>
+              sources += FieldSource.Arg(rhs.size)
+              fEt match {
+                case o: ExtractedType.ElementOptionBuiltIn        => rhs += optSymOf(foldedElemSym(o.elem, b.et, b.bounded))
+                case l: ExtractedType.ElementListBuiltIn          => rhs += listSymOf(foldedElemSym(l.elem, b.et, b.bounded), nonempty = false)
+                case l: ExtractedType.NonEmptyElementListBuiltIn  => rhs += listSymOf(foldedElemSym(l.elem, b.et, b.bounded), nonempty = true)
+                case _                                            =>
+                  rhs += ref(fEt)
+                  rhs += ignSlot(b)
+              }
+          }
+        }
+        (rhs.toList, sources.toList)
+      }
+    }
+
     private def ensureProduct(t: ExtractedType.ProductNonTerminal): Unit = {
       val lab = labelOf(t)
       if seenNt.contains(lab) then return
       seenNt += lab
       products.update(lab, t)
 
-      val fieldSyms: List[GSym] = t.fields.toList.map(f => ref(f.extracted))
-      groups += NTGroup.BasicNT(GSym.Nt(lab), NonEmptyList.one(fieldSyms))
-      reduces += ((lab, 0) -> ReduceKind.Product(lab, fieldSyms.indices.map(FieldSource.Arg(_)).toList))
+      val (rhs, sources) = productRhs(t.gen, t.fields.toList.map(_.extracted))
+      groups += NTGroup.BasicNT(GSym.Nt(lab), NonEmptyList.one(rhs))
+      reduces += ((lab, 0) -> ReduceKind.Product(lab, sources))
     }
 
     /** Sum of nonterminals only (e.g. Expr.Add). */
@@ -231,17 +360,13 @@ private[slyce] object FromExtractedType {
             case c: ExtractedType.ProductNonTerminal =>
               products.update(labelOf(c), c)
               // Prefer separate NT when product may be referenced elsewhere; still inline fields
-              // into this sum prod so reduce builds the case class directly.
-              val fieldSyms = c.fields.toList.map(f => ref(f.extracted))
-              reduces += (
-                (
-                  lab,
-                  idx,
-                ) -> ReduceKind.Product(labelOf(c), fieldSyms.indices.map(FieldSource.Arg(_)).toList)
-              )
+              // into this sum prod so reduce builds the case class directly. Ignore slots
+              // (@ignoreBefore/Between/After) are interleaved the same way as a standalone product.
+              val (rhs, sources) = productRhs(c.gen, c.fields.toList.map(_.extracted))
+              reduces += ((lab, idx) -> ReduceKind.Product(labelOf(c), sources))
               // Also ensure named NT exists for external refs (KeyPair.key: Str)
               ensureProduct(c)
-              fieldSyms
+              rhs
 
             case c: ExtractedType.SumNonTerminal =>
               val childSym = ref(c)

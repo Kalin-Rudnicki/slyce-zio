@@ -52,7 +52,7 @@ private[slyce] object ParsingTable {
         reducesTo = ReducesTo.Start,
         seen = Nil,
         waiting = grammar.startNt :: Nil,
-        lookAhead = Follow(Set.empty, eofIsValid = true) :: Nil,
+        lookAhead = LA.eofOnly,
       )
     val initialClosure = expandEntries(defined, Set(initialEntry), grammar.maxLookAhead)
 
@@ -96,7 +96,50 @@ private[slyce] object ParsingTable {
     case Production(nt: GSym.NonTerm, idx: Int)
   }
 
-  private final case class Follow(validTerminals: Set[GSym.Term], eofIsValid: Boolean)
+  /** A set of look-ahead strings (each up to `maxLookAhead` terminals long), represented as a PREFIX TREE.
+    *
+    * `byTerm(t)` holds the continuations that can follow terminal `t`; `eof` marks that a string may end here (end-of-input is a valid follow at this point). Keeping continuations per-branch (rather
+    * than a flat set-per-position) preserves the correlation BETWEEN positions: e.g. `W` followed only by `{),EOF}` stays distinct from `)` followed by `{P,…}`, so the merge never fabricates the
+    * phantom string `W P`. The old set-per-position representation unioned each depth independently and admitted such phantom cross-products, which made recursive-operator + ignore-slot grammars fail
+    * to converge at any finite k.
+    *
+    * A node with empty `byTerm` and `eof == false` is a leaf: a look-ahead string ends here (either because it was truncated at `maxLookAhead`, or a recursion cutoff contributed nothing further).
+    */
+  private final case class LA(byTerm: Map[GSym.Term, LA], eof: Boolean) {
+    def isEmpty: Boolean = byTerm.isEmpty && !eof
+  }
+  private object LA {
+    val empty: LA = LA(Map.empty, eof = false)
+    val eofOnly: LA = LA(Map.empty, eof = true)
+    def single(t: GSym.Term, next: LA): LA = LA(Map(t -> next), eof = false)
+  }
+
+  private def unionLA(a: LA, b: LA): LA =
+    if a.byTerm.isEmpty then LA(b.byTerm, a.eof || b.eof)
+    else if b.byTerm.isEmpty then LA(a.byTerm, a.eof || b.eof)
+    else {
+      val merged =
+        (a.byTerm.keySet ++ b.byTerm.keySet).iterator.map { t =>
+          val v =
+            (a.byTerm.get(t), b.byTerm.get(t)) match {
+              case (Some(x), Some(y)) => unionLA(x, y)
+              case (Some(x), None)    => x
+              case (None, Some(y))    => y
+              case (None, None)       => LA.empty // unreachable: keys come from the keySet union
+            }
+          t -> v
+        }.toMap
+      LA(merged, a.eof || b.eof)
+    }
+
+  private def unionAll(las: IterableOnce[LA]): LA =
+    las.iterator.foldLeft(LA.empty)(unionLA)
+
+  /** Truncate a look-ahead trie to at most `depth` terminals deep. */
+  private def truncateLA(la: LA, depth: Int): LA =
+    if depth <= 0 then LA.empty
+    else if la.byTerm.isEmpty then la
+    else LA(la.byTerm.map { case (t, n) => t -> truncateLA(n, depth - 1) }, la.eof)
 
   private final case class Closure(entries: Set[Closure.Entry]) {
     lazy val finished: Set[Closure.Entry.Finished] = entries.collect { case e: Closure.Entry.Finished => e }
@@ -108,18 +151,18 @@ private[slyce] object ParsingTable {
     sealed trait Entry {
       def reducesTo: ReducesTo
       def seen: List[GSym]
-      def lookAhead: List[Follow]
+      def lookAhead: LA
       def waitingList: List[GSym]
     }
     object Entry {
-      final case class Finished(reducesTo: ReducesTo, seen: List[GSym], lookAhead: List[Follow]) extends Entry {
+      final case class Finished(reducesTo: ReducesTo, seen: List[GSym], lookAhead: LA) extends Entry {
         override def waitingList: List[GSym] = Nil
       }
-      final case class Waiting(reducesTo: ReducesTo, seen: List[GSym], waiting: NonEmptyList[GSym], lookAhead: List[Follow]) extends Entry {
+      final case class Waiting(reducesTo: ReducesTo, seen: List[GSym], waiting: NonEmptyList[GSym], lookAhead: LA) extends Entry {
         override def waitingList: List[GSym] = waiting.toList
       }
 
-      def apply(reducesTo: ReducesTo, seen: List[GSym], waiting: List[GSym], lookAhead: List[Follow]): Entry =
+      def apply(reducesTo: ReducesTo, seen: List[GSym], waiting: List[GSym], lookAhead: LA): Entry =
         NonEmptyList.fromList(waiting) match {
           case Some(w) => Waiting(reducesTo, seen, w, lookAhead)
           case None    => Finished(reducesTo, seen, lookAhead)
@@ -141,42 +184,34 @@ private[slyce] object ParsingTable {
 
   // =====| Algorithm (v1-style, cleaned) |=====
 
-  private def mergeFollows(follows: List[List[Follow]]): List[Follow] = {
-    val nonEmpty = follows.flatMap(NonEmptyList.fromList)
-    NonEmptyList.fromList(nonEmpty) match {
-      case Some(nels) =>
-        val heads = nels.map(_.head)
-        val tails = nels.toList.map(_.tail)
-        Follow(heads.toList.toSet.flatMap(_.validTerminals), heads.exists(_.eofIsValid)) :: mergeFollows(tails)
-      case None => Nil
-    }
-  }
-
+  /** FIRST_k of the symbol sequence `ids`, falling through to `ifPassThrough` when `ids` is exhausted, as a prefix tree of look-ahead strings. NonTerminals are inlined (guarded by `alreadyExpanded`,
+    * a set of `(production, position)` keys, reset each time a terminal is consumed) to avoid infinite recursion.
+    */
   private def calcLookAhead(
       productionsForNT: Map[GSym.NonTerm, List[Closure.Production]],
       ids: List[(ReducesTo, Int, GSym)],
       alreadyExpanded: Set[(ReducesTo, Int)],
-      ifPassThrough: List[Follow],
+      ifPassThrough: LA,
       maxLookAhead: Int,
-  ): List[Follow] =
-    if maxLookAhead <= 0 then Nil
+  ): LA =
+    if maxLookAhead <= 0 then LA.empty
     else
       ids match {
-        case Nil                  => ifPassThrough.take(maxLookAhead)
+        case Nil                  => truncateLA(ifPassThrough, maxLookAhead)
         case (rt, sc, id) :: tail =>
           id match {
             case nt: GSym.NonTerm =>
-              if alreadyExpanded.contains((rt, sc)) then Nil
+              if alreadyExpanded.contains((rt, sc)) then LA.empty
               else {
                 val newExpanded = alreadyExpanded + (rt -> sc)
                 val inlined: List[List[(ReducesTo, Int, GSym)]] =
                   productionsForNT.getOrElse(nt, Nil).map { case Closure.Production(prt, waiting) =>
                     waiting.zipWithIndex.map { case (sym, idx) => (prt: ReducesTo, idx, sym) }
                   }
-                mergeFollows(inlined.map(more => calcLookAhead(productionsForNT, more ::: tail, newExpanded, ifPassThrough, maxLookAhead)))
+                unionAll(inlined.map(more => calcLookAhead(productionsForNT, more ::: tail, newExpanded, ifPassThrough, maxLookAhead)))
               }
             case t: GSym.Term =>
-              Follow(Set(t), eofIsValid = false) :: calcLookAhead(productionsForNT, tail, Set.empty, ifPassThrough, maxLookAhead - 1)
+              LA.single(t, calcLookAhead(productionsForNT, tail, Set.empty, ifPassThrough, maxLookAhead - 1))
           }
       }
 
@@ -202,7 +237,7 @@ private[slyce] object ParsingTable {
         .groupMap(e => (e.reducesTo, e.seen, e.waitingList))(_.lookAhead)
         .toSet
         .map { case ((rt, seen, waiting), follows) =>
-          Closure.Entry(rt, seen, waiting, mergeFollows(follows.toList))
+          Closure.Entry(rt, seen, waiting, unionAll(follows))
         }
 
     Closure(joined)
@@ -224,8 +259,8 @@ private[slyce] object ParsingTable {
       productionsForNT: Map[GSym.NonTerm, List[Closure.Production]],
       c: Closure,
       maxLookAhead: Int,
-  ): List[Follow] =
-    mergeFollows(
+  ): LA =
+    unionAll(
       c.entries.toList.map { e =>
         calcLookAhead(
           productionsForNT,
@@ -249,40 +284,62 @@ private[slyce] object ParsingTable {
         case (t: GSym.Term, c)     => Right(t -> (c, calcFollowsForClosure(productionsForNT, c, maxLookAhead)))
       }
     val termMap = tList.toMap
-    calcTerminalActions(termMap, closure.finished, Nil).map { la =>
+    val res = calcTerminalActions(termMap, closure.finished, Nil)
+    // Opt-in conflict diagnostics: the one-line "Need more look-ahead" error names the path + productions
+    // but not WHY. With SLYCE_DEBUG set, dump the whole conflicting state — every reduce item with its
+    // look-ahead strings, plus the shift terminals and in-progress items — which is what actually lets you
+    // tell a genuine LR(k) need apart from an over-approximation. Zero cost when the env var is unset.
+    if res.isLeft && sys.env.contains("SLYCE_DEBUG") then {
+      // How deep into each reduce item's look-ahead trie the dump prints before eliding with "…".
+      val debugLADepth = 6
+      def showLA(la: LA, depth: Int): String =
+        if depth <= 0 then "…"
+        else {
+          val terms = la.byTerm.toList.map { case (t, n) => s"${t.label}->${showLA(n, depth - 1)}" }
+          (terms ++ (if la.eof then List("EOF") else Nil)).mkString("{", ", ", "}")
+        }
+      System.err.println(s"slyce conflict-state dump: ${res.swap.getOrElse("")}")
+      System.err.println(s"  shift terminals: ${termMap.keys.map(_.label).toList.sorted}")
+      closure.finished.foreach { e =>
+        System.err.println(s"  REDUCE ${e.reducesTo}/${e.seen.size}  seen=[${e.seen.map(_.label).mkString(" ")}]  LA=${showLA(e.lookAhead, debugLADepth)}")
+      }
+      closure.unfinished.foreach { e =>
+        System.err.println(s"  ITEM ${e.reducesTo}: [${e.seen.map(_.label).mkString(" ")}] . [${e.waitingList.map(_.label).mkString(" ")}]")
+      }
+    }
+    res.map { la =>
       TmpState(ntList.toMap, la)
     }
   }
 
   private def calcTerminalActions(
-      terminalTransitionMap: Map[GSym.Term, (Closure, List[Follow])],
+      terminalTransitionMap: Map[GSym.Term, (Closure, LA)],
       finishedEntries: Set[Closure.Entry.Finished],
       rFollowedPath: List[GSym.Term],
   ): Either[String, TmpAction] = {
-    val (fesWithout, fesWith) =
-      finishedEntries.partitionMap { e =>
-        NonEmptyList.fromList(e.lookAhead) match {
-          case Some(nel) =>
-            Right(nel.head -> Closure.Entry.Finished(e.reducesTo, e.seen, nel.tail))
-          case None => Left(e)
-        }
-      }
+    // `fesWithout`: reduce/accept items whose look-ahead string ran out at this descent point (a genuine
+    // "need more than k" conflict). `fesActive`: those with at least one more terminal edge or an EOF end.
+    val (fesWithout, fesActive) =
+      finishedEntries.partitionMap(e => if e.lookAhead.isEmpty then Left(e) else Right(e))
 
     if fesWithout.nonEmpty then {
       val path = rFollowedPath.reverse.map(_.label).mkString(", ")
       val conflicts = fesWithout.map(fe => s"${fe.reducesTo}/${fe.seen.size}").mkString(", ")
       Left(s"Need more look-ahead (path: $path; conflicts: $conflicts). Try increasing maxLookAhead.")
-    } else if fesWith.isEmpty then {
+    } else if fesActive.isEmpty then {
       val onTerm = terminalTransitionMap.map { case (t, (c, _)) => t -> TmpAction.Shift(c) }
       Right(TmpAction.LookAhead(onTerm, None))
     } else {
+      // Reduce items indexed by their next terminal, each ADVANCED past that terminal (its continuation trie).
       val fesByTerm: Map[GSym.Term, Set[Closure.Entry.Finished]] =
-        fesWith
-          .flatMap { case (follow, finished) => follow.validTerminals.toList.map(_ -> finished) }
+        fesActive.toList
+          .flatMap { e => e.lookAhead.byTerm.toList.map { case (t, next) => t -> Closure.Entry.Finished(e.reducesTo, e.seen, next) } }
           .groupMap(_._1)(_._2)
+          .view
+          .mapValues(_.toSet)
+          .toMap
 
-      val fesEOF: Set[Closure.Entry.Finished] =
-        fesWith.collect { case (Follow(_, true), finish) => finish }
+      val fesEOF: Set[Closure.Entry.Finished] = fesActive.filter(_.lookAhead.eof)
 
       val onEOF: Either[String, Option[TmpAction]] =
         fesEOF.toList match {
@@ -292,7 +349,7 @@ private[slyce] object ParsingTable {
               case ReducesTo.Start          => Right(Some(TmpAction.Accept))
               case rt: ReducesTo.Production => Right(Some(TmpAction.Reduce(Closure.Production(rt, value.seen))))
             }
-          case values => Left(s"Multiple EOF actions: $values")
+          case values => Left(s"Multiple EOF actions: ${values.map(v => s"${v.reducesTo}/${v.seen.size}")}")
         }
 
       val onTermPart: Either[String, Map[GSym.Term, TmpAction]] =
@@ -311,15 +368,12 @@ private[slyce] object ParsingTable {
                   }
                 case (fes2, None) =>
                   calcTerminalActions(Map.empty, fes2.toSet, t :: rFollowedPath).map(a => (t -> a) :: list)
-                case (fes2, Some((c, cfs))) =>
-                  NonEmptyList.fromList(cfs) match {
-                    case Some(nel) =>
-                      val filtered = nel.head.validTerminals.toList.map(tt => tt -> (c, nel.tail)).toMap
-                      calcTerminalActions(filtered, fes2.toSet, t :: rFollowedPath).map(a => (t -> a) :: list)
-                    case None =>
-                      Left(s"No more look-ahead for closure on ${t.label}")
+                case (fes2, Some((c, closureLA))) =>
+                  if closureLA.isEmpty then Left(s"No more look-ahead for closure on ${t.label}")
+                  else {
+                    val descended = closureLA.byTerm.map { case (tt, cont) => tt -> (c, cont) }
+                    calcTerminalActions(descended, fes2.toSet, t :: rFollowedPath).map(a => (t -> a) :: list)
                   }
-                case _ => Left(s"Unhandled action conflict on ${t.label}")
               }
             }
           }
@@ -329,7 +383,7 @@ private[slyce] object ParsingTable {
         partial1 <- onTermPart
         eof <- onEOF
       } yield {
-        val referenced = fesWith.flatMap(_._1.validTerminals)
+        val referenced = fesActive.flatMap(_.lookAhead.byTerm.keySet)
         val partial2 =
           terminalTransitionMap.iterator
             .filterNot { case (t, _) => referenced.contains(t) }
