@@ -56,6 +56,7 @@ private[slyce] object DeriveParser {
             name = ${ Expr(lab) },
             pattern = Pattern.compile(${ Expr(patternStr) }),
             build = $buildExpr,
+            priority = ${ Expr(pt.regex.priority) },
           )
         }
       }

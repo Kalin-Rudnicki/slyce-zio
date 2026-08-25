@@ -15,6 +15,26 @@ ThisBuild / watchBeforeCommand := Watch.clearScreen
 ThisBuild / version ~= (_.replace('+', '-'))
 ThisBuild / dynver ~= (_.replace('+', '-'))
 
+// The sbt-git bundled with sbt-ci-release 1.5.7 uses an old JGit that can't read a *linked git worktree*
+// (it reports the repo as bare and throws NoWorkTreeException at load, blocking sbt from loading). That
+// old plugin has no `useConsoleForROGit`, so we neutralize the JGit-backed read-only git settings to
+// constants — JGit is then never invoked. Versioning is unaffected: it comes from sbt-dynver, which
+// shells out to the git CLI (worktree-safe) independently of these keys.
+ThisBuild / git.gitUncommittedChanges := false
+ThisBuild / git.gitCurrentBranch := ""
+ThisBuild / git.gitHeadCommit := None
+ThisBuild / git.gitCurrentTags := Seq.empty[String]
+ThisBuild / git.gitDescribedVersion := None
+// These git.* keys are set to constants only to keep JGit from being invoked (see above); dynver owns
+// versioning, so they're otherwise unused — exclude them from sbt's unused-key lint.
+Global / excludeLintKeys ++= Set(
+  git.gitUncommittedChanges,
+  git.gitCurrentBranch,
+  git.gitHeadCommit,
+  git.gitCurrentTags,
+  git.gitDescribedVersion,
+)
+
 // =====|  |=====
 
 inThisBuild(

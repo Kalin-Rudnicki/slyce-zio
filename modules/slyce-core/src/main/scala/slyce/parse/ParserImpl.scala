@@ -25,6 +25,7 @@ object ParserImpl {
       name: String,
       pattern: Pattern,
       build: (String, Span.Range) => Either[String, Any],
+      priority: Int,
   )
 
   enum Action {
@@ -59,6 +60,7 @@ object ParserImpl {
       var bestId = -1
       var bestEnd = -1
       var bestVal: Any = null
+      var bestPriority = 0
       val it = allowed.iterator
       while it.hasNext do {
         val tid = it.next()
@@ -68,22 +70,24 @@ object ParserImpl {
         m.useAnchoringBounds(false)
         if m.lookingAt() then {
           val end = m.end()
-          if end > bestEnd then {
+          // Longest-match (maximal munch) is the PRIMARY rule and is never overridden by priority.
+          // Priority ONLY breaks EQUAL-LENGTH ties: a strictly-higher-priority terminal wins the same-length
+          // tie, and THAT outcome is independent of `allowed` iteration order. Equal length + equal priority
+          // (two terminals sharing the top priority, the default 0 included) falls back to first-match-wins,
+          // which IS order-dependent — a pre-existing property that priority does not remove, only sidesteps
+          // for the specific tie it is given a strict ranking on.
+          val replaces =
+            if end > bestEnd then true
+            else if end == bestEnd then bestId < 0 || term.priority > bestPriority
+            else false
+          if replaces then {
             val matched = text.substring(from, end)
             term.build(matched, spanOf(from, end)) match {
               case Right(v) =>
                 bestId = tid
                 bestEnd = end
                 bestVal = v
-              case Left(_) => ()
-            }
-          } else if end == bestEnd && bestId < 0 then {
-            val matched = text.substring(from, end)
-            term.build(matched, spanOf(from, end)) match {
-              case Right(v) =>
-                bestId = tid
-                bestEnd = end
-                bestVal = v
+                bestPriority = term.priority
               case Left(_) => ()
             }
           }

@@ -426,7 +426,17 @@ private[slyce] object ExtractedType {
         val parsedRegex: RegularExpression = RegularExpression.parse(Source(regString, None)) match
           case Right(value) => value
           case Left(error)  => report.errorAndAbort(s"Unable to parse regex for ${gen.typeRepr.showAnsiCode}\n$error", regAnnot)
-        new ProductTerminal(gen)(build, ParsedRegex(regString, parsedRegex, annotPos))
+
+        // OPT-IN equal-length lexer tie-break priority. Absent `@priority` defaults to 0 (historical behavior).
+        val termPriority: Int =
+          gen.annotations.optionalOf[priority] match
+            case None            => 0
+            case Some(prioAnnot) =>
+              prioAnnot match
+                case '{ new `priority`(${ Expr(n) }: Int) } => n
+                case _                                      => report.errorAndAbort("`@priority(n)` requires a constant Int argument", prioAnnot)
+
+        new ProductTerminal(gen)(build, ParsedRegex(regString, parsedRegex, annotPos, termPriority))
     }
   }
 
